@@ -2,14 +2,16 @@ package amidst.parsing;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.util.HashMap;
 
 import amidst.documentation.Immutable;
 
@@ -29,19 +31,32 @@ public enum URIUtils {
 		return newURI(location).toURL();
 	}
 
-	public static Reader newReader(String location) throws IOException {
+	public static BufferedReader newReader(String location) throws IOException {
 		return newReader(newURL(location));
 	}
 
-	public static Reader newReader(URL url) throws IOException {
-		return new InputStreamReader(newInputStream(url));
-	}
-
-	public static Reader newReader(File file) throws FileNotFoundException {
-		return new BufferedReader(new FileReader(file));
+	public static BufferedReader newReader(URL url) throws IOException {
+		return new BufferedReader(new InputStreamReader(url.openStream()));
 	}
 
 	public static BufferedInputStream newInputStream(URL url) throws IOException {
 		return new BufferedInputStream(url.openStream());
+	}
+
+	public static byte[] readBytes(URL url) throws IOException {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		byte buf[] = new byte[4096];
+		try (InputStream stream = url.openStream()) {
+			int read;
+			while((read = stream.read(buf)) >= 0) {
+				bytes.write(buf, 0, read);
+			}
+		}
+		return bytes.toByteArray();
+	}
+
+	public static FileSystem openZipFile(URI uri) throws URISyntaxException, IOException {
+		URI zipUri = new URI("jar:" + uri.getScheme(), uri.getPath(), null);
+		return FileSystems.newFileSystem(zipUri, new HashMap<>());
 	}
 }

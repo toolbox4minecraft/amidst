@@ -1,6 +1,6 @@
 package amidst.mojangapi.world;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import amidst.documentation.Immutable;
 
@@ -29,8 +29,17 @@ public class WorldSeed {
 		}
 	}
 
+	private static final SecureRandom random = new SecureRandom();
+
 	public static WorldSeed random() {
-		return new WorldSeed(new Random().nextLong(), null, WorldSeedType.RANDOM);
+		/*
+		 * SecureRandom.nextLong() can generate 2^64 different results even
+		 * though it directly inherits it from Random. The key difference is
+		 * the nature of next() in the different classes. In Random it is
+		 * restricted to 2^48 bits, while SecureRandom uses (i think) 2^128
+		 * bits.
+		 */
+		return new WorldSeed(random.nextLong(), null, WorldSeedType.RANDOM);
 	}
 
 	public static WorldSeed fromUserInput(String input) {

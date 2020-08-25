@@ -11,12 +11,12 @@ import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
-import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -26,17 +26,20 @@ public class CursorInformationWidget extends TextWidget {
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Setting<Dimension> dimensionSetting;
+	private final BiomeList biomeList;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(
 			CornerAnchorPoint anchor,
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
-			Setting<Dimension> dimensionSetting) {
+			Setting<Dimension> dimensionSetting,
+			BiomeList biomeList) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
 		this.dimensionSetting = dimensionSetting;
+		this.biomeList = biomeList;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -58,7 +61,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return Biome.theEnd.getName();
+			return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
@@ -72,15 +75,13 @@ public class CursorInformationWidget extends TextWidget {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
-			try {
-				return Biome.getByIndex(biome).getName();
-			} catch (UnknownBiomeIndexException e) {
-				AmidstLogger.error(e);
-				AmidstMessageBox.displayError("Error", e);
-				return UNKNOWN_BIOME_NAME;
+			Biome b = biomeList.getByIdOrNull(biome);
+			if (b != null) {
+				return b.getName();
+			} else if (biome != -1) {
+				return UNKNOWN_BIOME_NAME + " (ID: " + biome + ")";
 			}
-		} else {
-			return UNKNOWN_BIOME_NAME;
 		}
+		return UNKNOWN_BIOME_NAME;
 	}
 }

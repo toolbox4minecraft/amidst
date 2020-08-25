@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>4.3</version>
+	<version>4.6</version>
 	<repositories>
 		<repository>
-			<id>local-m2</id>
-			<url>file://${project.basedir}/m2</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<properties>
@@ -46,7 +47,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${amidst.build.jdk.version}</source>
 					<target>${amidst.build.jdk.version}</target>
@@ -55,7 +56,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.2.4</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -63,6 +64,15 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<filters>
+								<filter>
+									<!-- This ends up being used by the Minecraft JAR, so makes sure we keep everything -->
+									<artifact>com.google.code.gson:gson</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -73,6 +83,7 @@
 									</manifestEntries>
 								</transformer>
 							</transformers>
+							<minimizeJar>true</minimizeJar>
 						</configuration>
 					</execution>
 				</executions>
@@ -96,9 +107,9 @@
 			<version>2.32</version>
 		</dependency>
 		<dependency>
-			<groupId>jnbt</groupId>
-			<artifactId>jnbt</artifactId>
-			<version>1.3</version>
+			<groupId>com.github.Querz</groupId>
+			<artifactId>NBT</artifactId>
+			<version>5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

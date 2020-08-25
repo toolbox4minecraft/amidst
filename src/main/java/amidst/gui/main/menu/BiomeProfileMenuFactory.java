@@ -85,14 +85,14 @@ public class BiomeProfileMenuFactory {
 			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					actions.selectBiomeProfile(profile);
 					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
 						checkBox.setSelected(false);
 					}
 					selectedCheckBox.setSelected(true);
-					actions.selectBiomeProfile(profile);
 				}
 			};
-			if (defaultBiomeProfileSelector == null && profile.getName().equals("default")) {
+			if (defaultBiomeProfileSelector == null && profile.equals(BiomeProfile.getDefaultProfile())) {
 				defaultBiomeProfileSelector = () -> result.actionPerformed(null);
 			}
 			return result;
@@ -108,9 +108,13 @@ public class BiomeProfileMenuFactory {
 	private final JMenu parentMenu;
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
+
 	private final String reloadText;
 	private final int reloadMnemonic;
 	private final MenuShortcut reloadMenuShortcut;
+
+	private final String createExampleText;
+	private final int createExampleMnemonic;
 
 	public BiomeProfileMenuFactory(
 			JMenu parentMenu,
@@ -118,25 +122,37 @@ public class BiomeProfileMenuFactory {
 			BiomeProfileDirectory biomeProfileDirectory,
 			String reloadText,
 			int reloadMnemonic,
-			MenuShortcut reloadMenuShortcut) {
+			MenuShortcut reloadMenuShortcut,
+			String createExampleText,
+			int createExampleMnemonic) {
 		this.parentMenu = parentMenu;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.reloadText = reloadText;
 		this.reloadMnemonic = reloadMnemonic;
 		this.reloadMenuShortcut = reloadMenuShortcut;
+		this.createExampleText = createExampleText;
+		this.createExampleMnemonic = createExampleMnemonic;
 		AmidstLogger.info("Checking for additional biome profiles.");
 		initParentMenu();
 	}
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
-		biomeProfileDirectory.saveDefaultProfileIfNecessary();
 		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions);
-		biomeProfileDirectory.visitProfiles(visitor);
+		visitor.visitProfile(BiomeProfile.getDefaultProfile());
 		parentMenu.addSeparator();
+		if (biomeProfileDirectory.visitProfiles(visitor)) {
+			parentMenu.addSeparator();
+		}
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);
+		Menus.item(parentMenu, this::doCreateExampleProfile, createExampleText, createExampleMnemonic);
 		visitor.selectDefaultBiomeProfile();
+	}
+
+	private void doCreateExampleProfile() {
+		actions.createExampleProfile(biomeProfileDirectory);
+		doReload();
 	}
 
 	private void doReload() {

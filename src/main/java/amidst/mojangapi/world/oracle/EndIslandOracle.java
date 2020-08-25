@@ -62,6 +62,11 @@ public class EndIslandOracle {
 	 */
 	private static final float ISLAND_DENSITY_THRESHOLD = -0.9f;
 
+	/**
+	 * The distance from (0;0) at which islands start to generated
+	 */
+	private static final int OUTER_LANDS_DISTANCE_IN_CHUNKS = 64;
+
 	private final SimplexNoise noiseFunction;
 
 	public EndIslandOracle(SimplexNoise noiseFunction) {
@@ -102,9 +107,10 @@ public class EndIslandOracle {
 	 * null
 	 */
 	private EndIsland tryCreateEndIsland(int chunkX, int chunkY) {
+
 		if (chunkX == 0 && chunkY == 0) {
 			return createMainEndIsland(chunkX, chunkY);
-		} else if (chunkX * chunkX + chunkY * chunkY > 4096) {
+		} else if (!isInRange(chunkX, chunkY, OUTER_LANDS_DISTANCE_IN_CHUNKS)) {
 			return tryCreateEndIslandInOuterLands(chunkX, chunkY);
 		} else {
 			return null;
@@ -120,7 +126,7 @@ public class EndIslandOracle {
 	}
 
 	/**
-	 * The chunk is in the outer-islands band (1024 blocks from the origin)
+	 * The chunk is in the outer-islands band
 	 */
 	// TODO: check for threading, do we need synchonized or is the SimplexNoise
 	// class thread safe?
@@ -138,6 +144,17 @@ public class EndIslandOracle {
 	 * island).
 	 */
 	private int getErosionFactor(int chunkX, int chunkY) {
-		return (Math.abs(chunkX) * 3439 + Math.abs(chunkY) * 147) % 13 + 9;
+	    // Convert coordinates to long to guard against overflow
+		return (int) ((Math.abs((long) chunkX) * 3439 + Math.abs((long) chunkY) * 147) % 13 + 9);
 	}
+
+    /**
+     * Is the point (x, y) inside the disk of radius d centered at the origin?
+     */
+    private boolean isInRange(int x, int y, int d) {
+        // Guard against overflow
+        if (x < -d || x > d || y < -d || y > d)
+            return false;
+        return x * x + y * y <= d * d;
+    }
 }

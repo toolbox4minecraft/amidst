@@ -1,61 +1,35 @@
 package amidst.mojangapi.world.versionfeatures;
 
-import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
-@Immutable
-public class VersionFeature<V> {
-	public static <V> VersionFeatureBuilder<V> builder() {
+@FunctionalInterface
+public interface VersionFeature<V> {
+	public V getValue(RecognisedVersion version, VersionFeatures features);
+
+	public static<V> VersionFeatureBuilder<V, ?> builder() {
 		return new VersionFeatureBuilder<>();
 	}
 
-	public static <V> ListVersionFeatureBuilder<V> listBuilder() {
-		return new ListVersionFeatureBuilder<>();
+	public static<V> VersionFeatureListBuilder<V, ?> listBuilder() {
+		return new VersionFeatureListBuilder<>();
 	}
 
-	private final V defaultValue;
-	private final List<VersionFeatureEntry<V>> exactMatches;
-	private final List<VersionFeatureEntry<V>> entriesNewestFirst;
-
-	public VersionFeature(
-			V defaultValue,
-			List<VersionFeatureEntry<V>> exactMatches,
-			List<VersionFeatureEntry<V>> entriesNewestFirst) {
-		this.defaultValue = defaultValue;
-		this.exactMatches = exactMatches;
-		this.entriesNewestFirst = entriesNewestFirst;
+	public static<V> VersionFeature<V> constant(V value) {
+		return (version, features) -> value;
 	}
 
-	public V getValue(RecognisedVersion version) {
-		VersionFeatureEntry<V> entry;
-		entry = tryFindExactMatch(version);
-		if (entry != null) {
-			return entry.getValue();
-		}
-		entry = tryFindGreatestEntryLowerOrEqualTo(version);
-		if (entry != null) {
-			return entry.getValue();
-		}
-		return defaultValue;
+	public static<V> VersionFeature<V> fixed(Function<VersionFeatures, V> factory) {
+		return (version, features) -> factory.apply(features);
 	}
 
-	private VersionFeatureEntry<V> tryFindExactMatch(RecognisedVersion version) {
-		for (VersionFeatureEntry<V> entry : exactMatches) {
-			if (entry.getVersion() == version) {
-				return entry;
-			}
-		}
-		return null;
+	public default<W> VersionFeature<W> andThen(Function<V, W> mapper) {
+		return (version, features) -> mapper.apply(this.getValue(version, features));
 	}
 
-	private VersionFeatureEntry<V> tryFindGreatestEntryLowerOrEqualTo(RecognisedVersion version) {
-		for (VersionFeatureEntry<V> entry : entriesNewestFirst) {
-			if (RecognisedVersion.isOlderOrEqualTo(entry.getVersion(), version)) {
-				return entry;
-			}
-		}
-		return null;
+	public default<W> VersionFeature<W> andThenFixed(BiFunction<VersionFeatures, V, W> mapper) {
+		return (version, features) -> mapper.apply(features, this.getValue(version, features));
 	}
 }

@@ -4,8 +4,9 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
-import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -13,13 +14,12 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.export.BiomeExporterDialog;
+import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.WorldSeed;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.export.WorldExporter;
-import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.threading.WorkerExecutor;
@@ -41,7 +41,8 @@ public class ViewerFacade {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerManager layerManager;
 	private final WorkerExecutor workerExecutor;
-	private final Factory1<WorldExporterConfiguration, WorldExporter> worldExporterFactory;
+	private final BiomeExporterDialog biomeExporterDialog;
+	private final Consumer<Entry<ProgressEntryType, Integer>> progressListener;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
 	private final Runnable onPlayerFinishedLoading;
@@ -58,7 +59,8 @@ public class ViewerFacade {
 			WorldIconSelection worldIconSelection,
 			LayerManager layerManager,
 			WorkerExecutor workerExecutor,
-			Factory1<WorldExporterConfiguration, WorldExporter> worldExporterFactory,
+			BiomeExporterDialog biomeExporterDialog,
+			Consumer<Entry<ProgressEntryType, Integer>> progressListener,
 			Runnable onRepainterTick,
 			Runnable onFragmentLoaderTick,
 			Runnable onPlayerFinishedLoading) {
@@ -72,7 +74,8 @@ public class ViewerFacade {
 		this.worldIconSelection = worldIconSelection;
 		this.layerManager = layerManager;
 		this.workerExecutor = workerExecutor;
-		this.worldExporterFactory = worldExporterFactory;
+		this.biomeExporterDialog = biomeExporterDialog;
+		this.progressListener = progressListener;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
 		this.onPlayerFinishedLoading = onPlayerFinishedLoading;
@@ -98,7 +101,6 @@ public class ViewerFacade {
 		graph.dispose();
 		zoom.skipFading();
 		zoom.reset();
-		world.dispose();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -143,13 +145,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSeed getWorldSeed() {
-		return world.getWorldSeed();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldType getWorldType() {
-		return world.getWorldType();
+	public WorldOptions getWorldOptions() {
+		return world.getWorldOptions();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -200,12 +197,12 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean hasLayer(int layerId) {
-		return world.getVersionFeatures().hasLayer(layerId);
+		return world.getEnabledLayers().contains(layerId);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export(WorldExporterConfiguration configuration) {
-		worldExporterFactory.create(configuration).export();
+	public void openExportDialog() {
+		biomeExporterDialog.createAndShow(world, translator, progressListener);
 	}
 
 	public boolean isFullyLoaded() {

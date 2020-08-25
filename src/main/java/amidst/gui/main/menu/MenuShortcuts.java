@@ -16,7 +16,7 @@ public enum MenuShortcuts implements MenuShortcut {
 	NEW_FROM_RANDOM_SEED("menu R"),
 	SEARCH_FOR_RANDOM_SEED("menu F"),
 	OPEN_SAVE_GAME("menu O"),
-	EXPORT("menu X"),
+	EXPORT_BIOMES("menu X"),
 	SWITCH_PROFILE("menu W"),
 	EXIT("menu Q"),
 
@@ -33,7 +33,7 @@ public enum MenuShortcuts implements MenuShortcut {
 
 	DISPLAY_DIMENSION_OVERWORLD("menu shift 1"),
 	DISPLAY_DIMENSION_END("menu shift 2"),
-	
+
 	SHOW_SLIME_CHUNKS("menu 1"),
 	SHOW_WORLD_SPAWN("menu 2"),
 	SHOW_STRONGHOLDS("menu 3"),
@@ -43,19 +43,19 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_OCEAN_MONUMENTS("menu 7"),
 	SHOW_WOODLAND_MANSIONS("menu 8"),
 	SHOW_OCEAN_FEATURES("menu 9"),
-	SHOW_NETHER_FORTRESSES("menu 0"),
-	
+	SHOW_NETHER_FEATURES("menu 0"),
+
 	// It's okay to duplicate the Overworld layers shortcuts here, because
 	// the End layers will never be active at the same time.
 	SHOW_END_CITIES("menu 1"),
-	
+
 	SHOW_GRID("menu G"),
 	SHOW_PLAYERS("menu P"),
 	ENABLE_ALL_LAYERS("menu E"),
 
 	RELOAD_BIOME_PROFILES("menu B"),;
 
-	private static KeyStroke getKeyStroke(String accelerator) {
+	public static KeyStroke getKeyStroke(String accelerator) {
 		return getPlatformSpecificKeyStroke(accelerator.replace("menu", ""), accelerator.contains("menu"));
 	}
 

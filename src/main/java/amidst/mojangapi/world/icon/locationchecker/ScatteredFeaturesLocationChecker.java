@@ -8,8 +8,6 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
-	private static final long MAGIC_NUMBER_FOR_SEED_1 = 341873128712L;
-	private static final long MAGIC_NUMBER_FOR_SEED_2 = 132897987541L;
 	private static final byte MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES = 32;
 	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 8;
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
@@ -19,7 +17,7 @@ public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
 			List<Biome> validBiomesAtMiddleOfChunk,
 			long magicNumber,
 			boolean buggyStructureCoordinateMath) {
-		
+
 		this(seed, biomeDataOracle,
 			MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 			MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
@@ -27,24 +25,40 @@ public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
 			magicNumber,
 			buggyStructureCoordinateMath);
 	}
-	
+
 	public ScatteredFeaturesLocationChecker(
 			long seed, BiomeDataOracle biomeDataOracle,
 			byte maxDistanceBetweenFeatures, byte minDistanceBetweenFeatures,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			long magicNumber,
 			boolean buggyStructureCoordinateMath) {
+		super(getLocationChecker(seed, biomeDataOracle,
+			maxDistanceBetweenFeatures,
+			minDistanceBetweenFeatures,
+			validBiomesAtMiddleOfChunk,
+			magicNumber,
+			buggyStructureCoordinateMath));
+	}
 
-		super(
-				new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber,
-					maxDistanceBetweenFeatures,
-					minDistanceBetweenFeatures,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk));
+	private static LocationChecker[] getLocationChecker(
+			long seed, BiomeDataOracle biomeDataOracle,
+			byte maxDistanceBetweenFeatures, byte minDistanceBetweenFeatures,
+			List<Biome> validBiomesAtMiddleOfChunk,
+			long magicNumber,
+			boolean buggyStructureCoordinateMath) {
+		LocationChecker structure = new StructureAlgorithm(
+			seed,
+			magicNumber,
+			maxDistanceBetweenFeatures,
+			minDistanceBetweenFeatures,
+			USE_TWO_VALUES_FOR_UPDATE,
+			buggyStructureCoordinateMath);
+
+		if (validBiomesAtMiddleOfChunk == null) {
+			return new LocationChecker[] { structure };
+		} else {
+			return new LocationChecker[] { structure,
+					new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk) };
+		}
 	}
 }

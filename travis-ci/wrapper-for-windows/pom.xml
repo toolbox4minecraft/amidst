@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>wrapper-for-windows</artifactId>
-	<version>4.3</version>
+	<version>4.6</version>
 	<build>
 		<finalName>${amidst.build.filename}</finalName>
 		<plugins>
@@ -51,7 +51,7 @@
 							<jre>
 								<minVersion>${amidst.build.jdk.version}.0</minVersion>
 								<initialHeapSize>512</initialHeapSize>
-								<maxHeapSize>1024</maxHeapSize>
+								<maxHeapSize>2048</maxHeapSize>
 							</jre>
 						</configuration>
 					</execution>

@@ -1,14 +1,18 @@
 package amidst.settings.biomeprofile;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 
 @ThreadSafe
 public class BiomeProfileSelection {
-	private volatile BiomeColor[] biomeColors;
+	private ConcurrentHashMap<Integer, BiomeColor> biomeColors;
+	private Set<Integer> unknownBiomes;
 
 	public BiomeProfileSelection(BiomeProfile biomeProfile) {
 		set(biomeProfile);
@@ -17,24 +21,28 @@ public class BiomeProfileSelection {
 	public BiomeColor getBiomeColorOrUnknown(int index) {
 		try {
 			return getBiomeColor(index);
-		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e);
-			AmidstMessageBox.displayError("Error", e);
+		} catch (UnknownBiomeIdException e) {
+			// Only show an error if this is the first time we encounter this biome
+			if (unknownBiomes.add(index)) {
+				AmidstLogger.error(e);
+				AmidstMessageBox.displayError("Error", e);
+			}
 			return BiomeColor.unknown();
 		}
 	}
 
-	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
-		BiomeColor[] biomeColors = this.biomeColors;
-		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIdException {
+		BiomeColor color = biomeColors.get(index);
+		if(color != null) {
+			return color;
 		} else {
-			return biomeColors[index];
+			throw new UnknownBiomeIdException("unsupported biome index detected: " + index);
 		}
 	}
 
 	public void set(BiomeProfile biomeProfile) {
-		this.biomeColors = biomeProfile.createBiomeColorArray();
+		this.biomeColors = biomeProfile.createBiomeColorMap();
+		this.unknownBiomes = ConcurrentHashMap.newKeySet();
 		AmidstLogger.info("Biome profile activated: " + biomeProfile.getName());
 	}
 }

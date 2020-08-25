@@ -19,20 +19,55 @@ public enum RecognisedVersion {
 	// Make sure UNKNOWN is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot.
 	// The 128 stronghold algorithm changes in version 16w06a. However, we cannot uniquely identify this version.
 	// 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
-	// 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
+	// 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://minecraft.gamepedia.com/Java_Edition_1.8.3/)
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
+	_1_16_2    ("1.16.2",     "brxcyd$acyhaozannaaxungn$bacs[Jacoabuwacxxwdvxaezvzcst"),                                  // matches the launcher version id; 1.16.2-pre2  1.16.2-pre3  1.16.2-rc1  1.16.2-rc2  1.16.2
+	_1_16_2_pre1("1.16.2-pre1", "brvcya$acyeaoxanlaavumgn$bacq[Jacmabsvycxuwbvvaexvxcsr"),                                // matches the launcher version id: 1.16.2-pre1
+	_20w30a    ("20w30a",     "brucxw$acyaaoxanlaavumgn$bacq[Jacmabsvycxqwbvvaexvxcso"),                                  // matches the launcher version id: 20w30a
+	_20w29a    ("20w29a",     "brvcxx$acybaoxanlaayupgn$bact[Jacpabvwbcxrwevyaeywacsp"),                                  // matches the launcher version id: 20w29a
+	_20w28a    ("20w28a",     "buodar$adavarqaqeadrxigm$bafm[Jafiaeoyudalyxyrahrytcvj"),                                  // matches the launcher version id: 20w28a
+	_20w27a    ("20w27a",     "bqndap$adatanqamezstjgk$aabn[Jabjaapuvdajuyusadtuucvl"),                                   // matches the launcher version id: 20w27a
+	_1_16      ("1.16",       "bqedae$adaianoamczutlgm$aabp[Jablaaruxczyvauuadsuwcva"),                                   // matches the launcher version id: 1.16-pre8 1.16-rc1  1.16  1.16.1
+	_1_16_pre6 ("1.16-pre6",  "bqedaf$adajanoamczutlgm$aabp[Jablaaruxczzvauuadsuwcvb"),                                   // matches the launcher version id: 1.16-pre6  1.16-pre7
+	_1_16_pre5 ("1.16-pre5",  "bqddae$adaiannambzttkgl$aabo[Jabkaaquwczyuzutadruvcva"),                                   // matches the launcher version id: 1.16-pre5
+	_1_16_pre3 ("1.16-pre3",  "bqddae$adaiannambzutlgl$aabp[Jablaaruxczyvauuadsuwcva"),                                   // matches the launcher version id: 1.16-pre3  1.16-pre4
+	_1_16_pre1 ("1.16-pre1",  "bqadaa$adaeanlalzzutlgl$aabp[Jablaaruxczuvauuadruwcuw"),                                   // matches the launcher version id: 1.16-pre1  1.16-pre2
+	_20w22a    ("20w22a",     "bpnczm$aczqanfaltzqtmgl$aabk[Jabgaamutczguwuqadmuscui"),                                   // matches the launcher version id: 20w22a
+	_20w21a    ("20w21a",     "bpdczc$aczganaalozntlgl$aabh[Jabdaajaahczbmaacxuqcywutczvczuunuoadhcty"),                  // matches the launcher version id: 20w21a
+	_20w20b    ("20w20b",     "bpdczl$aczoanaalozntmabh[Jabdaajaahczbmaacxuqczfutdaddacunuoadicug"),                      // matches the launcher version id: 20w20a  20w20b
+	_20w19a    ("20w19a",     "bozczq$acztamwalkzktjabe[Jabaaagaaecxblwacuunczkuqdaidahukuladfcul"),                      // matches the launcher version id: 20w19a
+	_20w18a    ("20w18a",     "bowczn$aczqamvaljzktjabe[Jabaaagaaecxbltacuunczhuqdafdaeukuladfcui"),                      // matches the launcher version id: 20w18a
+	_20w17a    ("20w17a",     "botczj$aczmamqalezithabc[Jaayaaeaaccvblqacsulczduoczyczxuiujadccue"),                      // matches the launcher version id: 20w17a
+	_20w16a    ("20w16a",     "bolcyw$aamiakwzdtdaax[Jaatzzzxcvbliacluhcyqukczjcziueufacv"),                              // matches the launcher version id: 20w16a
+	_20w15a    ("20w15a",     "boicye$aamfaktzctcaaw[Jaaszyzwcvblfackugcxyujcyrcyqudueacu"),                              // matches the launcher version id: 20w15a
+	_20w14a    ("20w14a",     "bobcxp$aameakszbtbaav[Jaarzxzvcvbkyacjufcxjuicyccybucudact"),                              // matches the launcher version id: 20w14a
+	_20w13a    ("20w13a",     "bnwcxfalyakmzbtbaav[Jaarzxzvcvbksaciufcwzuicxscxrucudacq"),                                // matches the launcher version id: 20w13a  20w13b
+	_20w12a    ("20w12a",     "bnkcwoalrakfyysyaas[Jaaozuzsctbkgacfuccwiufcxbcxatzuaacn"),                                // matches the launcher version id: 20w12a
+	_20w11a    ("20w11a",     "bnccwdaljajxyxsxaar[Jaanztzrcsbjyaceubcvxuecwqcwptytzacm"),                                // matches the launcher version id: 20w11a
+	_20w10a    ("20w10a",     "bnccvyalkajyyxsxaar[Jaanztzrcsbjzaceubcvsuecwlcwktytzacn"),                                // matches the launcher version id: 20w10a
+	_20w09a    ("20w09a",     "bmbcuuakkaiyxyrzzs[Jzoyuyscsbiyabftdcuotgcvhcvgtatbabo"),                                  // matches the launcher version id: 20w09a
+	_20w08a    ("20w08a",     "blycuoakhaivxxryzr[Jznytyrcrbivabetccuitfcvbcvasztaabn"),                                  // matches the launcher version id: 20w07a  20w08a
+	_20w06a    ("20w06a",     "bkjcsyakaaioxvrwzp[Jzlyrypcrbhgabctacsstdctlctksxsyabk"),                                  // matches the launcher version id: 20w06a
+	_1_15_2    ("1.15.2",     "bkacrpajsaikxurwzo[Jzkyqyocrbgxabbtacrjtdcsccsbsxsyabj"),                                  // matches the launcher version id: 1.15.2-pre1  1.15.2-pre2  1.15.2
+	_1_15_1    ("1.15.1",     "bjxcrmajpaiixurwzo[Jzkyqyocrbguabbtacrgtdcrzcrysxsyabj"),                                  // matches the launcher version id: 1.15-pre3  1.15-pre4  1.15-pre5  1.15-pre6  1.15-pre7  1.15  1.15.1-pre1  1.15.1
+	_1_15_pre2 ("1.15-pre2",  "bjxcrlajpaiixurwzo[Jzkyqyocrbguabbtacrftdcrycrxsxsyabj"),                                  // matches the launcher version id: 1.15-pre2
+	_1_15_pre1 ("1.15-pre1",  "bjxcrkajpaiixurwzo[Jzkyqyocrbguabbtacretdcrxcrwsxsyabj"),                                  // matches the launcher version id: 1.15-pre1
+	_19w46b    ("19w46b",     "bjxcrjajpaiixurwzo[Jzkyqyocrbguabbtacrdtdcrwcrvsxsyabj"),                                  // matches the launcher version id: 19w46b
+	_19w45b    ("19w45b",     "bjtcreajlaiexrrtzl[Jzhynylcobgqaaysxcqytacrrcrqsusvabg"),                                  // matches the launcher version id: 19w45b  19w44a
+	_19w42a    ("19w42a",     "bjtcrdajlaiexrrtzl[Jzhynylcobgqaaysxcqxtacrqcrpsusvabg"),                                  // matches the launcher version id: 19w42a
+	_19w41a    ("19w41a",     "bjscrcajkaidxrrtzl[Jzhynylcobgpaaysxcqwtacrpcrosusvabg"),                                  // matches the launcher version id: 19w41a
 	_19w39a    ("19w39a",     "bjocqtajfahyxorrzi[Jzeykyicobglaavsvcqnsycrgcrfssstabd"),                                  // matches the launcher version id: 19w39a 19w40a
 	_19w38b    ("19w38b",     "bjgcqlaiyahrxhrkzb[Jyxydybckbgdaaosocqfsrcqycqxslsmaaw"),                                  // matches the launcher version id: 19w38b
 	_19w36a    ("19w36a",     "bjbcqfaisahlxareyu[Jyqxwxucebfxaahsislcqssfsgaaq"),                                        // matches the launcher version id: 19w36a 19w37a
     _19w35a    ("19w35a",     "bizcpyaiqahjxareyu[Jyqxwxucebfvaahsislcqlsfsgaaq"),                                        // matches the launcher version id: 19w35a
 	_19w34a    ("19w34a",     "bixcpwaiqahjxareyu[Jyqxwxucebfuaahsislcqjsfsgaaq"),                                        // matches the launcher version id: 19w34a
-    _1_14_4    ("1.14.4",     "bhvcoqahqagjwbqfxv[Jxrwxwvcebeszirjrmcpdrgrhzr"),                                          // matches the launcher version id: 1.14.4-pre4 1.14.4-pre5 1.14.4-pre6 1.14.4-pre7 1.14.4
+    _1_14_4    ("1.14.4",     "bhvcoqahqagjwbqfxv[Jxrwxwvcebeszirjrmcpdrgrhzr"),                                          // matches the launcher version id: 1.14.4-pre4  1.14.4-pre5  1.14.4-pre6  1.14.4-pre7  1.14.4
 	_1_14_4_pre3("1.14.4-pre3", "bhucopahpagiwaqexu[Jxqwwwuceberzhrirlcpcrfrgzq"),                                        // matches the launcher version id: 1.14.4-pre3
 	_1_14_4_pre2("1.14.4-pre2", "bhtcooahoaghvzqdxt[Jxpwvwtcebeqzgrhrkcpbrerfzp"),                                        // matches the launcher version id: 1.14.4-pre2
 	_1_14_4_pre1("1.14.4-pre1", "bhscolahoaghvzqdxt[Jxpwvwtcebepzgrhrkcozrerfzp"),                                        // matches the launcher version id: 1.14.4-pre1
-	_1_14_3    ("1.14.3",     "bhqcojahnaggvzqdxt[Jxpwvwtcebenzgrhrkcoxrerfzo"),                                          // matches the launcher version id: 1.14.3-pre3  1.14.3-pre4 1.14.3
+	_1_14_3    ("1.14.3",     "bhqcojahnaggvzqdxt[Jxpwvwtcebenzgrhrkcoxrerfzo"),                                          // matches the launcher version id: 1.14.3-pre3  1.14.3-pre4  1.14.3
 	_1_14_3_pre2("1.14.3-pre2", "bhpcoiahnaggvzqdxt[Jxpwvwtcebenzgrhrkcowrerfzo"),                                        // matches the launcher version id: 1.14.3-pre2
 	_1_14_3_pre1("1.14.3-pre1", "bhncogahlagevxqcxr[Jxnwtwrcebelzergrjcourdrezm"),                                        // matches the launcher version id: 1.14.3-pre1
 	_1_14_2    ("1.14.2",     "bhmcofahkagdvxqcxq[Jxmwtwrcebekzdrgrjcotrdrezl"),                                          // matches the launcher version id: 1.14.1-pre1  1.14.1-pre2  1.14.1  1.14.2-pre1  1.14.2-pre2  1.14.2-pre3  1.14.2-pre4  1.14.2
@@ -59,6 +94,7 @@ public enum RecognisedVersion {
 	_18w45a    ("18w45a",     "afbadwuspgwg[Jwcvovmcaaxhxtqlqqcfqqiqjya"),                                                // matches the launcher version id: 18w45a
 	_18w44a    ("18w44a",     "aeyadtuppewd[Jvzvlvjbyaxcxqqjqncfkqgqhxx"),                                                // matches the launcher version id: 18w44a
 	_18w43c    ("18w43c",     "aekyfuopdwc[Jvyvkvibyawjxpqiqmcecqfqgxw"),                                                 // matches the launcher version id: 18w43c
+	_18w43a    ("18w43a",     "aekyfuopdwc[Jvyvkvibyawjxpqiqmcebqfqg"),                                                   // matches the launcher version id: 18w43a
 	_1_13_2	   ("1.13.2",     "aduxrubomvp[Jvluxuvbvavlxbprpvcctpopp"),                                                   // matches the launcher version id: 1.13.2-pre1  1.13.2-pre2  1.13.2
 	_1_13_1    ("1.13.1",     "aduxrubomvp[Jvluxuvbvavkxbprpvccspopp"),                                                   // matches the launcher version id: 1.13.1-pre1  1.13.1-pre2  1.13.1
 	_18w33a    ("18w33a",     "adtxquaolvo[Jvkuwuubvavjxapqpuccrpnpo"),                                                   // matches the launcher version id: 18w33a
@@ -79,6 +115,7 @@ public enum RecognisedVersion {
 	_18w21b    ("18w21b",     "ahdxbtjnvxn[Lsl;ux[J[[Jutufudbtaytwjpapecfooxoy"),                                         // matches the launcher version id: 18w21b
 	_18w20c    ("18w20c",     "ahcxatinuxm[Lsk;uw[J[[Jusueucbtayswiozpdcexowox"),                                         // matches the launcher version id: 18w20c
 	_18w19b    ("18w19b",     "agwwzthntxm[Lsj;uv[J[[Jurudubbsaymwhoypccerovow"),                                         // matches the launcher version id: 18w19b
+	_18w19a    ("18w19a",     "afcwytgntxl[Lsi;uu[J[[Juqucuabsawswgoxpbccxouov"),                                         // matches the launcher version id: 18w19a
 	_18w16a    ("18w16a",     "aavwutfnsxf[Lsh;ut[J[[Jupubtzbsaskweowpabyhotou"),                                         // matches the launcher version id: 18w16a
 	_18w15a    ("18w15a",     "aauwttensxe[Lsh;us[J[[Juouatybsasjwdowpabxrotou"),                                         // matches the launcher version id: 18w15a
 	_18w14b    ("18w14b",     "aauwttensxe[Lsh;us[J[[Juouatybsasawdowpabwyotou"),                                         // matches the launcher version id: 18w14b
@@ -86,6 +123,7 @@ public enum RecognisedVersion {
 	_18w10d    ("18w10d",     "aaqwqtbnpxb[Lse;up[J[[Jultxtvbparvwaotoxbwmoqor"),                                         // matches the launcher version id: 18w10d
 	_18w09a    ("18w09a",     "aakwlswnkww[Lrz;uk[J[[Jugtstqbparovvooosbvkolom"),                                         // matches the launcher version id: 18w09a
 	_18w08b    ("18w08b",     "aaiwjsuniwu[Lrx;ui[J[[Juetqtobparmvtomoqbvdojok"),                                         // matches the launcher version id: 18w08b
+	_18w08a    ("18w08a",     "aaiwjsuniwu[Lrx;ui[J[[Juetqtobpargvtomoqbuxojok"),                                         // matches the launcher version id: 18w08a
 	_18w07c    ("18w07c",     "aahwistniwt[Lrx;uh[J[[Judtptnbparfvsomoqbuhojok"),                                         // matches the launcher version id: 18w07c
 	_18w06a    ("18w06a",     "aalwlswniwx[Lsa;uk[J[[Jugtstqbpargvvonorbuaokol"),                                         // matches the launcher version id: 18w06a
 	_18w05a    ("18w05a",     "znvssdnfwe[Lrs;tr[J[[Jtnszsxbnaqgvcoiombliofog"),                                          // matches the launcher version id: 18w05a
@@ -140,6 +178,7 @@ public enum RecognisedVersion {
 	_1_8_1     ("1.8.1",      "wduyrdnq[Lqu;sp[J[[Jsa"),                                                                  // matches the launcher version id: 1.8.1
 	_1_8       ("1.8",        "wbuwrcnp[Lqt;sn[J[[Jry"),                                                                  // matches the launcher version id: 1.8
 	_14w21b    ("14w21b",     "tjseoylw[Loq;qd[J[[Jpo"),                                                                  // matches the launcher version id:
+	_14w17a    ("14w17a",     "sxrtonlk[Loe;ps[J[[Jpd"),                                                                  // matches the launcher version id: 14w17a
 	_1_7_10    ("1.7.10",     "riqinckb[Lmt;oi[J[[Jns"),                                                                  // matches the launcher version id: 1.7.10
 	_1_7_9     ("1.7.9",      "rhqhnbkb[Lms;oh[J[[Jnr"),                                                                  // matches the launcher version id: 1.7.9        1.7.8        1.7.7        1.7.6
 	_14w02a    ("14w02a",     "qrponkki[Lnb;lv[J[[J"),                                                                    // matches the launcher version id:
@@ -178,13 +217,14 @@ public enum RecognisedVersion {
 	_12w04a    ("12w04a",     "vu"),                                                                                      // matches the launcher version id:
 	_12w03a    ("12w03a",     "vj"),                                                                                      // matches the launcher version id:
 	_1_1       ("1.1",        "[Bjsudadrvqluhaarcqevyzmqmqugiokzcepgagqvsonhhrgahqfy[J[Jaitpdbo"),                        // matches the launcher version id: 1.1
+	_12w01a    ("12w01a",     "[Bjqtyadmvllucaancpetyumomoubimkxcdpcaglvnokhfrbahkfw[J[Jainozbn"),                        // matches the launcher version id: 12w01a
 	_1_0       ("1.0",        "[Baesmmaijryafvdinqfdrzhabeabexexwadtnglkqdfagvkiahmhsadk[J[Jtkgkyu"),                     // matches the launcher version id: 1.0
 	_b1_9_pre6 ("b1.9-pre6",  "uk"),                                                                                      // matches the launcher version id:
 	_b1_9_pre5 ("b1.9-pre5",  "ug"),                                                                                      // matches the launcher version id:
 	_b1_9_pre4 ("b1.9-pre4",  "uh"),                                                                                      // matches the launcher version id:
 	_b1_9_pre3 ("b1.9-pre3",  "to"),                                                                                      // matches the launcher version id:
 	_b1_9_pre2 ("b1.9-pre2",  "sv"),                                                                                      // matches the launcher version id:
-	_b1_9_pre1 ("b1.9-pre1",  "sq"),                                                                                      // matches the launcher version id:
+	_b1_9_pre1 ("b1.9-pre1",  "[Biorvaaitdiryxqcfebwdlcrxhljqbtnkaddtfmvgjpgaeafd[J[Jafanhbe"),                           // matches the launcher version id: b1.9-pre1
 	_b1_8_1    ("b1.8.1",     "[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"),                            // matches the launcher version id: b1.8.1       b1.8
 	_b1_7_3    ("b1.7.3",     "[Bobcxpyfdndclsdngrjisjdamkpxczvuuqfhvfkvyovyik[J[Jxivscg"),                               // matches the launcher version id: b1.7.3       b1.7.2       b1.7
 	_b1_6_6    ("b1.6.6",     "[Bnxcvpufbmdalodlgpjfsecymgptcxvmukffuxkryfvqih[J[Jwzvkce"),                               // matches the launcher version id: b1.6.6       b1.6.5       b1.6.4       b1.6.3       b1.6.2       b1.6.1       b1.6

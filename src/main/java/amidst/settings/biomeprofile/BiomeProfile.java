@@ -1,48 +1,65 @@
 package amidst.settings.biomeprofile;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
-public class BiomeProfile {
-	private static Map<String, BiomeColorJson> createDefaultColorMap() {
-		Map<String, BiomeColorJson> result = new HashMap<>();
-		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getName(), biome.getDefaultColor().createBiomeColorJson());
+public class BiomeProfile implements Serializable {
+	private static final long serialVersionUID = 656038328314515511L;
+
+	private static BiomeProfile createDefaultProfile() {
+		final String profileFile = "/amidst/mojangapi/default_biome_profile.json";
+		try (InputStream stream = BiomeProfile.class.getResourceAsStream(profileFile)) { // For some reason this is the only way we can read the file from inside and outside the jar
+			try (Scanner scanner = new Scanner(stream)) {
+				StringBuffer buffer = new StringBuffer();
+				while(scanner.hasNext()){
+					buffer.append(scanner.nextLine());
+				}
+				return JsonReader.readString(buffer.toString(), BiomeProfile.class);
+			}
+		} catch (IOException | FormatException e) {
+			throw new RuntimeException("Unable to create default biome profile", e);
 		}
-		return result;
 	}
 
 	public static BiomeProfile getDefaultProfile() {
 		return DEFAULT_PROFILE;
 	}
+	
+	public static BiomeProfile createExampleProfile() {
+		return new BiomeProfile("example", "control E", DEFAULT_PROFILE.colorMap);
+	}
 
-	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfile("default", null, createDefaultColorMap());
+	private static final BiomeProfile DEFAULT_PROFILE = createDefaultProfile();
 
 	private volatile String name;
 	private volatile String shortcut;
-	private volatile Map<String, BiomeColorJson> colorMap;
+	private volatile Map<Integer, BiomeColorJson> colorMap;
 
 	@GsonConstructor
 	public BiomeProfile() {
 	}
-
-	private BiomeProfile(String name, String shortcut, Map<String, BiomeColorJson> colorMap) {
+	
+	BiomeProfile(String name, String shortcut, Map<Integer, BiomeColorJson> colorMap) {
 		this.name = name;
 		this.shortcut = shortcut;
 		this.colorMap = colorMap;
@@ -61,43 +78,29 @@ public class BiomeProfile {
 			AmidstLogger.info("Color map is missing in profile: {}", name);
 			return false;
 		}
-		
+
 		if(this.name == null) {
 			AmidstLogger.info("Name is missing in profile");
 			return false;
 		}
-
-		for (String biomeName : colorMap.keySet()) {
-			if (!Biome.exists(biomeName)) {
-				AmidstLogger.info("Failed to find biome for: {} in profile: {}", biomeName, name);
-			}
-		}
+		
 		return true;
 	}
 
-	public BiomeColor[] createBiomeColorArray() {
-		BiomeColor[] result = new BiomeColor[Biome.getBiomesLength()];
-		for (Biome biome : Biome.allBiomes()) {
-			result[biome.getIndex()] = getBiomeColor(biome);
-		}
+	public ConcurrentHashMap<Integer, BiomeColor> createBiomeColorMap() {
+		ConcurrentHashMap<Integer, BiomeColor> result = new ConcurrentHashMap<Integer, BiomeColor>();
+		colorMap.forEach((k,v) -> result.put(k, v.createBiomeColor()));
 		return result;
 	}
 
-	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap != null && colorMap.containsKey(biome.getName())) {
-			return colorMap.get(biome.getName()).createBiomeColor();
-		} else {
-			return biome.getDefaultColor();
-		}
-	}
-
-	public boolean save(File file) {
+	public boolean save(Path file) {
 		return writeToFile(file, serialize());
 	}
 
-	private String serialize() {
-		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
-		output += serializeColorMap();
+	public String serialize() {
+		String output = "{ \"name\":\"" + name + "\", ";
+		output += shortcut != null ? "\"shortcut\":\"" + shortcut + "\", " : "";
+		output += "\"colorMap\":[\r\n" + serializeColorMap();
 		return output + " ] }\r\n";
 	}
 
@@ -107,8 +110,8 @@ public class BiomeProfile {
 	 */
 	private String serializeColorMap() {
 		String output = "";
-		for (Map.Entry<String, BiomeColorJson> pairs : getSortedColorMapEntries()) {
-			output += "[ \"" + pairs.getKey() + "\", { ";
+		for (Map.Entry<Integer, BiomeColorJson> pairs : getSortedColorMapEntries()) {
+			output += "[ " + pairs.getKey() + ", { ";
 			output += "\"r\":" + pairs.getValue().getR() + ", ";
 			output += "\"g\":" + pairs.getValue().getG() + ", ";
 			output += "\"b\":" + pairs.getValue().getB() + " } ],\r\n";
@@ -116,18 +119,18 @@ public class BiomeProfile {
 		return output.substring(0, output.length() - 3);
 	}
 
-	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
+	private Set<Entry<Integer, BiomeColorJson>> getSortedColorMapEntries() {
 		if(colorMap == null) {
 			return Collections.emptySet();
 		}
 
-		SortedMap<String, BiomeColorJson> result = new TreeMap<>(Biome::compareByIndex);
+		SortedMap<Integer, BiomeColorJson> result = new TreeMap<>(Integer::compare);
 		result.putAll(colorMap);
 		return result.entrySet();
 	}
 
-	private boolean writeToFile(File file, String output) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+	private boolean writeToFile(Path file, String output) {
+		try (BufferedWriter writer = Files.newBufferedWriter(file)) {
 			writer.write(output);
 			return true;
 		} catch (IOException e) {

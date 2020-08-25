@@ -1,7 +1,7 @@
 package amidst.devtools;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -11,8 +11,11 @@ import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.VersionList;
-import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
+import amidst.settings.biomeprofile.BiomeProfile;
 
 /**
  * Eclipse does not allow to run the main directly as a Java Application,
@@ -65,13 +68,19 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateBiomeColorImages() throws IOException {
-		new GenerateBiomeColorImages(Biome.allBiomes(), new File(biomeColorImagesDirectory())).run();
+		new GenerateBiomeColorImages(DefaultVersionFeatures.builder(null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST).iterable(), Paths.get(biomeColorImagesDirectory())).run();
 	}
-	
+
 	@Ignore
 	@Test
 	public void benchmarkWorldGeneration() throws FormatException, IOException {
 		new WorldGenerationBencher(benchmarksDirectory(), versionsDirectory(), librariesDirectory(), versionList()).run();
+	}
+	
+	@Ignore
+	@Test
+	public void serializeBiomeProfile() {
+		new BiomeProfileSerializer(BiomeProfile.createExampleProfile()).run();
 	}
 
 	private VersionList versionList() throws FormatException, IOException {
@@ -89,7 +98,7 @@ public class DevToolRunner {
 	private String biomeColorImagesDirectory() {
 		return DevToolSettings.INSTANCE.getBiomeColorImagesDirectory();
 	}
-	
+
 	private String benchmarksDirectory() {
 		return DevToolSettings.INSTANCE.getBenchmarksDirectory();
 	}

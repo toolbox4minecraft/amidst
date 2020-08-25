@@ -1,28 +1,29 @@
 package amidst.mojangapi.file.directory;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 
 @Immutable
 public class VersionDirectory {
-	private final File jar;
-	private final File json;
+	private final Path jar;
+	private final Path json;
 
-	public VersionDirectory(File jar, File json) {
+	public VersionDirectory(Path jar, Path json) {
 		this.jar = jar;
 		this.json = json;
 	}
 
 	public boolean isValid() {
-		return jar.isFile() && json.isFile();
+		return Files.isRegularFile(jar) && Files.isRegularFile(json);
 	}
 
-	public File getJar() {
+	public Path getJar() {
 		return jar;
 	}
 
-	public File getJson() {
+	public Path getJson() {
 		return json;
 	}
 }

@@ -10,7 +10,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 /**
  * This is the fixed version of the 128 stronghold algorithm. It introduced in
  * 16w06a.
- * 
+ *
  * see https://bugs.mojang.com/browse/MC-92289
  */
 @ThreadSafe

@@ -1,6 +1,6 @@
 package amidst;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
@@ -79,15 +79,14 @@ public class Amidst {
 			AmidstLogger.info(versionString);
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
-			osxMenuProperties();
 			startApplication(parameters, metadata, createSettings());
 		}
 	}
 
-	private static void initFileLogger(String filename) {
-		if (filename != null) {
-			AmidstLogger.info("using log file: '" + filename + "'");
-			AmidstLogger.addListener("file", new FileLogger(new File(filename)));
+	private static void initFileLogger(Path file) {
+		if (file != null) {
+			AmidstLogger.info("using log file: '" + file + "'");
+			AmidstLogger.addListener("file", new FileLogger(file));
 		}
 	}
 
@@ -120,12 +119,9 @@ public class Amidst {
 	}
 
 	/**
-	 * WARNING: This method MUST be invoked before setLookAndFeel(). The
-	 * sun.java2d.* properties have no effect after setLookAndFeel() has been
-	 * called.
-	 * 
-	 * Please do not remove this comment in case we decide to use another look
-	 * and feel in the future.
+	 * WARNING: This method MUST be invoked before applyLookAndFeel(). The
+	 * sun.java2d.* properties have no effect after applyLookAndFeel() has
+	 * been called.
 	 */
 	private static void enableGraphicsAcceleration() {
 		enableOpenGLIfNecessary();
@@ -135,12 +131,12 @@ public class Amidst {
 	/**
 	 * We only use OpenGL on OS X, because it caused lots of bugs on Windows and
 	 * performance issues on Linux. Also, this is the behavior of Amidst v3.7.
-	 * 
+	 *
 	 * On Windows Direct3D is better supported and the default.
-	 * 
+	 *
 	 * Linux has accelerated images without activating OpenGL. The reason for
 	 * this is still unknown to the developers of Amidst.
-	 * 
+	 *
 	 * https://github.com/toolbox4minecraft/amidst/pull/94
 	 */
 	private static void enableOpenGLIfNecessary() {
@@ -156,9 +152,8 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
-	private static void osxMenuProperties() {
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
-		System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+	private static void applyLookAndFeel(AmidstSettings settings) {
+    	settings.lookAndFeel.get().tryApply();
 	}
 
 	private static void startApplication(
@@ -174,6 +169,7 @@ public class Amidst {
 			AmidstMetaData metadata,
 			AmidstSettings settings) {
 		try {
+			applyLookAndFeel(settings);
 			new PerApplicationInjector(parameters, metadata, settings).getApplication().run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			AmidstLogger.warn(e);

@@ -8,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerBuilder;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
@@ -64,10 +65,9 @@ public class PerApplicationInjector {
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
 		this.minecraftInstallation = MinecraftInstallation
 				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
-		this.preferredLauncherProfile = minecraftInstallation
-				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
+		this.preferredLauncherProfile = parameters.getInitialLauncherProfile(minecraftInstallation);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.initialSeed, parameters.initialWorldType);
+		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.getInitialWorldOptions());
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.versionListProvider = VersionListProvider
@@ -127,13 +127,14 @@ public class PerApplicationInjector {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacade createViewerFacade(World world, Actions actions) {
+	private ViewerFacade createViewerFacade(World world, BiomeExporterDialog biomeExporterDialog, Actions actions) {
 		return new PerViewerFacadeInjector(
 				settings,
 				threadMaster.getWorkerExecutor(),
 				zoom,
 				layerBuilder,
 				fragmentManager,
+				biomeExporterDialog,
 				biomeSelection,
 				world,
 				actions).getViewerFacade();

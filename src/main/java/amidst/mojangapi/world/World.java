@@ -1,10 +1,11 @@
 package amidst.mojangapi.world;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
@@ -13,20 +14,17 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
-import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class World {
-	private final Consumer<World> onDisposeWorld;
-
-	private final WorldSeed worldSeed;
-	private final WorldType worldType;
-	private final String generatorOptions;
+	private final WorldOptions worldOptions;
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
-	private final VersionFeatures versionFeatures;
+	private final List<Integer> enabledLayers;
+	private final BiomeList biomeList;
 
-	private final BiomeDataOracle biomeDataOracle;
+	private final BiomeDataOracle overworldBiomeDataOracle;
+	private final Optional<BiomeDataOracle> netherBiomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
 	private final CachedWorldIconProducer spawnProducer;
@@ -42,14 +40,13 @@ public class World {
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
 	public World(
-			Consumer<World> onDisposeWorld,
-			WorldSeed worldSeed,
-			WorldType worldType,
-			String generatorOptions,
+			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
-			VersionFeatures versionFeatures,
-			BiomeDataOracle biomeDataOracle,
+			BiomeList biomeList,
+			List<Integer> enabledLayers,
+			BiomeDataOracle overworldBiomeDataOracle,
+			Optional<BiomeDataOracle> netherBiomeDataOracle,
 			EndIslandOracle endIslandOracle,
 			SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
@@ -63,14 +60,13 @@ public class World {
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
-		this.onDisposeWorld = onDisposeWorld;
-		this.worldSeed = worldSeed;
-		this.worldType = worldType;
-		this.generatorOptions = generatorOptions;
+		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
-		this.versionFeatures = versionFeatures;
-		this.biomeDataOracle = biomeDataOracle;
+		this.biomeList = biomeList;
+		this.enabledLayers = enabledLayers;
+		this.overworldBiomeDataOracle = overworldBiomeDataOracle;
+		this.netherBiomeDataOracle = netherBiomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
 		this.spawnProducer = spawnProducer;
@@ -86,16 +82,8 @@ public class World {
 		this.endCityProducer = endCityProducer;
 	}
 
-	public WorldSeed getWorldSeed() {
-		return worldSeed;
-	}
-
-	public WorldType getWorldType() {
-		return worldType;
-	}
-
-	public String getGeneratorOptions() {
-		return generatorOptions;
+	public WorldOptions getWorldOptions() {
+		return worldOptions;
 	}
 
 	public MovablePlayerList getMovablePlayerList() {
@@ -106,12 +94,20 @@ public class World {
 		return recognisedVersion;
 	}
 
-	public VersionFeatures getVersionFeatures() {
-		return versionFeatures;
+	public BiomeList getBiomeList() {
+		return biomeList;
 	}
 
-	public BiomeDataOracle getBiomeDataOracle() {
-		return biomeDataOracle;
+	public List<Integer> getEnabledLayers() {
+		return enabledLayers;
+	}
+
+	public BiomeDataOracle getOverworldBiomeDataOracle() {
+		return overworldBiomeDataOracle;
+	}
+
+	public Optional<BiomeDataOracle> getNetherBiomeDataOracle() {
+		return netherBiomeDataOracle;
 	}
 
 	public EndIslandOracle getEndIslandOracle() {
@@ -161,7 +157,7 @@ public class World {
 	public WorldIconProducer<Void> getWoodlandMansionProducer() {
 		return woodlandMansionProducer;
 	}
-	
+
 	public WorldIconProducer<Void> getOceanFeaturesProducer() {
 		return oceanFeaturesProducer;
 	}
@@ -180,14 +176,5 @@ public class World {
 
 	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
-	}
-
-	/**
-	 * Unlocks the RunningLauncherProfile to allow the creation of another
-	 * world. However, this does not actually prevent the usage of this world.
-	 * If you keep using it, something will break.
-	 */
-	public void dispose() {
-		onDisposeWorld.accept(this);
 	}
 }

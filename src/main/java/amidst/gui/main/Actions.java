@@ -5,8 +5,11 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -14,9 +17,12 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
+import amidst.gui.export.BiomeExporter;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
@@ -28,7 +34,9 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
 
@@ -38,8 +46,10 @@ public class Actions {
 	private final MainWindowDialogs dialogs;
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcherWindow seedSearcherWindow;
+	private final BiomeExporterDialog biomeExporterDialog;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
+	private final Setting<String> lastScreenshotPath;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -47,14 +57,18 @@ public class Actions {
 			MainWindowDialogs dialogs,
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
+			BiomeExporterDialog biomeExporterDialog,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			Setting<String> lastScreenshotPath) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
+		this.biomeExporterDialog = biomeExporterDialog;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.lastScreenshotPath = lastScreenshotPath;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -67,6 +81,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
+		biomeExporterDialog.dispose();
 		newFromSeed(WorldSeed.random());
 	}
 
@@ -74,6 +89,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -85,17 +101,18 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
-		File file = dialogs.askForSaveGame();
+		Path file = dialogs.askForSaveGame();
 		if (file != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export() {
+	public void openExportDialog() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			viewerFacade.export(dialogs.askForExportConfiguration());
+			viewerFacade.openExportDialog();
 		}
 	}
 
@@ -106,7 +123,13 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
-		application.exitGracefully();
+		if (BiomeExporter.isExporterRunning()) {
+			if (dialogs.askToConfirmYesNo("Continue?", "A biome image is still exporting. Are you sure you want to continue?")) {
+				application.exitGracefully();
+			}
+		} else {
+			application.exitGracefully();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -165,12 +188,12 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void zoomIn() {
-		adjustZoom(-1);
+		adjustZoom(-4);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void zoomOut() {
-		adjustZoom(1);
+		adjustZoom(4);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -205,7 +228,7 @@ public class Actions {
 	public void copySeedToClipboard() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			String seed = "" + viewerFacade.getWorldSeed().getLong();
+			String seed = "" + viewerFacade.getWorldOptions().getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 		}
@@ -215,25 +238,29 @@ public class Actions {
 	public void takeScreenshot() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
+			WorldOptions worldOptions = viewerFacade.getWorldOptions();
 			BufferedImage image = viewerFacade.createScreenshot();
-			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
-					+ viewerFacade.getWorldSeed().getLong() + ".png";
-			File file = dialogs.askForScreenshotSaveFile(suggestedFilename);
+			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
+					+ worldOptions.getWorldSeed().getLong() + ".png";
+			String suggestedFile = Paths.get(lastScreenshotPath.get(), suggestedFilename).toString();
+			Path file = dialogs.askForPNGSaveFile(suggestedFile);
 			if (file != null) {
-				file = appendPNGFileExtensionIfNecessary(file);
-				if (file.exists() && !file.isFile()) {
+				file = appendFileExtensionIfNecessary(file, "png");
+				boolean fileExists = Files.exists(file);
+				if (fileExists && !Files.isRegularFile(file)) {
 					String message = "Unable to write screenshot, because the target exists but is not a file: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
 				} else if (!canWriteToFile(file)) {
 					String message = "Unable to write screenshot, because you have no writing permissions: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
-				} else if (!file.exists() || dialogs.askToConfirmYesNo(
+				} else if (!fileExists || dialogs.askToConfirmYesNo(
 						"Replace file?",
-						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+						"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
+					lastScreenshotPath.set(file.toAbsolutePath().getParent().toString());
 					saveImageToFile(image, file);
 				}
 			}
@@ -247,6 +274,20 @@ public class Actions {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void createExampleProfile(BiomeProfileDirectory dir) {
+		if (!dir.isValid()) {
+			dialogs.displayError("Unable to find biome profile directory.");
+		} else {
+			Path path = dir.getRoot().resolve("example.json");
+			if (BiomeProfile.createExampleProfile().save(path)) {
+				dialogs.displayInfo("Amidst", "Example biome profile created at:\n" + path.toAbsolutePath().toString());
+			} else {
+				dialogs.displayError("Error creating example biome profile.");
+			}
 		}
 	}
 
@@ -329,7 +370,21 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private long tryParseLong(String text, long defaultValue) {
+	public boolean tryChangeLookAndFeel(AmidstLookAndFeel lookAndFeel) {
+		if (dialogs.askToConfirmYesNo("Changing Look & Feel",
+				"Changing the look & feel will reload Amidst. Do you want to continue?")) {
+			if (lookAndFeel.tryApply()) {
+				application.restart();
+				return true;
+			} else {
+				dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
+			}
+		}
+		return false;
+	}
+
+	@CalledByAny
+	public static long tryParseLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
 		} catch (NumberFormatException e) {
@@ -337,28 +392,29 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean canWriteToFile(File file) {
-		File parentFile = file.getParentFile();
-		return file.canWrite() || (!file.exists() && parentFile != null && parentFile.canWrite());
+	@CalledByAny
+	public static boolean canWriteToFile(Path file) {
+		Path parent = file.getParent();
+		return Files.isWritable(file) || (!Files.exists(file) && parent != null && Files.isWritable(parent));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void saveImageToFile(BufferedImage image, File file) {
+	private void saveImageToFile(BufferedImage image, Path file) {
 		try {
-			ImageIO.write(image, "png", file);
+			ImageIO.write(image, "png", new BufferedOutputStream(Files.newOutputStream(file)));
 		} catch (IOException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.getAbsolutePath();
-		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
-			filename += ".png";
+	@CalledByAny
+	public static Path appendFileExtensionIfNecessary(Path file, String fileExtension) {
+		String filename = file.toAbsolutePath().toString();
+		if (!FileExtensionChecker.hasFileExtension(filename, fileExtension)) {
+			filename += '.' + fileExtension;
 		}
-		return new File(filename);
+		return Paths.get(filename);
 	}
+
 }

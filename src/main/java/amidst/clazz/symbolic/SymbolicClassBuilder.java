@@ -1,5 +1,6 @@
 package amidst.clazz.symbolic;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -145,7 +146,8 @@ public class SymbolicClassBuilder {
 			throws ClassNotFoundException {
 		Class<?>[] result = new Class<?>[declarations.size()];
 		for (int i = 0; i < declarations.size(); i++) {
-			result[i] = getParameterClass(declarations.get(i));
+			SymbolicParameterDeclaration declaration = declarations.get(i);
+			result[i] = getArrayClass(getParameterClass(declaration), declaration.getArrayDimensions());
 		}
 		return result;
 	}
@@ -164,6 +166,10 @@ public class SymbolicClassBuilder {
 		} else {
 			return classLoader.loadClass(declaration.getType());
 		}
+	}
+	
+	public static Class<?> getArrayClass(Class<?> elementType, int dimensions) {
+	    return dimensions == 0 ? elementType : Array.newInstance(elementType, new int[dimensions]).getClass();
 	}
 
 	private SymbolicClass getType(Class<?> type) {

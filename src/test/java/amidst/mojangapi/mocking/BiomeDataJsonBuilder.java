@@ -5,6 +5,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.testworld.storage.json.AreaJson;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 
@@ -13,8 +14,8 @@ public class BiomeDataJsonBuilder {
 	private final SortedMap<AreaJson, short[]> quarterBiomeData = new TreeMap<>();
 	private final SortedMap<AreaJson, short[]> fullBiomeData = new TreeMap<>();
 
-	public void store(int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
-		store(getBiomeDataMap(useQuarterResolution), x, y, width, height, biomeData);
+	public void store(Dimension dimension, int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
+		store(getBiomeDataMap(useQuarterResolution), dimension, x, y, width, height, biomeData);
 	}
 
 	private Map<AreaJson, short[]> getBiomeDataMap(boolean useQuarterResolution) {
@@ -25,10 +26,10 @@ public class BiomeDataJsonBuilder {
 		}
 	}
 
-	private void store(Map<AreaJson, short[]> biomeDataMap, int x, int y, int width, int height, int[] biomeData) {
+	private void store(Map<AreaJson, short[]> biomeDataMap, Dimension dimension, int x, int y, int width, int height, int[] biomeData) {
 		// Store biome data, and trim the array to exclude potential garbage data
 		// at the end, which isn't deterministic
-		biomeDataMap.put(new AreaJson(x, y, width, height), BiomeDataJson.int2short(biomeData, width*height));
+		biomeDataMap.put(new AreaJson(dimension, x, y, width, height), BiomeDataJson.int2short(biomeData, width*height));
 	}
 
 	public BiomeDataJson createQuarterBiomeData() {

@@ -15,6 +15,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
@@ -36,6 +37,7 @@ public class BiomeWidget extends Widget {
 	private final BiomeProfileSelection biomeProfileSelection;
 
 	private List<Biome> biomes = new ArrayList<>();
+	private BiomeList biomeList;
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;
@@ -57,11 +59,14 @@ public class BiomeWidget extends Widget {
 			CornerAnchorPoint anchor,
 			BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			BiomeList biomeList) {
 		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.biomeList = biomeList;
+		this.isVisible = biomeSelection.isWidgetVisible();
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -69,7 +74,7 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void toggleVisibility() {
-		isVisible = !isVisible;
+		isVisible = biomeSelection.toggleWidgetVisibility();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -91,7 +96,7 @@ public class BiomeWidget extends Widget {
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
-			for (Biome biome : Biome.allBiomes()) {
+			for (Biome biome : biomeList.iterable()) {
 				biomes.add(biome);
 				int width = fontMetrics.stringWidth(biome.getName());
 				maxNameWidth = Math.max(width, maxNameWidth);
@@ -203,14 +208,14 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
-		if (biomeSelection.isSelected(biome.getIndex())) {
-			if (i % 2 == 1) {
+		if (biomeSelection.isSelected(biome.getId())) {
+			if (i % 2 != 0) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
 				return BIOME_LIT_BG_COLOR_2;
 			}
 		} else {
-			if (i % 2 == 1) {
+			if (i % 2 != 0) {
 				return BIOME_BG_COLOR_1;
 			} else {
 				return BIOME_BG_COLOR_2;
@@ -226,7 +231,7 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private BiomeColor getBiomeColorOrUnknown(Biome biome) {
-		return biomeProfileSelection.getBiomeColorOrUnknown(biome.getIndex());
+		return biomeProfileSelection.getBiomeColorOrUnknown(biome.getId());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -238,7 +243,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
+		g2d.drawString(biomeList.getByIdOrNull(biome.getId()).getName(), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -314,7 +319,7 @@ public class BiomeWidget extends Widget {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
-				int index = biomes.get(id).getIndex();
+				int index = biomes.get(id).getId();
 				biomeSelection.toggle(index);
 				return biomeSelection.isHighlightMode();
 			}
@@ -326,7 +331,7 @@ public class BiomeWidget extends Widget {
 				biomeSelection.selectAll();
 				return biomeSelection.isHighlightMode();
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
-				biomeSelection.selectOnlySpecial();
+				selectOnlySpecialBiomes();
 				return biomeSelection.isHighlightMode();
 			} else if (isDeselectAllButton(mouseX)) {
 				biomeSelection.deselectAll();
@@ -334,6 +339,16 @@ public class BiomeWidget extends Widget {
 			}
 		}
 		return false;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void selectOnlySpecialBiomes() {
+		biomeSelection.deselectAll();
+		for (Biome biome: biomeList.iterable()) {
+			if (biome.isSpecialBiome()) {
+				biomeSelection.toggle(biome.getId());
+			}
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

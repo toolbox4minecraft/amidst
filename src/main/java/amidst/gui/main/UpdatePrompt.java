@@ -119,6 +119,8 @@ public class UpdatePrompt {
 			return askToConfirm(createMessage(message, newVersion, "major"));
 		} else if (newVersion.isNewerMinorVersionThan(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "minor"));
+		} else if (newVersion.isNewerPatchVersionThan(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "patch"));
 		} else if (newVersion.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else {

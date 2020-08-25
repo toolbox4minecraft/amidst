@@ -1,11 +1,11 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.*;
+
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
-
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.*;
 
 @Immutable
 public enum LegacyClassTranslator {
@@ -15,17 +15,17 @@ public enum LegacyClassTranslator {
 
 	private final ClassTranslator classTranslator = createClassTranslator();
 
-	public ClassTranslator get() {
-		return classTranslator;
+	public static ClassTranslator get() {
+		return INSTANCE.classTranslator;
 	}
 
 	// @formatter:off
 	private ClassTranslator createClassTranslator() {
 		return ClassTranslator
 			.builder()
-				.ifDetect(c -> 
+				.ifDetect(c ->
 					c.isClassDataWildcardMatching(createIntCacheWildcardBytes())
-					|| c.searchForStringContaining(", tcache: ") 
+					|| c.searchForStringContaining(", tcache: ")
 				)
 				.thenDeclareRequired(CLASS_INT_CACHE)
 					.requiredMethod(METHOD_INT_CACHE_RESET_INT_CACHE, "a").end()
@@ -51,7 +51,7 @@ public enum LegacyClassTranslator {
 					.optionalMethod(METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4, "a").real("long").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_OPTIONS).end()
 					.requiredMethod(METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")                             .real("int")   .real("int").end()
 			.next()
-				.ifDetect(c -> 
+				.ifDetect(c ->
 					c.getNumberOfConstructors() == 0
 					&& c.getNumberOfMethods() == 6
 					&& c.getNumberOfFields() >= 3

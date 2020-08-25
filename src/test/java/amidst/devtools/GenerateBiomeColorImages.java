@@ -3,13 +3,18 @@ package amidst.devtools;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class GenerateBiomeColorImages {
@@ -17,25 +22,30 @@ public class GenerateBiomeColorImages {
 	private static final int HEIGHT = 30;
 
 	private final Iterable<Biome> biomes;
-	private final File root;
+	private final Path root;
 
-	public GenerateBiomeColorImages(Iterable<Biome> biomes, File root) {
+	public GenerateBiomeColorImages(Iterable<Biome> biomes, Path root) {
 		this.biomes = biomes;
 		this.root = root;
 	}
 
 	public void run() throws IOException {
-		StringBuilder b = new StringBuilder();
-		b.append("Biome name | Biome id | Biome color\n");
-		b.append("---------|-----------:|:----------:\n");
-		for (Biome biome : biomes) {
-			int index = biome.getIndex();
-			String name = biome.getName();
-			Color color = biome.getDefaultColor().getColor();
-			appendLine(b, index, name);
-			createAndSaveImage(index, color);
+		try {
+			StringBuilder b = new StringBuilder();
+			b.append("Biome name | Biome id | Biome color\n");
+			b.append("---------|-----------:|:----------:\n");
+			BiomeProfileSelection colorProvider = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+			for (Biome biome : biomes) {
+				int index = biome.getId();
+				String name = biome.getName();
+				Color color = colorProvider.getBiomeColor(biome.getId()).getColor();
+				appendLine(b, index, name);
+				createAndSaveImage(index, color);
+			}
+			System.out.println(b.toString());
+		} catch (UnknownBiomeIdException e) {
+			e.printStackTrace();
 		}
-		System.out.println(b.toString());
 	}
 
 	private void appendLine(StringBuilder b, int index, String name) {
@@ -52,7 +62,8 @@ public class GenerateBiomeColorImages {
 	}
 
 	private void createAndSaveImage(int index, Color color) throws IOException {
-		ImageIO.write(createImage(color), "png", new File(root, index + ".png"));
+		ImageIO.write(createImage(color), "png",
+			new BufferedOutputStream(Files.newOutputStream(root.resolve(index + ".png"))));
 	}
 
 	private BufferedImage createImage(Color color) {

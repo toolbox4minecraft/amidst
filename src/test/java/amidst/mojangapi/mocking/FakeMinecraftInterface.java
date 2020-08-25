@@ -1,9 +1,14 @@
 package amidst.mojangapi.mocking;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.function.Function;
+
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
@@ -13,7 +18,6 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	private final WorldMetadataJson worldMetadataJson;
 	private final BiomeDataJson quarterBiomeData;
 	private final BiomeDataJson fullBiomeData;
-	private volatile boolean isWorldCreated = false;
 
 	public FakeMinecraftInterface(
 			WorldMetadataJson worldMetadataJson,
@@ -25,31 +29,12 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
-			throws MinecraftInterfaceException {
-		if (isWorldCreated) {
-			return getBiomeData(useQuarterResolution).get(x, y, width, height);
-		} else {
-			throw new MinecraftInterfaceException("the world needs to be created first");
-		}
-	}
-
-	private BiomeDataJson getBiomeData(boolean useQuarterResolution) {
-		if (useQuarterResolution) {
-			return quarterBiomeData;
-		} else {
-			return fullBiomeData;
-		}
-	}
-
-	@Override
-	public void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
 				&& generatorOptions.isEmpty()) {
-			isWorldCreated = true;
+			return new World();
 		} else {
-			isWorldCreated = false;
 			throw new MinecraftInterfaceException("the world has to match");
 		}
 	}
@@ -57,5 +42,23 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return worldMetadataJson.getRecognisedVersion();
+	}
+
+	private class World implements MinecraftInterface.World {
+		private World() {
+		}
+
+		@Override
+		public<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
+				throws MinecraftInterfaceException {
+			BiomeDataJson biomes = useQuarterResolution ? quarterBiomeData : fullBiomeData;
+			return biomeDataMapper.apply(biomes.get(dimension, x, y, width, height));
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return EnumSet.allOf(Dimension.class);
+		}
 	}
 }

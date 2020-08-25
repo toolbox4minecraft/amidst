@@ -1,9 +1,12 @@
 package amidst.mojangapi.file.nbt;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
-import org.jnbt.CompoundTag;
+import net.querz.nbt.tag.ByteTag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.StringTag;
+import net.querz.nbt.tag.Tag;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
@@ -12,26 +15,32 @@ import amidst.parsing.FormatException;
 
 @Immutable
 public class LevelDatNbt {
-	public static LevelDatNbt from(File file) throws IOException, FormatException {
+	public static LevelDatNbt from(Path path) throws IOException, FormatException {
 		try {
-			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(file));
+			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(path));
 			long seed = readRandomSeed(dataTag);
 			CoordinatesInWorld worldSpawn = readWorldSpawn(dataTag);
 			WorldType worldType = readWorldType(dataTag);
 			String generatorOptions = readGeneratorOptions(dataTag, worldType);
 			boolean hasPlayer = hasPlayerTag(dataTag);
 			return new LevelDatNbt(seed, worldSpawn, worldType, generatorOptions, hasPlayer);
-		} catch (NullPointerException e) {
-			throw new FormatException("cannot read level.dat: " + file);
+		} catch (NullPointerException | ClassCastException e) {
+			throw new FormatException("cannot read level.dat: " + path, e);
 		}
 	}
 
-	private static CompoundTag readDataTag(CompoundTag root) {
-		return (CompoundTag) root.getValue().get(NBTTagKeys.TAG_KEY_DATA);
+	private static CompoundTag readDataTag(CompoundTag root) throws IOException {
+		return root.get(NBTTagKeys.TAG_KEY_DATA, CompoundTag.class);
 	}
 
 	private static long readRandomSeed(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
+		Tag<?> randomSeed = dataTag.get(NBTTagKeys.TAG_KEY_RANDOM_SEED);
+		if (randomSeed != null) {
+			return NBTUtils.getLongValue(randomSeed);
+		}
+		// Minecraft 1.16 format
+		CompoundTag worldGenSettings = dataTag.get(NBTTagKeys.TAG_KEY_WORLD_GEN_SETTINGS, CompoundTag.class);
+		return NBTUtils.getLongValue(worldGenSettings.get(NBTTagKeys.TAG_KEY_SEED));
 	}
 
 	private static CoordinatesInWorld readWorldSpawn(CompoundTag dataTag) {
@@ -39,15 +48,18 @@ public class LevelDatNbt {
 	}
 
 	private static long readSpawnX(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
+		return NBTUtils.getLongValue(dataTag.get(NBTTagKeys.TAG_KEY_SPAWN_X));
 	}
 
 	private static long readSpawnZ(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
+		return NBTUtils.getLongValue(dataTag.get(NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {
-		if (hasGeneratorName(dataTag)) {
+		WorldType heuristicWorldType = tryGuessWorldType(dataTag);
+		if (heuristicWorldType != null) {
+			return heuristicWorldType;
+		} else if (hasGeneratorName(dataTag)) {
 			return WorldType.from(readGeneratorName(dataTag));
 		} else {
 			return WorldType.DEFAULT;
@@ -55,7 +67,7 @@ public class LevelDatNbt {
 	}
 
 	private static boolean hasGeneratorName(CompoundTag dataTag) {
-		return dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME) != null;
+		return dataTag.containsKey(NBTTagKeys.TAG_KEY_GENERATOR_NAME);
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag, WorldType worldType) {
@@ -67,15 +79,42 @@ public class LevelDatNbt {
 	}
 
 	private static String readGeneratorName(CompoundTag dataTag) {
-		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME).getValue();
+		return dataTag.get(NBTTagKeys.TAG_KEY_GENERATOR_NAME, StringTag.class).getValue();
+	}
+
+	// Try to guess world type from Minecraft 1.16 generator settings
+	private static WorldType tryGuessWorldType(CompoundTag dataTag) {
+		// Be careful when handling null values, we don't want to trigger unwanted errors
+		Tag<?> generator = NBTUtils.getNestedTag(dataTag,
+			"WorldGenSettings", "dimensions", "minecraft:overworld", "generator");
+
+		Tag<?> generatorType = NBTUtils.getNestedTag(generator, "type");
+		if (new StringTag("minecraft:flat").equals(generatorType)) {
+			return WorldType.FLAT;
+		}
+
+		if (new StringTag("minecraft:noise").equals(generatorType)) {
+			Tag<?> settings = NBTUtils.getNestedTag(generator, "settings");
+			if (new StringTag("minecraft:amplified").equals(settings)) {
+				return WorldType.AMPLIFIED;
+			}
+			Tag<?> largeBiomes = NBTUtils.getNestedTag(generator, "biome_source", "large_biomes");
+			if (new ByteTag(true).equals(largeBiomes)) {
+				return WorldType.LARGE_BIOMES;
+			} else {
+				return WorldType.DEFAULT;
+			}
+		}
+
+		return null;
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag) {
-		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
+		return dataTag.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS, StringTag.class).getValue();
 	}
 
 	private static boolean hasPlayerTag(CompoundTag dataTag) {
-		return dataTag.getValue().containsKey(NBTTagKeys.TAG_KEY_PLAYER);
+		return dataTag.containsKey(NBTTagKeys.TAG_KEY_PLAYER);
 	}
 
 	private final long seed;

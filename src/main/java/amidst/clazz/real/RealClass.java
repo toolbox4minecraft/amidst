@@ -22,12 +22,13 @@ public class RealClass {
 		result.put('J', "long");
 		result.put('S', "short");
 		result.put('Z', "boolean");
+		result.put('V', "void");
 		return Collections.unmodifiableMap(result);
 	}
 
 	private static final Map<Character, String> PRIMITIV_TYPE_CONVERSION_MAP = createPrimitiveTypeConversionMap();
-	private static final Pattern ARG_PATTERN = Pattern.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
-	private static final Pattern OBJECT_PATTERN = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
+	private static final Pattern ARG_PATTERN = Pattern.compile("([\\[]+)?([BCDFIJSZV]|L[^;]+)");
+	private static final Pattern OBJECT_PATTERN = Pattern.compile("^([\\[]+)?[LBCDFIJSZV]");
 	public static final int CLASS_DATA_WILDCARD = -1;
 
 	private final String realClassName;
@@ -191,17 +192,32 @@ public class RealClass {
 		return null;
 	}
 
-	public boolean hasMethodWithRealArguments(String... arguments) {
+	public boolean hasMethodWithRealArgsReturning(String... arguments) {
 		for (ReferenceIndex entry : methodIndices) {
-			String value = getStringValueOfConstant(entry.getValue2());
-			String[] args = readArguments(value);
-			if(arguments.length == args.length) {
-				for(int i = 0; i < args.length; i++) {
-					if(arguments[i] != null && !arguments[i].equals(args[i]))
-						return false;
+			// Skip constructors
+			if (!getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
+				String value = getStringValueOfConstant(entry.getValue2());
+				String[] args = readArgumentsAndReturn(value);
+				if (matchSignatureWithRealArgs(args, arguments, true)) {
+					return true;
 				}
-				return true;
 			}
+
+		}
+		return false;
+	}
+
+	public boolean hasConstructorWithRealArgs(String... arguments) {
+		for (ReferenceIndex entry : methodIndices) {
+			// Only constructors
+			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
+				String value = getStringValueOfConstant(entry.getValue2());
+				String[] args = readArgumentsAndReturn(value);
+				if (matchSignatureWithRealArgs(args, arguments, false)) {
+					return true;
+				}
+			}
+
 		}
 		return false;
 	}
@@ -234,30 +250,27 @@ public class RealClass {
 		return AccessFlags.hasFlags(accessFlags, AccessFlags.FINAL);
 	}
 
-	public String getArgumentsForConstructor(int constructorId) {
-		int i = 0;
-		for (ReferenceIndex entry : methodIndices) {
-			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
-				if (i == constructorId) {
-					String arguments = getStringValueOfConstant(entry.getValue2());
-					return toArgumentString(readArguments(arguments));
-				}
-				i++;
-			}
-		}
-		return "";
-	}
-
 	private String getStringValueOfConstant(int value) {
 		return (String) constants[value - 1].getValue();
 	}
 
-	private String[] readArguments(String arguments) {
+	private static boolean matchSignatureWithRealArgs(String[] argsAndReturn, String[] requiredArgs, boolean withReturn) {
+		int len = withReturn ? argsAndReturn.length : argsAndReturn.length - 1;
+		if (requiredArgs.length != len) {
+			return false;
+		}
+		for(int i = 0; i < len; i++) {
+			if (requiredArgs[i] != null && !requiredArgs[i].equals(argsAndReturn[i]))
+				return false;
+		}
+		return true;
+	}
+
+	private String[] readArgumentsAndReturn(String arguments) {
 		List<String> result = new ArrayList<>();
-		String args = arguments.substring(1).split("\\)")[0];
-		Matcher matcher = ARG_PATTERN.matcher(args);
+		Matcher matcher = ARG_PATTERN.matcher(arguments);
 		while (matcher.find()) {
-			String arg = args.substring(matcher.start(), matcher.end());
+			String arg = arguments.substring(matcher.start(), matcher.end());
 			Matcher objectMatcher = OBJECT_PATTERN.matcher(arg);
 			if (objectMatcher.find()) {
 				arg = getObjectArg(arg, objectMatcher.end());
@@ -278,19 +291,6 @@ public class RealClass {
 		} else {
 			return "";
 		}
-	}
-
-	private String toArgumentString(String[] arguments) {
-		StringBuilder result = new StringBuilder();
-		result.append("(");
-		if (arguments.length > 0) {
-			result.append(arguments[0]);
-			for (int i = 1; i < arguments.length; i++) {
-				result.append(",").append(arguments[i]);
-			}
-		}
-		result.append(")");
-		return result.toString();
 	}
 
 	@Override

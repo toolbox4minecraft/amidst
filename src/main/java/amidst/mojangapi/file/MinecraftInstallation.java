@@ -1,7 +1,7 @@
 package amidst.mojangapi.file;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +21,10 @@ import amidst.parsing.json.JsonReader;
 @Immutable
 public class MinecraftInstallation {
 	public static MinecraftInstallation newCustomMinecraftInstallation(
-			File libraries,
-			File saves,
-			File versions,
-			File launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
+			Path libraries,
+			Path saves,
+			Path versions,
+			Path launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
 				.createCustomDotMinecraftDirectory(libraries, saves, versions, launcherProfilesJson);
 		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
@@ -35,10 +35,10 @@ public class MinecraftInstallation {
 		return newLocalMinecraftInstallation(null);
 	}
 
-	public static MinecraftInstallation newLocalMinecraftInstallation(String preferredDotMinecraftDirectory)
+	public static MinecraftInstallation newLocalMinecraftInstallation(Path dotMinecraftDirectory2)
 			throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
-				.createDotMinecraftDirectory(preferredDotMinecraftDirectory);
+				.createDotMinecraftDirectory(dotMinecraftDirectory2);
 		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
 		return new MinecraftInstallation(dotMinecraftDirectory);
 	}
@@ -75,7 +75,7 @@ public class MinecraftInstallation {
 				dotMinecraftDirectoryService.createValidVersionDirectory(dotMinecraftDirectory, versionId));
 	}
 
-	public LauncherProfile newLauncherProfile(File jar, File json) throws FormatException, IOException {
+	public LauncherProfile newLauncherProfile(Path jar, Path json) throws FormatException, IOException {
 		return newLauncherProfile(dotMinecraftDirectoryService.createValidVersionDirectory(jar, json));
 	}
 
@@ -90,27 +90,48 @@ public class MinecraftInstallation {
 				versionJson.getId());
 	}
 
-	public SaveGame newSaveGame(File location) throws IOException, FormatException {
+	public SaveGame newSaveGame(Path location) throws IOException, FormatException {
 		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
 
-	public Optional<LauncherProfile> tryReadLauncherProfile(
-			String preferredMinecraftJarFile,
-			String preferredMinecraftJsonFile) {
-		if (preferredMinecraftJarFile != null && preferredMinecraftJsonFile != null) {
-			try {
-				return Optional.of(
-						newLauncherProfile(new File(preferredMinecraftJarFile), new File(preferredMinecraftJsonFile)));
-			} catch (FormatException | IOException e) {
-				AmidstLogger.error(
-						e,
-						"cannot read launcher profile. preferredMinecraftJarFile: '" + preferredMinecraftJarFile
-								+ "', preferredMinecraftJsonFile: '" + "'");
-				return Optional.empty();
-			}
-		} else {
-			return Optional.empty();
-		}
-	}
+    public Optional<LauncherProfile> tryReadLauncherProfile(
+            Path minecraftJarFile,
+            Path minecraftJsonFile) {
+        if (minecraftJarFile != null && minecraftJsonFile != null) {
+            try {
+                return Optional.of(
+                        newLauncherProfile(minecraftJarFile, minecraftJsonFile));
+            } catch (FormatException | IOException e) {
+                AmidstLogger.error(
+                        e,
+                        "cannot read launcher profile. minecraftJarFile: '" + minecraftJarFile
+                                + "', minecraftJsonFile: '" + minecraftJsonFile + "'");
+                return Optional.empty();
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Try to locate a local profile with a name that matches the given string. No remote profiles are
+     * supported. Any errors are ignored and will result in a non-match.
+     */
+    public Optional<LauncherProfile> tryGetLauncherProfileFromName(String profileName) {
+        try {
+            VersionList versionList = VersionList.newLocalVersionList();
+            List<UnresolvedLauncherProfile> unresolvedProfiles = readLauncherProfiles();
+            for (UnresolvedLauncherProfile unresolvedProfile : unresolvedProfiles) {
+                LauncherProfile profile = unresolvedProfile.resolveToVanilla(versionList);
+                if (profile.getProfileName().equalsIgnoreCase(profileName)) {
+                    return Optional.of(profile);
+                }
+            }
+        } catch(FormatException | IOException e) {
+            AmidstLogger.error(e, "error while reading launcher profiles");
+        }
+
+        return Optional.empty();
+    }
 }
