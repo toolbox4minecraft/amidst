@@ -8,13 +8,17 @@ import java.awt.Graphics2D;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultCaret;
 
@@ -49,6 +53,7 @@ public class BiomeWidget extends Widget {
 	private final LayerReloader layerReloader;
 	private final BiomeProfileSelection biomeProfileSelection;
 	private final JTextField searchField;
+	private final Supplier<JComponent> parentComponentSupplier;
 
 	private List<Biome> biomes = new ArrayList<>();
 	private List<Biome> displayedBiomes = new ArrayList<>();
@@ -76,7 +81,8 @@ public class BiomeWidget extends Widget {
 			BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
 			BiomeProfileSelection biomeProfileSelection,
-			BiomeList biomeList) {
+			BiomeList biomeList,
+			Supplier<JComponent> parentComponentSupplier) {
 		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
@@ -92,6 +98,7 @@ public class BiomeWidget extends Widget {
 				super.paintComponent(g);
 			}
 		};
+		this.parentComponentSupplier = parentComponentSupplier;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -133,6 +140,17 @@ public class BiomeWidget extends Widget {
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setupSearchField(FontMetrics fontMetrics) {
+		parentComponentSupplier.get().addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				Point p = e.getPoint();
+				Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+				if(!searchField.getBounds().contains(p)
+				   && focusOwner != null
+				   && focusOwner.equals(searchField)) {
+					KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner();
+				}
+			}
+		});
 		searchField.setBorder(null);
 		searchField.setOpaque(false);
 		searchField.setFont(fontMetrics.getFont().deriveFont(13f));
@@ -142,7 +160,7 @@ public class BiomeWidget extends Widget {
 		// this makes sure it actually shows up and completes the first paint
 		// so it can be resized correctly in paintComponent()
 		searchField.setSize(1,1);
-		this.add(searchField);
+		parentComponentSupplier.get().add(searchField);
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -442,14 +460,6 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean processClick(int mouseX, int mouseY) {
-		// TODO: fixme
-		Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-		if(!searchField.getBounds().contains(new Point(mouseX, mouseY))
-		   && focusOwner != null
-		   && focusOwner.equals(searchField)) {
-			KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner();
-		}
-		
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			int index = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (index < displayedBiomes.size()) {
