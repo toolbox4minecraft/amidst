@@ -117,6 +117,14 @@ public enum _1_13ClassTranslator {
 					.requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
 					.optionalMethod(METHOD_REGISTRY_GET_BY_KEY, "b").symbolic(CLASS_REGISTRY_KEY).end()
 					.optionalMethod(METHOD_REGISTRY_GET_BY_KEY2, "a").symbolic(CLASS_REGISTRY_KEY).end()  // the name changed in 18w43c
+			.next()
+				.ifDetect(c -> 
+					c.searchForStringContaining("Server-Worker-")
+					&& c.searchForStringContaining("os.name")
+					&& c.searchForLong(1000000L)
+				)
+				.thenDeclareOptional(CLASS_UTIL)
+					.optionalField(FIELD_UTIL_SERVER_EXECUTOR, "c")
 
 			.construct();
 	}
