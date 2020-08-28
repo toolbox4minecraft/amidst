@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
-import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
@@ -21,6 +20,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.util.SwingUtils;
 
 @NotThreadSafe
 public class MainWindow {
@@ -80,6 +80,6 @@ public class MainWindow {
 		if (FeatureToggles.SEED_SEARCH) {
 			seedSearcherWindow.dispose();
 		}		
-		Amidst.destroyComponentTree(frame);
+		SwingUtils.destroyComponentTree(frame);
 	}
 }

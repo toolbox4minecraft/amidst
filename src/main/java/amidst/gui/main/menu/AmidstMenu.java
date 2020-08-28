@@ -46,14 +46,20 @@ public class AmidstMenu {
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void runOnMenuItems(MenuElement menuElement, String[] textRepresentations, Consumer<JMenuItem> consumer) {
+		boolean doOnAll = (textRepresentations == null);
+		
 		MenuElement[] elements = menuElement.getSubElements();
 		if(elements != null) {
 			for(MenuElement element : elements) {
 				if(element instanceof JMenuItem) {
-					for(String s : textRepresentations) {
-						if(((JMenuItem) element).getText().equals(s)) {
-							consumer.accept((JMenuItem) element);
+					if(!doOnAll) {
+						for(String s : textRepresentations) {
+							if(((JMenuItem) element).getText().equals(s)) {
+								consumer.accept((JMenuItem) element);
+							}
 						}
+					} else {
+						consumer.accept((JMenuItem) element);
 					}
 				}
 				runOnMenuItems(element, textRepresentations, consumer);

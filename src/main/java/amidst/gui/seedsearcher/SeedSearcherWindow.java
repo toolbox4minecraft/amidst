@@ -13,7 +13,6 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
-import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -25,6 +24,7 @@ import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
+import amidst.util.SwingUtils;
 import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
@@ -166,6 +166,6 @@ public class SeedSearcherWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		seedSearcher.dispose();
-		Amidst.destroyComponentTree(frame);
+		SwingUtils.destroyComponentTree(frame);
 	}
 }

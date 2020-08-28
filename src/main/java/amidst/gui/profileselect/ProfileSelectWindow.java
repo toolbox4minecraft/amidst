@@ -13,8 +13,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
-
-import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
@@ -29,6 +27,7 @@ import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
+import amidst.util.SwingUtils;
 
 @NotThreadSafe
 public class ProfileSelectWindow {
@@ -191,6 +190,6 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		isDisposed = true;
-		Amidst.destroyComponentTree(frame);
+		SwingUtils.destroyComponentTree(frame);
 	}
 }
