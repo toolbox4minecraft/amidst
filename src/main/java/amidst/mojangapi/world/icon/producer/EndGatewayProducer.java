@@ -46,6 +46,8 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 	 */
 	private final EndSpawnGatewayProducer spawnProducer;
 	private final long seed;
+	
+	private final boolean generateDecoratorGateways;
 	private final int featureIndex;
 	private final int generationStage;
 
@@ -54,14 +56,25 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 		this.seed = seed;
 		this.featureIndex = featureIndex;
 		this.generationStage = generationStage;
+		this.generateDecoratorGateways = true;
+	}
+	
+	public EndGatewayProducer(long seed, EndIslandOracle oracle) {
+		this.spawnProducer = new EndSpawnGatewayProducer(oracle);
+		this.seed = seed;
+		this.featureIndex = 0;
+		this.generationStage = 0;
+		this.generateDecoratorGateways = false;
 	}
 
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, EndIslandList endIslands) {
-		// The buffer only needs to account for positive changes because it's not possible for it to move backwards out of the fragment.
-		for (int xRelativeToFragment = -BUFFER_SIZE; xRelativeToFragment < SIZE; xRelativeToFragment++) {
-			for (int yRelativeToFragment = -BUFFER_SIZE; yRelativeToFragment < SIZE; yRelativeToFragment++) {
-				generateAt(corner, consumer, endIslands, xRelativeToFragment, yRelativeToFragment);
+		if (generateDecoratorGateways) {
+			// The buffer only needs to account for positive changes because it's not possible for it to move backwards out of the fragment.
+			for (int xRelativeToFragment = -BUFFER_SIZE; xRelativeToFragment < SIZE; xRelativeToFragment++) {
+				for (int yRelativeToFragment = -BUFFER_SIZE; yRelativeToFragment < SIZE; yRelativeToFragment++) {
+					generateAt(corner, consumer, endIslands, xRelativeToFragment, yRelativeToFragment);
+				}
 			}
 		}
 		spawnProducer.produce(corner, consumer, null);
@@ -113,10 +126,13 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 							if(placementInfluence > 0.0F) {
 								return coordinates;
 							} else {
-								// If this check fails, there's a very small chance that it landed on a small island
-								for(SmallEndIsland smallIsland : endIslands.getSmallIslands()) {
-									if(smallIsland.isOnIsland(gatewayX, gatewayY)) {
-										return coordinates;
+								List<SmallEndIsland> smallIslands = endIslands.getSmallIslands();
+								if(smallIslands != null) {
+									// If this check fails, there's a very small chance that it landed on a small island
+									for(SmallEndIsland smallIsland : smallIslands) {
+										if(smallIsland.isOnIsland(gatewayX, gatewayY)) {
+											return coordinates;
+										}
 									}
 								}
 							}
@@ -211,12 +227,16 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 
 		private boolean isChunkIslandlessSlow(CoordinatesInWorld blockCoords) {
 			EndIslandList endIslands = oracle.getAt(blockCoords);
-			// Small Islands
-			for(SmallEndIsland island : endIslands.getSmallIslands()) {
-				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
-					for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
-						if(island.isOnIsland(x, y)) {
-							return false;
+			
+			List<SmallEndIsland> smallIslands = endIslands.getSmallIslands();
+			if(smallIslands != null) {
+				// Small Islands
+				for(SmallEndIsland island : smallIslands) {
+					for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
+						for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
+							if(island.isOnIsland(x, y)) {
+								return false;
+							}
 						}
 					}
 				}
@@ -245,12 +265,15 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 							return new CoordinatesInWorld(x, y);
 						}
 					}
-					// We want the lowest small end islands first, so we sort them.
+					
 					List<SmallEndIsland> smallIslands = endIslands.getSmallIslands();
-					smallIslands.sort(((Comparator<SmallEndIsland>)(e1, e2) -> Integer.compare(e1.getHeight(), e2.getHeight())).reversed());
-					for (SmallEndIsland island : endIslands.getSmallIslands()) {
-						if (island.isOnIsland(x, y)) {
-							return new CoordinatesInWorld(x, y);
+					if(smallIslands != null) {
+						// We want the lowest small end islands first, so we sort them.
+						smallIslands.sort(((Comparator<SmallEndIsland>)(e1, e2) -> Integer.compare(e1.getHeight(), e2.getHeight())).reversed());
+						for (SmallEndIsland island : smallIslands) {
+							if (island.isOnIsland(x, y)) {
+								return new CoordinatesInWorld(x, y);
+							}
 						}
 					}
 				}
@@ -280,20 +303,24 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 				}
 			}
 			
-			for (long x = blockCoords.getX() + startX; x <= blockCoords.getX() + endX; ++x) {
-				for (long y = blockCoords.getY() + startY; y <= blockCoords.getY() + endY; ++y) {
-					for (SmallEndIsland island : endIslands.getSmallIslands()) {
-						if (island.isOnIsland(x, y)) {
-							int coordHeight = island.getHeight();
-							if(coordHeight > highestBlock) {
-								highestBlock = coordHeight;
-								highestX = x;
-								highestY = y;
+			List<SmallEndIsland> smallIslands = endIslands.getSmallIslands();
+			if(smallIslands != null) {
+				for (long x = blockCoords.getX() + startX; x <= blockCoords.getX() + endX; ++x) {
+					for (long y = blockCoords.getY() + startY; y <= blockCoords.getY() + endY; ++y) {
+						for (SmallEndIsland island : smallIslands) {
+							if (island.isOnIsland(x, y)) {
+								int coordHeight = island.getHeight();
+								if(coordHeight > highestBlock) {
+									highestBlock = coordHeight;
+									highestX = x;
+									highestY = y;
+								}
 							}
 						}
 					}
 				}
 			}
+			
 			return new CoordinatesInWorld(highestX, highestY);
 		}
 

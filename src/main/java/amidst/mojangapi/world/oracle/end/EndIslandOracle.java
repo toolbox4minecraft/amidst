@@ -257,4 +257,8 @@ public class EndIslandOracle {
 		}
 		return null;
 	}
+    
+    public boolean canGenerateSmallIslands() {
+    	return canGenerateSmallIslands;
+    }
 }

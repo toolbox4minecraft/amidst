@@ -163,14 +163,14 @@ public enum DefaultVersionFeatures {
 					LayerIds.TEMPLE
 				).sinceExtend(RecognisedVersion._1_8,
 					LayerIds.OCEAN_MONUMENT
-				).sinceExtend(RecognisedVersion._15w31c,
+				).sinceExtend(RecognisedVersion._15w31c,  // Actually 15w31a
 					LayerIds.END_ISLANDS,
-					LayerIds.END_CITY
+					LayerIds.END_CITY,
+					LayerIds.END_GATEWAY
 				).sinceExtend(RecognisedVersion._16w43a,
 					LayerIds.WOODLAND_MANSION
 				).sinceExtend(RecognisedVersion._18w09a,
-					LayerIds.OCEAN_FEATURES,
-					LayerIds.END_GATEWAY // were introduced in 16w39a, but we can only find them past here
+					LayerIds.OCEAN_FEATURES
 				).construct())
 
 			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
@@ -267,7 +267,9 @@ public enum DefaultVersionFeatures {
 
 			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.<WorldIconProducer<EndIslandList>> builder()
 				.init((WorldIconProducer<EndIslandList>) EMPTY_PRODUCER)
-				.since(RecognisedVersion._15w31c,
+				.since(RecognisedVersion._15w31c,  // Actually 15w31a
+					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), features.get(FeatureKey.END_ISLAND_ORACLE)))
+				).since(RecognisedVersion._16w39a,
 					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), 0, 3, features.get(FeatureKey.END_ISLAND_ORACLE)))
 				).since(RecognisedVersion._20w06a, // TODO: confirm this version is correct; this changed after 1.15.2 and before 1.16
 					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), 13, 4, features.get(FeatureKey.END_ISLAND_ORACLE)))
