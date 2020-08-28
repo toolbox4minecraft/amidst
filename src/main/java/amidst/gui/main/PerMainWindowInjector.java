@@ -68,6 +68,7 @@ public class PerMainWindowInjector {
 			ThreadMaster threadMaster) {
 		this.versionString = createVersionString(metadata, runningLauncherProfile);
 		this.frame = new JFrame();
+		frame.addComponentListener(new MultiMonitorFixer(frame));
 		this.contentPane = frame.getContentPane();
 		this.viewerFacadeReference = new AtomicReference<>();
 		this.dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);

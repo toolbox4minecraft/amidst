@@ -404,7 +404,7 @@ public class BiomeExporterDialog {
 		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, false);
 
 		this.worldOptions = world.getWorldOptions();
-		this.biomeDataOracle = world.getBiomeDataOracle();
+		this.biomeDataOracle = world.getOverworldBiomeDataOracle();
 		this.progressListener = progressListener;
 
 		CoordinatesInWorld defaultTopLeft = translator.screenToWorld(new Point(0, 0));

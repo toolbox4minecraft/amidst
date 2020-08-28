@@ -95,7 +95,8 @@ public class WorldBuilder {
 				recognisedVersion,
 				versionFeatures.get(FeatureKey.BIOME_LIST),
 				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
-				versionFeatures.get(FeatureKey.BIOME_DATA_ORACLE),
+				versionFeatures.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
+				versionFeatures.get(FeatureKey.NETHER_BIOME_DATA_ORACLE),
 				versionFeatures.get(FeatureKey.END_ISLAND_ORACLE),
 				versionFeatures.get(FeatureKey.SLIME_CHUNK_ORACLE),
 				new SpawnProducer(worldSpawnOracle),
@@ -191,13 +192,22 @@ public class WorldBuilder {
 								Dimension.OVERWORLD,
 								false)
 				),
-				new StructureProducer<>(
+				new MultiProducer<>(
+					new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,
 						versionFeatures.get(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						Dimension.NETHER,
 						false),
+					new StructureProducer<>(
+						Resolution.NETHER_CHUNK,
+						88,
+						versionFeatures.get(FeatureKey.BASTION_REMNANT_LOCATION_CHECKER),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMANNT),
+						Dimension.NETHER,
+						false)
+				),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,

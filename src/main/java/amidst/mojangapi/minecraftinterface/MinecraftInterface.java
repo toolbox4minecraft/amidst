@@ -1,8 +1,10 @@
 package amidst.mojangapi.minecraftinterface;
 
+import java.util.Set;
 import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 
 /**
@@ -53,8 +55,11 @@ public interface MinecraftInterface {
 		 *            and should not escape it. Any attempt to read the array once
 		 *            the callback returned may return invalid data.
 		 */
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException;
+
+		public Set<Dimension> supportedDimensions();
 	}
 }

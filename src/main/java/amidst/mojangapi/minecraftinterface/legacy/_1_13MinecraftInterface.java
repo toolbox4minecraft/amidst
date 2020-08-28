@@ -5,8 +5,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.Set;
 import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
@@ -15,6 +16,8 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -29,9 +32,8 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass biomeClass;
 	private final SymbolicClass registryClass;
 	private final SymbolicClass registryKeyClass;
-	private final SymbolicClass utilClass;
 
-	private boolean isInitialized = false;
+	private boolean isBootstrapCalled = false;
 
 	private final RecognisedVersion recognisedVersion;
 
@@ -41,12 +43,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	 * getId(Registry<Biome>, Biome)
 	 */
 	private MethodHandle biomeGetIdMethod;
-	
-	/**
-	 * A MethodHandle for getting the quarter resolution
-	 * biome data.
-	 */
-	private MethodHandle getBiomesMethod;
 
 	/**
 	 * The biome registry, for use with versions >= 18w33a
@@ -67,7 +63,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			SymbolicClass biomeClass,
 			SymbolicClass registryClass,
 			SymbolicClass registryKeyClass,
-			SymbolicClass utilClass,
 			RecognisedVersion recognisedVersion) {
 		this.bootstrapClass = bootstrapClass;
 		this.worldTypeClass = worldTypeClass;
@@ -77,7 +72,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		this.biomeClass = biomeClass;
 		this.registryClass = registryClass;
 		this.registryKeyClass = registryKeyClass;
-		this.utilClass = utilClass;
 
 		this.recognisedVersion = recognisedVersion;
 	}
@@ -92,13 +86,14 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_BIOME),
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY),
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY_KEY),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_UTIL),
 				recognisedVersion);
 	}
 
-	private int[] populateBiomeData(int[] data, int x, int y, int width, int height, Object biomeGen)
+	private int[] populateBiomeData(int[] data, int x, int y, int width, int height, SymbolicObject biomeGen)
 			throws MinecraftInterfaceException {
 		try {
+			initBiomeGetIdHandle();
+
 			/**
 			 * We break the region in 16x16 chunks, to get better performance
 			 * out of the LazyArea used by the game. Sadly, we get no
@@ -131,16 +126,25 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				}
 			}
 			return data;
-		} catch (Throwable e) {
+		} catch (
+				IllegalAccessException
+				| IllegalArgumentException
+				| InvocationTargetException
+				| InstantiationException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
 
-	private Object[] getBiomeDataInner(int x, int y, int width, int height, Object biomeGen) throws Throwable {
+	private Object[] getBiomeDataInner(int x, int y, int width, int height, SymbolicObject biomeGen)
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		if(genLayerClass.hasMethod(_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
-			return (Object[]) getBiomesMethod.invoke(biomeGen, x, y, width, height, null);
+			return (Object[]) biomeGen.callMethod(
+					_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
 		} else {
-			return (Object[]) getBiomesMethod.invoke(biomeGen, x, y, width, height);
+			return (Object[]) biomeGen.callMethod(
+					_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2, x, y, width, height);
 		}
 	}
 
@@ -185,37 +189,35 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			throws MinecraftInterfaceException {
 
 		try {
-			initializeIfNeeded();
+			callBootstrapRegister();
 
 			// @formatter:off
-			ThreadLocal<Object[]> threadedBiomeGenerators = ThreadLocal.withInitial(() -> {
-				try {
-					return (Object[]) layerUtilClass.callStaticMethod(
-						_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
-						seed,
-						getWorldType(worldType).getObject(),
-						getGenSettings(generatorOptions).getObject()
-					);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-						| InstantiationException e) {
-					throw new RuntimeException(e);
-				}
-			});
+			Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
+				_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
+				seed,
+				getWorldType(worldType).getObject(),
+				getGenSettings(generatorOptions).getObject()
+			);
 			// @formatter:on
-			
-			return new World(threadedBiomeGenerators);
 
-		} catch (Throwable e) {
+			SymbolicObject quarterResolutionGen = new SymbolicObject(genLayerClass, genLayers[0]);
+			SymbolicObject fullResolutionGen = new SymbolicObject(genLayerClass, genLayers[1]);
+			return new World(quarterResolutionGen, fullResolutionGen);
+
+		} catch (
+				IllegalAccessException
+				| IllegalArgumentException
+				| InvocationTargetException
+				| InstantiationException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}
 
-	private synchronized void initializeIfNeeded()
+	private synchronized void callBootstrapRegister()
 			throws IllegalAccessException,
 			IllegalArgumentException,
-			InvocationTargetException,
-			InstantiationException {
-		if (isInitialized) {
+			InvocationTargetException {
+		if (isBootstrapCalled) {
 			return;
 		}
 
@@ -227,37 +229,9 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER2;
 			}
 		}
-		
-		initBiomeGetIdHandle();
-		
-		if(genLayerClass.hasMethod(_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
-			getBiomesMethod = getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA);
-		} else {
-			getBiomesMethod = getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2);
-		}
-		
+
 		bootstrapClass.callStaticMethod(register);
-		
-		// Minecraft's datafixers have been created during the initialization
-		// of the DataFixesManager class since 1.13 (I think). In our case,
-		// the class gets initialized during the bootstrapping stage. For our
-		// use case of the minecraft code, the datafixers are useless. The
-		// creation of the datafixers take valuable processor time and memory,
-		// so it's best to disable them in any way we can. Unfortunately, the
-		// only way to do this is to just shut down the thread pool that creates
-		// them. This doesn't work for versions before 1.14 because they use
-		// ForkJoinPool.commonPool(), which is unaffected by shutdown() and
-		// shutdownNow().
-		
-		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
-			try {
-				((ExecutorService) utilClass.getStaticFieldValue(_1_13SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
-			} catch (NullPointerException e) {
-				AmidstLogger.warn("Unable to shut down Server-Worker threads");
-			}
-		}
-		
-		isInitialized = true;
+		isBootstrapCalled = true;
 	}
 
 	private SymbolicObject getWorldType(WorldType worldType) throws IllegalArgumentException, IllegalAccessException {
@@ -292,32 +266,47 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-	
-	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
-	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
-	    return MethodHandles.lookup().unreflect(rawMethod);
-	}
 
 	private class World implements MinecraftInterface.World {
 		/**
-		 * A Threadlocal holding instances of both the quarter and full resolution
-		 * biome generators.
+		 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
+		 * axis are divided by 4). Minecraft calculates biomes at
+		 * quarter-resolution, then noisily interpolates the biome-map up to 1:1
+		 * resolution when needed, this is the biome GenLayer before it is
+		 * interpolated.
 		 */
-		private final ThreadLocal<Object[]> threadedBiomeGenerators;
+		private final SymbolicObject quarterResolutionBiomeGenerator;
 
-		private World(ThreadLocal<Object[]> threadedBiomeGenerators) {
-			this.threadedBiomeGenerators = threadedBiomeGenerators;
+		/**
+		 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
+		 * biomes at quarter-resolution, then noisily interpolates the biome-map up
+		 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
+		 */
+		private final SymbolicObject fullResolutionBiomeGenerator;
+
+		private World(SymbolicObject quarterResolutionGen, SymbolicObject fullResolutionGen) {
+			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
+			this.fullResolutionBiomeGenerator = fullResolutionGen;
 		}
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
-			int biomeGeneratorIndex = useQuarterResolution ? 0 : 1;
+			if (dimension != Dimension.OVERWORLD)
+				throw new UnsupportedDimensionException(dimension);
+
+			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
 			return dataArray.withArrayFaillible(width * height, data -> {
-				populateBiomeData(data, x, y, width, height, threadedBiomeGenerators.get()[biomeGeneratorIndex]);
+				populateBiomeData(data, x, y, width, height, biomeGenerator);
 				return biomeDataMapper.apply(data);
 			});
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }

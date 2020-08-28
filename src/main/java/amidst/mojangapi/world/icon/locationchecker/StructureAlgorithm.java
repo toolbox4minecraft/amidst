@@ -6,10 +6,12 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class StructureAlgorithm implements LocationChecker {
+
+	private static final long MAGIC_NUMBER_FOR_SEED_1 = 341873128712L;
+	private static final long MAGIC_NUMBER_FOR_SEED_2 = 132897987541L;
+
 	private final long seed;
-	private final long magicNumberForSeed1;
-	private final long magicNumberForSeed2;
-	private final long magicNumberForSeed3;
+	private final long structureSalt;
 	private final byte maxDistanceBetweenScatteredFeatures;
 	private final int distanceBetweenScatteredFeaturesRange;
 	private final boolean useTwoValuesForUpdate;
@@ -17,17 +19,13 @@ public class StructureAlgorithm implements LocationChecker {
 
 	public StructureAlgorithm(
 			long seed,
-			long magicNumberForSeed1,
-			long magicNumberForSeed2,
-			long magicNumberForSeed3,
+			long structureSalt,
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate) {
 		this(
 				seed,
-				magicNumberForSeed1,
-				magicNumberForSeed2,
-				magicNumberForSeed3,
+				structureSalt,
 				maxDistanceBetweenScatteredFeatures,
 				minDistanceBetweenScatteredFeatures,
 				useTwoValuesForUpdate,
@@ -36,17 +34,13 @@ public class StructureAlgorithm implements LocationChecker {
 
 	public StructureAlgorithm(
 			long seed,
-			long magicNumberForSeed1,
-			long magicNumberForSeed2,
-			long magicNumberForSeed3,
+			long structureSalt,
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate,
 			boolean buggyStructureCoordinateMath) {
 		this.seed = seed;
-		this.magicNumberForSeed1 = magicNumberForSeed1;
-		this.magicNumberForSeed2 = magicNumberForSeed2;
-		this.magicNumberForSeed3 = magicNumberForSeed3;
+		this.structureSalt = structureSalt;
 		this.maxDistanceBetweenScatteredFeatures = maxDistanceBetweenScatteredFeatures;
 		this.distanceBetweenScatteredFeaturesRange = maxDistanceBetweenScatteredFeatures
 				- minDistanceBetweenScatteredFeatures;
@@ -61,7 +55,11 @@ public class StructureAlgorithm implements LocationChecker {
 		Random random = new Random(getSeed(value1, value2));
 		value1 = updateValue(random, value1);
 		value2 = updateValue(random, value2);
-		return x == value1 && y == value2;
+		return x == value1 && y == value2 && doExtraCheck(random);
+	}
+
+	protected boolean doExtraCheck(Random random) {
+		return true;
 	}
 
 	private int getInitialValue(int coordinate) {
@@ -83,10 +81,10 @@ public class StructureAlgorithm implements LocationChecker {
 
 	private long getSeed(int value1, int value2) {
 		// @formatter:off
-		return value1 * magicNumberForSeed1
-		     + value2 * magicNumberForSeed2
+		return value1 * MAGIC_NUMBER_FOR_SEED_1
+		     + value2 * MAGIC_NUMBER_FOR_SEED_2
 		              + seed
-		              + magicNumberForSeed3;
+		              + structureSalt;
 		// @formatter:on
 	}
 

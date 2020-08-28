@@ -8,6 +8,7 @@ import amidst.documentation.Immutable;
 public class UpdateInformationJson {
 	private volatile int major;
 	private volatile int minor;
+	private volatile int patch;
 	private volatile String message;
 	private volatile String downloadUrl;
 
@@ -15,9 +16,10 @@ public class UpdateInformationJson {
 	public UpdateInformationJson() {
 	}
 
-	public UpdateInformationJson(int major, int minor, String message, String downloadUrl) {
+	public UpdateInformationJson(int major, int minor, int patch, String message, String downloadUrl) {
 		this.major = major;
 		this.minor = minor;
+		this.patch = patch;
 		this.downloadUrl = downloadUrl;
 		this.message = message;
 	}
@@ -28,6 +30,10 @@ public class UpdateInformationJson {
 
 	public int getMinor() {
 		return minor;
+	}
+
+	public int getPatch() {
+		return patch;
 	}
 
 	/**
@@ -43,6 +49,6 @@ public class UpdateInformationJson {
 	}
 
 	public AmidstVersion createAmidstVersion() {
-		return new AmidstVersion(major, minor);
+		return new AmidstVersion(major, minor, patch);
 	}
 }

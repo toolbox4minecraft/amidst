@@ -15,6 +15,7 @@ import amidst.gui.main.MainWindow;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.PerMainWindowInjector;
 import amidst.gui.main.UpdatePrompt;
+import amidst.gui.main.viewer.BiomeSelection;
 import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
@@ -50,6 +51,7 @@ public class PerApplicationInjector {
 	private final LayerBuilder layerBuilder;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
+	private final BiomeSelection biomeSelection;
 	private final Application application;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -73,6 +75,7 @@ public class PerApplicationInjector {
 		this.layerBuilder = new LayerBuilder();
 		this.zoom = new Zoom(settings.maxZoom);
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers(), settings.threads);
+		this.biomeSelection = new BiomeSelection();
 		this.application = new Application(
 				preferredLauncherProfile,
 				launcherProfileRunner,
@@ -132,6 +135,7 @@ public class PerApplicationInjector {
 				layerBuilder,
 				fragmentManager,
 				biomeExporterDialog,
+				biomeSelection,
 				world,
 				actions).getViewerFacade();
 	}
