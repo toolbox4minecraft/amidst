@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
-import javax.swing.JMenu;
 import javax.swing.MenuElement;
 
 import amidst.documentation.AmidstThread;
