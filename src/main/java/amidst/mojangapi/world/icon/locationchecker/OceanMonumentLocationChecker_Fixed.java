@@ -18,7 +18,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * description is quoted below:
  *
  * ---- "The issue lies in that the server is calculating DEEP_BIOME based on
- * the 1.8 World Generator and NOT the worlds ACTUAL biome from previous
+ * the 1.8 WorldAccessor Generator and NOT the worlds ACTUAL biome from previous
  * versions.
  *
  * I had a report of a biome in OCEAN (Not Deep), and when I generated a 1.8
@@ -26,7 +26,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * seed.
  *
  * The Monument Structure check uses 2 different Biome lookup methods, and the
- * one that does DEEP_BIOME check uses the World Gen calculations, and then the
+ * one that does DEEP_BIOME check uses the WorldAccessor Gen calculations, and then the
  * followup check for "Surrounding biomes" uses the actual worlds data.
  *
  * I temp fixed for my server with the following change: - if
