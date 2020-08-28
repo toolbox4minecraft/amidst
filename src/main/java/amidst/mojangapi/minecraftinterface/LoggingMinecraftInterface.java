@@ -20,7 +20,7 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	public MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
 		MinecraftInterface.WorldConfig config = new WorldConfig();
 		
-		StringBuilder sb = new StringBuilder("Supported dimensions for WorldAccessor: ");
+		StringBuilder sb = new StringBuilder("Supported dimensions for world configuration: ");
 		boolean firstDim = true;
 		for(Dimension dimension : config.supportedDimensions()) {
 			if(firstDim) {

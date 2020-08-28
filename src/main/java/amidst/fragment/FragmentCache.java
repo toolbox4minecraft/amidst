@@ -69,6 +69,7 @@ public class FragmentCache {
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public synchronized void clear() {
+		AmidstLogger.info("fragment cache cleared");
 		cache.clear();
 	}
 
