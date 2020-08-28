@@ -10,8 +10,16 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
@@ -21,11 +29,21 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
 public class _1_15MinecraftInterface implements MinecraftInterface {
     public static final RecognisedVersion LAST_COMPATIBLE_VERSION = RecognisedVersion._20w19a;
+
+    private static final List<String> NETHER_BIOME_NAMES = Arrays.asList(
+    	"nether_wastes",
+    	"soul_sand_valley",
+    	"crimson_forest",
+    	"warped_forest",
+    	"basalt_deltas"
+    );
 
     private boolean isInitialized = false;
 	private final RecognisedVersion recognisedVersion;
@@ -38,6 +56,8 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass worldDataClass;
 	private final SymbolicClass noiseBiomeProviderClass;
 	private final SymbolicClass overworldBiomeZoomerClass;
+	private final SymbolicClass netherBiomeProviderClass;
+	private final SymbolicClass netherBiomeSettingsClass;
 	private final SymbolicClass utilClass;
 
 	private MethodHandle registryGetIdMethod;
@@ -62,6 +82,8 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
         this.worldDataClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_WORLD_DATA);
         this.noiseBiomeProviderClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
         this.overworldBiomeZoomerClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_OVERWORLD_BIOME_ZOOMER);
+        this.netherBiomeProviderClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_NETHER_BIOME_PROVIDER);
+        this.netherBiomeSettingsClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_NETHER_BIOME_SETTINGS);
         this.utilClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_UTIL);
 	}
 
@@ -71,10 +93,11 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	    initializeIfNeeded();
 
 	    try {
-	        Object biomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
+	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
+	        Object netherBiomeProvider = manuallyCreateNetherBiomeProvider(seed);
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
             long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
-            return new World(biomeProvider, biomeZoomer, seedForBiomeZoomer);
+            return new World(overworldBiomeProvider, netherBiomeProvider, biomeZoomer, seedForBiomeZoomer);
 
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
@@ -199,6 +222,43 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		return worldTypeObj.getObject();
 	}
 
+	private Object manuallyCreateNetherBiomeProvider(long seed)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, MinecraftInterfaceException {
+		// Minecraft doesn't give us an easy way to create the Nether biome provider, so we do it ourselves.
+		if (netherBiomeProviderClass == null) {
+			return null;
+		}
+
+		SymbolicObject biomeSettings = netherBiomeSettingsClass.callConstructor(
+			_1_15SymbolicNames.CONSTRUCTOR_NETHER_BIOME_SETTINGS, seed);
+
+		if (netherBiomeSettingsClass.hasMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES1)) {
+			Set<Object> biomes = new HashSet<>();
+			addNetherBiomesToCollection(biomes);
+			biomeSettings.callMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES1, biomes);
+		} else if (netherBiomeSettingsClass.hasMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES2)) {
+			List<Object> biomes = new ArrayList<>();
+			addNetherBiomesToCollection(biomes);
+			biomeSettings.callMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES2, biomes);
+		} else {
+			throw new MinecraftInterfaceException("couldn't create nether biomes");
+		}
+
+		return netherBiomeProviderClass.callConstructor(
+			_1_15SymbolicNames.CONSTRUCTOR_NETHER_BIOME_PROVIDER, biomeSettings.getObject()).getObject();
+	}
+
+	private void addNetherBiomesToCollection(Collection<Object> biomes)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		for (String biomeName: NETHER_BIOME_NAMES) {
+			Object biome = getFromRegistryByKey(biomeRegistry, biomeName);
+			if (biome != null) {
+				biomes.add(biome);
+			}
+		}
+	}
+
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
@@ -251,44 +311,79 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	}
 
 	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
+	    /*Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
+	    return MethodHandles.lookup().unreflect(rawMethod);*/
 	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
-	    return MethodHandles.lookup().unreflect(rawMethod);
+	    MethodHandle mh = MethodHandles.lookup().unreflect(rawMethod);
+	    return mh.asType(mh.type().erase());
 	}
 
 	private class World implements MinecraftInterface.World {
 		/**
-		 * A BiomeProvider instance for the current world, giving
+		 * A BiomeProvider instance for the current overworld, giving
 		 * access to the quarter-scale biome data.
 		 */
-	    private Object biomeProvider;
+	    private final Object overworldBiomeProvider;
+	    /**
+	     * A Biome provider instance for the current nether.
+	     */
+	    private final Object netherBiomeProvider;
 	    /**
 	     * The BiomeZoomer instance for the current world, which
 	     * interpolates the quarter-scale BiomeProvider to give
 	     * full-scale biome data.
 	     */
-	    private Object biomeZoomer;
+	    private final Object biomeZoomer;
 	    /**
 	     * The seed used by the BiomeZoomer during interpolation.
 	     * It is derived from the world seed.
 	     */
-		private long seedForBiomeZoomer;
+		private final long seedForBiomeZoomer;
 
-	    private World(Object biomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
-	    	this.biomeProvider = biomeProvider;
+		private final Set<Dimension> supportedDimensions;
+
+	    private World(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
+	    	this.overworldBiomeProvider = overworldBiomeProvider;
+	    	this.netherBiomeProvider = netherBiomeProvider;
 	    	this.biomeZoomer = biomeZoomer;
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
+
+	    	Set<Dimension> supportedDimensions = EnumSet.of(Dimension.OVERWORLD);
+	    	if (netherBiomeProvider != null) {
+	    		supportedDimensions.add(Dimension.NETHER);
+	    	}
+	    	this.supportedDimensions = Collections.unmodifiableSet(supportedDimensions);
 	    }
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(
+				Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
+			Object biomeProvider;
+			int biomeHeight;
+
+			switch (dimension) {
+			case OVERWORLD:
+				biomeProvider = this.overworldBiomeProvider;
+				biomeHeight = 0; // The overworld uses y=0 for all heights
+				break;
+			case NETHER:
+				if (this.netherBiomeProvider != null) {
+					biomeProvider = this.netherBiomeProvider;
+					biomeHeight = 63; // Pick an arbitrary value
+					break;
+				}
+			default:
+				throw new UnsupportedDimensionException(dimension);
+			}
 
 			int size = width * height;
 		    return dataArray.withArrayFaillible(size, data -> {
 			    try {
 			    	if(size == 1) {
-			    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
+			    		data[0] = getBiomeIdAt(biomeProvider, biomeHeight, x, y, useQuarterResolution);
 			    		return biomeDataMapper.apply(data);
 			    	}
 
@@ -306,7 +401,7 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		                    for (int i = 0; i < w; i++) {
 		                        for (int j = 0; j < h; j++) {
 		                            int trueIdx = (x0 + i) + (y0 + j) * width;
-		                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+		                            data[trueIdx] = getBiomeIdAt(biomeProvider, biomeHeight, x + x0 + i, y + y0 + j, useQuarterResolution);
 		                        }
 		                    }
 		                }
@@ -319,16 +414,19 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		    });
 		}
 
-		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
+		private int getBiomeIdAt(Object biomeProvider, int biomeHeight, int x, int y, boolean useQuarterResolution) throws Throwable {
 		    Object biome;
-	        // We don't care about the vertical component, so we pass a bogus value
-		    int height = -9999;
 		    if(useQuarterResolution) {
-		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
+		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, biomeHeight, y);
 		    } else {
-		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
+		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, biomeHeight, y, biomeProvider);
 		    }
 		    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return supportedDimensions;
 		}
 	}
 }

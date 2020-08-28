@@ -1,6 +1,7 @@
 package amidst.mojangapi.world;
 
 import java.util.List;
+import java.util.Optional;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -23,7 +24,8 @@ public class World {
 	private final List<Integer> enabledLayers;
 	private final BiomeList biomeList;
 
-	private final BiomeDataOracle biomeDataOracle;
+	private final BiomeDataOracle overworldBiomeDataOracle;
+	private final Optional<BiomeDataOracle> netherBiomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
 	private final CachedWorldIconProducer spawnProducer;
@@ -45,7 +47,8 @@ public class World {
 			RecognisedVersion recognisedVersion,
 			BiomeList biomeList,
 			List<Integer> enabledLayers,
-			BiomeDataOracle biomeDataOracle,
+			BiomeDataOracle overworldBiomeDataOracle,
+			Optional<BiomeDataOracle> netherBiomeDataOracle,
 			EndIslandOracle endIslandOracle,
 			SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
@@ -65,7 +68,8 @@ public class World {
 		this.recognisedVersion = recognisedVersion;
 		this.biomeList = biomeList;
 		this.enabledLayers = enabledLayers;
-		this.biomeDataOracle = biomeDataOracle;
+		this.overworldBiomeDataOracle = overworldBiomeDataOracle;
+		this.netherBiomeDataOracle = netherBiomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
 		this.spawnProducer = spawnProducer;
@@ -93,7 +97,7 @@ public class World {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-	
+
 	public BiomeList getBiomeList() {
 		return biomeList;
 	}
@@ -102,8 +106,12 @@ public class World {
 		return enabledLayers;
 	}
 
-	public BiomeDataOracle getBiomeDataOracle() {
-		return biomeDataOracle;
+	public BiomeDataOracle getOverworldBiomeDataOracle() {
+		return overworldBiomeDataOracle;
+	}
+
+	public Optional<BiomeDataOracle> getNetherBiomeDataOracle() {
+		return netherBiomeDataOracle;
 	}
 
 	public EndIslandOracle getEndIslandOracle() {

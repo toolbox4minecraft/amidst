@@ -3,13 +3,16 @@ package amidst.mojangapi.world.test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.junit.Test;
 
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -54,9 +57,14 @@ public class VersionFeaturesTest {
 
 	private static class MockMinecraftWorld implements MinecraftInterface.World {
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution,
+		public<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height, boolean useQuarterResolution,
 				Function<int[], T> biomeDataMapper) {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return EnumSet.allOf(Dimension.class);
 		}
 	}
 }

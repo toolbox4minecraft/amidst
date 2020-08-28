@@ -10,20 +10,23 @@ public class AmidstVersion {
 		return new AmidstVersion(
 				Integer.parseInt(properties.getProperty("amidst.version.major")),
 				Integer.parseInt(properties.getProperty("amidst.version.minor")),
+				Integer.parseInt(properties.getProperty("amidst.version.patch")),
 				properties.getProperty("amidst.version.preReleaseSuffix"));
 	}
 
 	private final int major;
 	private final int minor;
+	private final int patch;
 	private final String preReleaseSuffix;
 
-	public AmidstVersion(int major, int minor) {
-		this(major, minor, null);
+	public AmidstVersion(int major, int minor, int patch) {
+		this(major, minor, patch, null);
 	}
 
-	public AmidstVersion(int major, int minor, String preReleaseSuffix) {
+	public AmidstVersion(int major, int minor, int patch, String preReleaseSuffix) {
 		this.major = major;
 		this.minor = minor;
+		this.patch = patch;
 		this.preReleaseSuffix = preReleaseSuffix;
 	}
 
@@ -33,6 +36,10 @@ public class AmidstVersion {
 
 	public int getMinor() {
 		return minor;
+	}
+
+	public int getPatch() {
+		return patch;
 	}
 
 	public String getPreReleaseSuffix() {
@@ -47,12 +54,16 @@ public class AmidstVersion {
 		return major == old.major && minor > old.minor;
 	}
 
+	public boolean isNewerPatchVersionThan(AmidstVersion old) {
+		return major == old.major && minor == old.minor && patch > old.patch;
+	}
+
 	public boolean isSameVersionButOldPreReleaseAndNewStable(AmidstVersion old) {
 		return isSameVersion(old) && old.isPreRelease() && !isPreRelease();
 	}
 
 	public boolean isSameVersion(AmidstVersion old) {
-		return major == old.major && minor == old.minor;
+		return major == old.major && minor == old.minor && patch == old.patch;
 	}
 
 	public boolean isPreRelease() {
@@ -64,10 +75,13 @@ public class AmidstVersion {
 	}
 
 	public String createVersionString() {
-		if (isPreRelease()) {
-			return "v" + major + "." + minor + "-" + preReleaseSuffix;
-		} else {
-			return "v" + major + "." + minor;
+		String version = "v" + major + "." + minor;
+		if (patch != 0) {
+			version += "." + patch;
 		}
+		if (isPreRelease()) {
+			version += "-" + preReleaseSuffix;
+		}
+		return version;
 	}
 }

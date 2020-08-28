@@ -66,6 +66,7 @@ public class BiomeWidget extends Widget {
 		this.layerReloader = layerReloader;
 		this.biomeProfileSelection = biomeProfileSelection;
 		this.biomeList = biomeList;
+		this.isVisible = biomeSelection.isWidgetVisible();
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -73,7 +74,7 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void toggleVisibility() {
-		isVisible = !isVisible;
+		isVisible = biomeSelection.toggleWidgetVisibility();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -330,7 +331,7 @@ public class BiomeWidget extends Widget {
 				biomeSelection.selectAll();
 				return biomeSelection.isHighlightMode();
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
-				biomeSelection.selectOnlySpecial();
+				selectOnlySpecialBiomes();
 				return biomeSelection.isHighlightMode();
 			} else if (isDeselectAllButton(mouseX)) {
 				biomeSelection.deselectAll();
@@ -338,6 +339,16 @@ public class BiomeWidget extends Widget {
 			}
 		}
 		return false;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void selectOnlySpecialBiomes() {
+		biomeSelection.deselectAll();
+		for (Biome biome: biomeList.iterable()) {
+			if (biome.isSpecialBiome()) {
+				biomeSelection.toggle(biome.getId());
+			}
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
