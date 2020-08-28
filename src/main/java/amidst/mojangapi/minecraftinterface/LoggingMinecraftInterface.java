@@ -1,6 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
@@ -10,9 +11,6 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public class LoggingMinecraftInterface implements MinecraftInterface {
 	private final MinecraftInterface inner;
-
-	// This is used so we don't log the message every time a thread creates a new WorldAccessor.
-	private volatile boolean shouldLogAccessor = false;
 
 	public LoggingMinecraftInterface(MinecraftInterface minecraftInterface) {
 		this.inner = minecraftInterface;
@@ -35,7 +33,6 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 		}
 		AmidstLogger.info(sb.toString());
 		
-		shouldLogAccessor = true;
 		return new WorldConfig();
 	}
 
@@ -46,6 +43,9 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 
 	private class WorldConfig implements MinecraftInterface.WorldConfig {
 		private final MinecraftInterface.WorldConfig innerConfig;
+		
+		// This is used so we don't log the message every time a thread creates a new WorldAccessor.
+		private final AtomicBoolean shouldLogAccessor = new AtomicBoolean(true);
 		
 		private WorldConfig() throws MinecraftInterfaceException {
 			this.innerConfig = inner.createWorldConfig();
@@ -59,8 +59,7 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 		@Override
 		public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
 				throws MinecraftInterfaceException {
-			if(shouldLogAccessor) {
-				shouldLogAccessor = false;
+			if(shouldLogAccessor.getAndSet(false)) {
 				AmidstLogger.info("Creating world with seed '{}' and type '{}'", seed, worldType.getName());
 				AmidstLogger.info("Using the following generator options: {}", generatorOptions);
 			}
