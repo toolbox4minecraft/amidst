@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SimplexNoise;
@@ -16,8 +15,8 @@ import kaptainwutax.seedutils.mc.MCVersion;
 
 @ThreadSafe
 public class EndIslandOracle {
-	public static EndIslandOracle from(long seed, RecognisedVersion recognisedVersion) {
-		return new EndIslandOracle(createNoiseFunction(seed), seed, recognisedVersion);
+	public static EndIslandOracle from(long seed, boolean canGenerateSmallIslands) {
+		return new EndIslandOracle(createNoiseFunction(seed), seed, canGenerateSmallIslands);
 	}
 
 	/**
@@ -55,12 +54,12 @@ public class EndIslandOracle {
 
 	private final SimplexNoise noiseFunction;
 	private final long seed;
-	private final RecognisedVersion recognisedVersion;
+	private final boolean canGenerateSmallIslands;
 
-	public EndIslandOracle(SimplexNoise noiseFunction, long seed, RecognisedVersion recognisedVersion) {
+	public EndIslandOracle(SimplexNoise noiseFunction, long seed, boolean canGenerateSmallIslands) {
 		this.noiseFunction = noiseFunction;
 		this.seed = seed;
-		this.recognisedVersion = recognisedVersion;
+		this.canGenerateSmallIslands = canGenerateSmallIslands;
 	}
 	
 	public static int getBiomeAtBlock(long x, long y, List<LargeEndIsland> largeIslands) {		
@@ -204,7 +203,7 @@ public class EndIslandOracle {
 			int chunksPerFragmentY,
 			List<LargeEndIsland> largeIslands) {
 		List<SmallEndIsland> result = null;
-		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_13)) { // TODO: need confirmation on this version
+		if(canGenerateSmallIslands) {
 			result = new ArrayList<>();
 			for (int y = -SMALL_ISLAND_SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SMALL_ISLAND_SURROUNDING_CHUNKS; y++) {
 				for (int x = -SMALL_ISLAND_SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SMALL_ISLAND_SURROUNDING_CHUNKS; x++) {
@@ -258,9 +257,4 @@ public class EndIslandOracle {
 		}
 		return null;
 	}
-    
-    public RecognisedVersion getRecognisedVersion() {
-    	return recognisedVersion;
-    }
-    
 }
