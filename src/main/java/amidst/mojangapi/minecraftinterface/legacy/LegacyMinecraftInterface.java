@@ -70,11 +70,18 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 			throws MinecraftInterfaceException {
 		try {
 			intCacheClass.callStaticMethod(LegacySymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
-			return (int[]) biomeGenerator
-				.callMethod(LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
+			int[] biomeInts = (int[]) biomeGenerator.callMethod(LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
+			// we have to clone the array so we aren't being referenced by IntCache when a different thread calls reset before we convert to shorts
+			return cloneArray(biomeInts);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
+	}
+	
+	private static int[] cloneArray(int[] originalArray) {
+		int[] newArray = new int[originalArray.length];
+		System.arraycopy(originalArray, 0, newArray, 0, newArray.length);
+		return newArray;
 	}
 
 	/**
