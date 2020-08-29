@@ -23,7 +23,7 @@ public enum DefaultWorldIconTypes {
 	JUNGLE              ("jungle",            "Jungle Temple"),
 	DESERT              ("desert",            "Desert Temple"),
 	VILLAGE             ("village",           "Village"),
-	SPAWN               ("spawn",             "WorldAccessor Spawn"),
+	SPAWN               ("spawn",             "World Spawn"),
 	WITCH               ("witch",             "Witch Hut"),
 	OCEAN_MONUMENT      ("ocean_monument",    "Ocean Monument"),
 	IGLOO               ("igloo",             "Igloo"),
