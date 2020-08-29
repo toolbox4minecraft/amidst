@@ -73,7 +73,7 @@ public class AmidstSettings {
 		showFPS                    = Setting.createBoolean(  preferences, "showFPS",              true);
 		showScale                  = Setting.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
-		threads                    = Setting.createInteger(  preferences, "threads",              Runtime.getRuntime().availableProcessors());
+		threads                    = Setting.createInteger(  preferences, "threads",              (Runtime.getRuntime().availableProcessors() / 2) + 1);
 		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");
