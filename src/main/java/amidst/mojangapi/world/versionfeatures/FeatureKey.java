@@ -6,9 +6,11 @@ import java.util.Optional;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.BiomeList;
-import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.VillageProducer;
+import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
@@ -17,31 +19,31 @@ import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 public class FeatureKey<T> {
 
 	// @formatter:off
-	public static final FeatureKey<WorldOptions>     WORLD_OPTIONS                     = make();
-	public static final FeatureKey<BiomeDataOracle>  OVERWORLD_BIOME_DATA_ORACLE       = make();
-	public static final FeatureKey<Optional<BiomeDataOracle>> NETHER_BIOME_DATA_ORACLE = make();
-	public static final FeatureKey<BiomeList>        BIOME_LIST                        = make();
+	public static final FeatureKey<WorldOptions>     WORLD_OPTIONS                        = make();
+	public static final FeatureKey<BiomeDataOracle>  OVERWORLD_BIOME_DATA_ORACLE          = make();
+	public static final FeatureKey<Optional<BiomeDataOracle>> NETHER_BIOME_DATA_ORACLE    = make();
+	public static final FeatureKey<BiomeList>        BIOME_LIST                           = make();
 
-	public static final FeatureKey<List<Integer>>    ENABLED_LAYERS                    = make();
-	public static final FeatureKey<SlimeChunkOracle> SLIME_CHUNK_ORACLE                = make();
-	public static final FeatureKey<EndIslandOracle>  END_ISLAND_ORACLE                 = make();
-	public static final FeatureKey<WorldSpawnOracle>  WORLD_SPAWN_ORACLE               = make();
-	public static final FeatureKey<LocationChecker>  NETHER_FORTRESS_LOCATION_CHECKER  = make();
-	public static final FeatureKey<LocationChecker>  BASTION_REMNANT_LOCATION_CHECKER  = make();
-	public static final FeatureKey<LocationChecker>  END_ISLAND_LOCATION_CHECKER       = make();
-	public static final FeatureKey<LocationChecker>  MINESHAFT_LOCATION_CHECKER        = make();
-	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER        = make();
-	public static final FeatureKey<LocationChecker>  VILLAGE_LOCATION_CHECKER          = make();
-	public static final FeatureKey<LocationChecker>  PILLAGER_OUTPOST_LOCATION_CHECKER = make();
-	public static final FeatureKey<LocationChecker>  DESERT_TEMPLE_LOCATION_CHECKER    = make();
-	public static final FeatureKey<LocationChecker>  IGLOO_LOCATION_CHECKER            = make();
-	public static final FeatureKey<LocationChecker>  JUNGLE_TEMPLE_LOCATION_CHECKER    = make();
-	public static final FeatureKey<LocationChecker>  WITCH_HUT_LOCATION_CHECKER        = make();
-	public static final FeatureKey<LocationChecker>  OCEAN_MONUMENT_LOCATION_CHECKER   = make();
-	public static final FeatureKey<LocationChecker>  WOODLAND_MANSION_LOCATION_CHECKER = make();
-	public static final FeatureKey<LocationChecker>  OCEAN_RUINS_LOCATION_CHECKER      = make();
-	public static final FeatureKey<LocationChecker>  SHIPWRECK_LOCATION_CHECKER        = make();
-	public static final FeatureKey<LocationChecker>  BURIED_TREASURE_LOCATION_CHECKER  = make();
+	public static final FeatureKey<List<Integer>>    ENABLED_LAYERS                       = make();
+	public static final FeatureKey<SlimeChunkOracle> SLIME_CHUNK_ORACLE                   = make();
+	public static final FeatureKey<EndIslandOracle>  END_ISLAND_ORACLE                    = make();
+	public static final FeatureKey<WorldSpawnOracle> WORLD_SPAWN_ORACLE                   = make();
+	public static final FeatureKey<WorldIconProducer<Void>> NETHER_FORTRESS_PRODUCER         = make();
+	public static final FeatureKey<WorldIconProducer<Void>> BASTION_REMNANT_PRODUCER         = make();
+	public static final FeatureKey<WorldIconProducer<List<EndIsland>>> END_CITY_PRODUCER  = make();
+	public static final FeatureKey<WorldIconProducer<Void>> MINESHAFT_PRODUCER               = make();
+	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER           = make();
+	public static final FeatureKey<VillageProducer>         VILLAGE_PRODUCER              = make();
+	public static final FeatureKey<WorldIconProducer<Void>> PILLAGER_OUTPOST_PRODUCER        = make();
+	public static final FeatureKey<WorldIconProducer<Void>> DESERT_TEMPLE_PRODUCER           = make();
+	public static final FeatureKey<WorldIconProducer<Void>> IGLOO_PRODUCER                   = make();
+	public static final FeatureKey<WorldIconProducer<Void>> JUNGLE_TEMPLE_PRODUCER           = make();
+	public static final FeatureKey<WorldIconProducer<Void>> WITCH_HUT_PRODUCER               = make();
+	public static final FeatureKey<WorldIconProducer<Void>> OCEAN_MONUMENT_PRODUCER          = make();
+	public static final FeatureKey<WorldIconProducer<Void>> WOODLAND_MANSION_PRODUCER        = make();
+	public static final FeatureKey<WorldIconProducer<Void>> OCEAN_RUINS_PRODUCER             = make();
+	public static final FeatureKey<WorldIconProducer<Void>> SHIPWRECK_PRODUCER               = make();
+	public static final FeatureKey<WorldIconProducer<Void>> BURIED_TREASURE_PRODUCER         = make();
 	// @formatter:on
 
 

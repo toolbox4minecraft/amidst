@@ -1,8 +1,7 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
-import java.util.Random;
-
 import amidst.documentation.Immutable;
+import kaptainwutax.seedutils.lcg.rand.JRand;
 
 /**
  * As of v1.4.2 Minecraft switched to this version of the algorithm
@@ -19,7 +18,7 @@ public class MineshaftAlgorithm_ChanceBased extends MineshaftAlgorithm_Base {
 	}
 
 	@Override
-	protected boolean getResult(int chunkX, int chunkY, Random random) {
+	protected boolean getResult(int chunkX, int chunkY, JRand random) {
 		return random.nextDouble() < chancePerChunk;
 	}
 
