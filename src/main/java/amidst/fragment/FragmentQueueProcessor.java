@@ -1,6 +1,5 @@
 package amidst.fragment;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
@@ -13,46 +12,37 @@ import amidst.settings.Setting;
 
 @NotThreadSafe
 public class FragmentQueueProcessor {
-	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedDeque<Fragment> backgroundQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
-	private final FragmentCache cache;
+	private final AvailableFragmentCache availableCache;
+	private final OffScreenFragmentCache offscreenCache;
 	private final LayerManager layerManager;
 	private final Setting<Dimension> dimensionSetting;
+	private final FragmentGraph graph;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
-			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedDeque<Fragment> backgroundQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
-			FragmentCache cache,
+			AvailableFragmentCache availableCache,
+			OffScreenFragmentCache offscreenCache,
 			LayerManager layerManager,
-			Setting<Dimension> dimensionSetting) {
-		this.availableQueue = availableQueue;
+			Setting<Dimension> dimensionSetting,
+			FragmentGraph graph) {
 		this.loadingQueue = loadingQueue;
-		this.backgroundQueue = backgroundQueue;
 		this.recycleQueue = recycleQueue;
-		this.cache = cache;
+		this.availableCache = availableCache;
+		this.offscreenCache = offscreenCache;
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
+		this.graph = graph;
 	}
 
 	/**
 	 * Return the next fragment the loader should process, or null if no more fragments are available.
 	 */
 	private Fragment getNextFragment() {
-		Fragment fragment;
-
-		// First process all visible fragments
-		fragment = loadingQueue.poll();
-		if (fragment != null) {
-			return fragment;
-		}
-		// If there are no visible fragments, then we can process previously enqueued
-		// but currently hidden fragments
-		return backgroundQueue.poll();
+		return loadingQueue.poll();
 	}
 
 	/**
@@ -78,7 +68,19 @@ public class FragmentQueueProcessor {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void updateLayerManager(Dimension dimension) {
 		if (layerManager.updateAll(dimension)) {
-			cache.reloadAll();
+			reloadAll();
+			offscreenCache.clear();
+		}
+	}
+
+	/**
+	 * Gets all of the fragments currently on the graph to offer, as they aren't stored in any cache.
+	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private synchronized void reloadAll() {
+		loadingQueue.clear();
+		for (FragmentGraphItem graphItem : (Iterable<FragmentGraphItem>) () -> graph.iterator()) {
+			loadingQueue.offer(graphItem.getFragment());
 		}
 	}
 
@@ -106,8 +108,7 @@ public class FragmentQueueProcessor {
 	private void recycleFragment(Fragment fragment) {
 		fragment.recycle();
 		removeFromLoadingQueue(fragment);
-		backgroundQueue.remove(fragment);
-		availableQueue.offer(fragment);
+		availableCache.put(fragment);
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since
