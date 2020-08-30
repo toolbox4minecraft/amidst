@@ -1,7 +1,7 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
 import amidst.documentation.Immutable;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 @Immutable
 public abstract class MineshaftAlgorithm_Base implements LocationChecker {
@@ -19,21 +19,21 @@ public abstract class MineshaftAlgorithm_Base implements LocationChecker {
 		 * a cave or a ravine). We can't check these cases, so we will have to accept
 		 * some false positives.
 		 */
-		JRand random = new JRand(seed);
+		FastRand random = new FastRand(seed);
 
 		long var13 = chunkX * random.nextLong();
 		long var15 = chunkY * random.nextLong();
 
 		random.setSeed(var13 ^ var15 ^ seed);
 		if(doExtraCheck())
-			random.nextInt();
+			random.advance();
 
 		if(!getResult(chunkX, chunkY, random))
 			return false;
 		return !doExtraCheck() || random.nextInt(80) < Math.max(Math.abs(chunkX), Math.abs(chunkY));
 	}
 
-	protected abstract boolean getResult(int chunkX, int chunkY, JRand random);
+	protected abstract boolean getResult(int chunkX, int chunkY, FastRand random);
 
 	protected boolean doExtraCheck() {
 		return true;

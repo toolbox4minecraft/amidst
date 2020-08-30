@@ -13,7 +13,7 @@ import amidst.mojangapi.world.icon.locationchecker.SuppressAroundLocationChecker
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
@@ -21,12 +21,12 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 	private static final int OFFSET_IN_WORLD = 4;
 	private static final Dimension DIMENSION = Dimension.OVERWORLD;
 	private static final boolean DISPLAY_DIMENSION = false;
-	
+
 	private static final long SALT = 165745296L;
 	private static final byte SPACING = 32;
 	private static final byte SEPARATION = 8;
 	private static final boolean IS_TRIANGULAR = false;
-	
+
 	private static final int STRUCTURE_SIZE = 0;
 
 
@@ -38,7 +38,7 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 			int avoidVillageRadius,
 			boolean checkVillageLocations,
 			boolean buggyStructureCoordinateMath) {
-		
+
 		super(RESOLUTION,
 			  OFFSET_IN_WORLD,
 			  new AllValidLocationChecker(
@@ -67,8 +67,8 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 
 		@Override
 		public boolean isValidLocation(int x, int y) {
-			JRand random = new JRand((x >> 4) ^ ((y >> 4) << 4) ^ seed);
-			random.nextInt();
+			FastRand random = new FastRand((x >> 4) ^ ((y >> 4) << 4) ^ seed);
+			random.advance();
 			return random.nextInt(5) == 0;
 		}
 	}

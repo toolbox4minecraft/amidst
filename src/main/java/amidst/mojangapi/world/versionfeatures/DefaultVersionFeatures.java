@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 import amidst.fragment.layer.LayerIds;
 import amidst.logging.AmidstLogger;
@@ -98,8 +98,8 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Byte>            OCEAN_RUINS_SEPARATION                    = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_BUILDING_SPACING                   = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_BUILDING_SEPARATION                = FeatureKey.make();
-	private static final FeatureKey<Function<JRand, Boolean>> NETHER_FORTRESS_FUNCTION         = FeatureKey.make();
-	private static final FeatureKey<Function<JRand, Boolean>> BASTION_REMNANT_FUNCTION         = FeatureKey.make();
+	private static final FeatureKey<Function<FastRand, Boolean>> NETHER_FORTRESS_FUNCTION         = FeatureKey.make();
+	private static final FeatureKey<Function<FastRand, Boolean>> BASTION_REMNANT_FUNCTION         = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE    = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT = FeatureKey.make();
@@ -221,7 +221,7 @@ public enum DefaultVersionFeatures {
 						)
 					)
 				).construct())
-			.with(NETHER_FORTRESS_FUNCTION, VersionFeature.<Function<JRand, Boolean>> builder()
+			.with(NETHER_FORTRESS_FUNCTION, VersionFeature.<Function<FastRand, Boolean>> builder()
 				.init(
 					r -> r.nextInt(6) < 2
 				).since(RecognisedVersion._1_16_pre3,
@@ -252,7 +252,7 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.crimsonForest,
 					DefaultBiomes.warpedForest
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
-			.with(BASTION_REMNANT_FUNCTION, VersionFeature.<Function<JRand, Boolean>> builder()
+			.with(BASTION_REMNANT_FUNCTION, VersionFeature.<Function<FastRand, Boolean>> builder()
 				.init(
 					r -> r.nextInt(6) >= 2
 				).since(RecognisedVersion._1_16_pre3,

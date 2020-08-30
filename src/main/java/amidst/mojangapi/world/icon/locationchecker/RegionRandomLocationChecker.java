@@ -3,39 +3,36 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.function.Function;
 
 import amidst.mojangapi.world.icon.producer.RegionalStructureProducer;
-import kaptainwutax.seedutils.lcg.LCG;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 public class RegionRandomLocationChecker implements LocationChecker {
 
 	private RegionalStructureProducer<?> regionalProducer;
-	private final Function<JRand, Boolean> randomFunction;
-	
-	public RegionRandomLocationChecker(Function<JRand, Boolean> randomFunction) {
+	private final Function<FastRand, Boolean> randomFunction;
+
+	public RegionRandomLocationChecker(Function<FastRand, Boolean> randomFunction) {
 		this.randomFunction = randomFunction;
 	}
-	
+
 	public void setRegionalProducer(RegionalStructureProducer<?> regionalProducer) {
 		this.regionalProducer = regionalProducer;
 	}
-	
-	private static final LCG ADVANCE_4 = LCG.JAVA.combine(4);
-	private static final LCG ADVANCE_2 = LCG.JAVA.combine(2);
-	
+
 	@Override
 	public boolean isValidLocation(int chunkX, int chunkY) {
-		JRand random = new JRand(regionalProducer.getRegionSeed(
+		FastRand random = new FastRand(regionalProducer.getRegionSeed(
 									regionalProducer.getRegionCoord(chunkX),
 									regionalProducer.getRegionCoord(chunkY)
 								));
-		
+
+		random.advance();
+		random.advance();
 		if (regionalProducer.isTriangular) {
-			random.advance(ADVANCE_4);
-		} else {
-			random.advance(ADVANCE_2);
+			random.advance();
+			random.advance();
 		}
-		
+
 		return randomFunction.apply(random);
 	}
-	
+
 }

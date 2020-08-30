@@ -12,7 +12,7 @@ import amidst.mojangapi.world.icon.locationchecker.RegionRandomLocationChecker;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
  
 public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 	private static final Resolution RESOLUTION = Resolution.NETHER_CHUNK;
@@ -30,7 +30,7 @@ public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 			byte spacing,
 			byte separation,
 			boolean buggyStructureCoordinateMath,
-			Function<JRand, Boolean> randomFunction) {
+			Function<FastRand, Boolean> randomFunction) {
 		
 		RegionRandomLocationChecker regionRandomChecker = new RegionRandomLocationChecker(randomFunction);
 		BastionRemnantProducer producer = new BastionRemnantProducer(

@@ -11,13 +11,13 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	private final Resolution resolution;
 	private final int offsetInWorld;
-	
+
 	/**
 	 * This should ONLY be used for things where we have to check against
 	 * it every time. For example, we have to do this with biomes and
@@ -27,24 +27,24 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	private final WorldIconTypeProvider<T> provider;
 	private final Dimension dimension;
 	private final boolean displayDimension;
-	
+
 	// These have never changed and probably never will change, so we hard code them instead of giving them a version feature
 	private static final long MAGIC_NUMBER_1 = 341873128712L;
 	private static final long MAGIC_NUMBER_2 = 132897987541L;
-	
+
 	public final long worldSeed;
 	public final long salt;
 	public final byte spacing; // spacing in chunks
 	public final int separation; // offset in chunks
 	public final boolean isTriangular;
 	public final boolean buggyStructureCoordinateMath;
-	
+
 	/**
 	 * Length of chunks needed to cover the maximum possible regions
 	 * intersecting a fragment.
 	 */
 	private final int intersectingRegionChunks;
-	
+
 	public RegionalStructureProducer(
 			Resolution resolution,
 			int offsetInWorld,
@@ -64,14 +64,14 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		this.provider = provider;
 		this.dimension = dimension;
 		this.displayDimension = displayDimension;
-		
+
 		this.worldSeed = worldSeed;
 		this.salt = salt;
 		this.spacing = spacing;
 		this.separation = separation;
 		this.isTriangular = isTriangular;
 		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
-		
+
 		this.intersectingRegionChunks = getIntersectingRegionChunks();
 	}
 
@@ -95,24 +95,24 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 			T additionalData,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
-		
+
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
-		
+
 		CoordinatesInWorld structLocation = getPossibleLocation(x, y);
-		
+
 		int structX = (int) structLocation.getX();
 		int structY = (int) structLocation.getY();
-		
+
 		CoordinatesInWorld resultCoordinates = createCoordinates(structX, structY);
-		
+
 		// This is needed to avoid duplicate world icons.
 		// Calling this before isValidLocation gives a huge speedup.
 		if(resultCoordinates.isInBoundsOf(corner, Fragment.SIZE)) {
-			
+
 			// if there is no checker provided, skip it
 			if (checker == null || checker.isValidLocation(structX, structY)) {
-				
+
 				DefaultWorldIconTypes worldIconType = provider.get(structX, structY, additionalData);
 				if (worldIconType != null) {
 					consumer.accept(
@@ -135,7 +135,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 
 	public CoordinatesInWorld getCheckedLocation(int chunkX, int chunkY) {
 		CoordinatesInWorld possibleLocation = getPossibleLocation(chunkX, chunkY);
-		
+
 		// if there is no checker provided, skip it
 		if (checker == null || checker.isValidLocation((int) possibleLocation.getX(), (int) possibleLocation.getY())) {
 			return possibleLocation;
@@ -149,8 +149,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	public CoordinatesInWorld getPossibleLocation(int chunkX, int chunkY) {
 		int value1 = getRegionCoord(chunkX);
 		int value2 = getRegionCoord(chunkY);
-		// JRand is faster than normal Random
-		JRand random = new JRand(getRegionSeed(value1, value2));
+		FastRand random = new FastRand(getRegionSeed(value1, value2));
 		value1 = getStructCoordInRegion(random, value1);
 		value2 = getStructCoordInRegion(random, value2);
 		return new CoordinatesInWorld(value1, value2);
@@ -182,7 +181,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		// @formatter:on
 	}
 
-	private int getStructCoordInRegion(JRand random, int value) {
+	private int getStructCoordInRegion(FastRand random, int value) {
 		int result = value * spacing;
 		if (isTriangular) {
 			result += (random.nextInt(spacing - separation)
@@ -192,7 +191,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		}
 		return result;
 	}
-	
+
 	private int getIntersectingRegionChunks() {
 		return (resolution.getStepsPerFragment() + spacing - 1) / spacing * spacing;
 	}

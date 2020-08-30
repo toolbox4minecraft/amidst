@@ -9,7 +9,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 @Immutable
 public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
@@ -23,13 +23,13 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 	 * intersecting a fragment.
 	 */
 	private static final int INTERSECTING_REGION_CHUNKS = (RESOLUTION.getStepsPerFragment() + SPACING - 1) / SPACING * SPACING;
-	
+
 	private final long seed;
 
 	public NetherFortressProducer_Original(long seed) {
 		this.seed = seed;
 	}
-	
+
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, Void additionalData) {
 		for (int xRelativeToFragment = 0; xRelativeToFragment <= INTERSECTING_REGION_CHUNKS; xRelativeToFragment += SPACING) {
@@ -45,16 +45,16 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 			Consumer<WorldIcon> consumer,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
-		
+
 		int x = xRelativeToFragment + (int) corner.getXAs(RESOLUTION);
 		int y = yRelativeToFragment + (int) corner.getYAs(RESOLUTION);
-		
+
 		CoordinatesInWorld checkedLocation = getCheckedLocation(x, y);
-		
+
 		if(checkedLocation != null) {
 			int possibleX = (int) checkedLocation.getX();
 			int possibleY = (int) checkedLocation.getY();
-			
+
 			CoordinatesInWorld coordinates = createCoordinates(possibleX, possibleY);
 			if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
 				consumer.accept(
@@ -73,18 +73,18 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 		long yInWorld = RESOLUTION.convertFromThisToWorld(structY);
 		return new CoordinatesInWorld(xInWorld + OFFSET_IN_WORLD, yInWorld + OFFSET_IN_WORLD);
 	}
-	
+
 	private CoordinatesInWorld getCheckedLocation(int x, int y) {
 		int i = x >> 4;
 		int j = y >> 4;
-		
-		JRand random = new JRand(i ^ j << 4 ^ seed);
-		random.nextInt();
-		
+
+		FastRand random = new FastRand(i ^ j << 4 ^ seed);
+		random.advance();
+
 		if(random.nextInt(3) == 0) {
 			return new CoordinatesInWorld((i << 4) + 4 + random.nextInt(8), (j << 4) + 4 + random.nextInt(8));
 		}
-		
+
 		return null;
 	}
 }

@@ -7,7 +7,7 @@ import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.RegionRandomLocationChecker;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
-import kaptainwutax.seedutils.lcg.rand.JRand;
+import amidst.util.FastRand;
 
 public class NetherFortressProducer_Scattered extends RegionalStructureProducer<Void> {
 	private static final Resolution RESOLUTION = Resolution.NETHER_CHUNK;
@@ -23,7 +23,7 @@ public class NetherFortressProducer_Scattered extends RegionalStructureProducer<
 			byte spacing,
 			byte separation,
 			boolean buggyStructureCoordinateMath,
-			Function<JRand, Boolean> randomFunction) {
+			Function<FastRand, Boolean> randomFunction) {
 		
 		RegionRandomLocationChecker regionRandomChecker = new RegionRandomLocationChecker(randomFunction);
 		NetherFortressProducer_Scattered producer = new NetherFortressProducer_Scattered(
