@@ -8,8 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import amidst.util.FastRand;
-
 import amidst.fragment.layer.LayerIds;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -49,6 +47,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.util.FastRand;
 
 public enum DefaultVersionFeatures {
 	;
@@ -355,6 +354,9 @@ public enum DefaultVersionFeatures {
 					getValidBiomesForStrongholdSinceV13w36a(features.get(FeatureKey.BIOME_LIST))
 				)).sinceExtend(RecognisedVersion._18w06a,
 					DefaultBiomes.mushroomIslandShore
+				).sinceRemove(RecognisedVersion._20w21a, // MC-199298
+					DefaultBiomes.bambooJungle,
+					DefaultBiomes.bambooJungleHills
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.VILLAGE_PRODUCER, VersionFeature.fixed(features ->

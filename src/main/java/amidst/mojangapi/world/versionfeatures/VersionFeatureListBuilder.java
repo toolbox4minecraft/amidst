@@ -33,6 +33,16 @@ public class VersionFeatureListBuilder<V, B extends VersionFeatureListBuilder<V,
 		});
 	}
 
+	@SafeVarargs
+	public final B sinceRemove(RecognisedVersion since, V... removedValues) {
+		return sinceUpdate(since, oldValue -> {
+			for (V removedValue: removedValues) {
+				oldValue.remove(removedValue);
+			}
+			return oldValue;
+		});
+	}
+
 	@Override
 	public VersionFeature<List<V>> construct() {
 		return super.construct().andThen(Collections::unmodifiableList);
