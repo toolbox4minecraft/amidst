@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import kaptainwutax.seedutils.lcg.rand.JRand;
+
 import amidst.fragment.layer.LayerIds;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -42,13 +44,11 @@ import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
-import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
-import kaptainwutax.seedutils.lcg.rand.JRand;
 
 public enum DefaultVersionFeatures {
 	;
@@ -62,8 +62,6 @@ public enum DefaultVersionFeatures {
 							.withValue(MINECRAFT_WORLD, minecraftWorld);
 		}
 	}
-	
-	private static final WorldIconProducer<?> NOOP_PRODUCER = new NoopProducer();
 
 	// @formatter:off
 	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                  = FeatureKey.make();
@@ -107,7 +105,6 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT = FeatureKey.make();
 	private static final FeatureKey<Integer>         BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET  = FeatureKey.make();
 
-	@SuppressWarnings("unchecked")
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
 			.with(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE,
 				VersionFeature.fixed(features -> new BiomeDataOracle(
@@ -209,7 +206,7 @@ public enum DefaultVersionFeatures {
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.NETHER_FORTRESS_PRODUCER, VersionFeature.<WorldIconProducer<Void>> builder()
-				.init((WorldIconProducer<Void>) NOOP_PRODUCER)
+				.init(new NoopProducer<>())
 				.since(RecognisedVersion._b1_9_pre1,
 					VersionFeature.fixed(features -> new NetherFortressProducer_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._20w16a,
@@ -230,9 +227,9 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._1_16_pre3,
 					r -> r.nextInt(5) < 2
 				).construct())
-			
+
 			.with(FeatureKey.BASTION_REMNANT_PRODUCER, VersionFeature.<WorldIconProducer<Void>> builder()
-				.init((WorldIconProducer<Void>) NOOP_PRODUCER)
+				.init(new NoopProducer<>())
 				.since(RecognisedVersion._20w16a,
 					VersionFeature.fixed(features ->
 						BastionRemnantProducer.create(
@@ -261,7 +258,7 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._1_16_pre3,
 					r -> r.nextInt(5) >= 2
 				).construct())
-			
+
 			.with(NETHER_BUILDING_SALT, VersionFeature.constant(30084232L))
 			.with(NETHER_BUILDING_SPACING, VersionFeature.<Byte> builder()
 				.init(
@@ -275,7 +272,7 @@ public enum DefaultVersionFeatures {
 			.with(NETHER_BUILDING_SEPARATION, VersionFeature.constant((byte) 4))
 
 			.with(FeatureKey.END_CITY_PRODUCER, VersionFeature.<WorldIconProducer<List<EndIsland>>> builder()
-				.init((WorldIconProducer<List<EndIsland>>) NOOP_PRODUCER)
+				.init(new NoopProducer<>())
 				.since(RecognisedVersion._15w31c,
 					VersionFeature.fixed(features ->
 						new RegionalStructureProducer<List<EndIsland>>(
@@ -428,9 +425,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.DESERT),
+				DefaultWorldIconTypes.DESERT,
 				Dimension.OVERWORLD,
-				false,
 				DESERT_TEMPLE_SALT))
 			.with(DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init(
@@ -447,9 +443,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				IGLOO_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.IGLOO),
+				DefaultWorldIconTypes.IGLOO,
 				Dimension.OVERWORLD,
-				false,
 				IGLOO_SALT))
 			.with(IGLOO_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
@@ -469,9 +464,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
+				DefaultWorldIconTypes.JUNGLE,
 				Dimension.OVERWORLD,
-				false,
 				JUNGLE_TEMPLE_SALT))
 			.with(JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
@@ -494,9 +488,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				WITCH_HUT_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
+				DefaultWorldIconTypes.WITCH,
 				Dimension.OVERWORLD,
-				false,
 				WITCH_HUT_SALT))
 			.with(WITCH_HUT_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
@@ -579,9 +572,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				OCEAN_RUINS_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
+				DefaultWorldIconTypes.OCEAN_RUINS,
 				Dimension.OVERWORLD,
-				false,
 				OCEAN_RUINS_SALT,
 				OCEAN_RUINS_SPACING,
 				OCEAN_RUINS_SEPARATION))
@@ -618,9 +610,8 @@ public enum DefaultVersionFeatures {
 				Resolution.CHUNK,
 				8,
 				SHIPWRECK_VALID_MIDDLE_CHUNK_BIOMES,
-				new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
+				DefaultWorldIconTypes.SHIPWRECK,
 				Dimension.OVERWORLD,
-				false,
 				SHIPWRECK_SALT,
 				SHIPWRECK_SPACING,
 				SHIPWRECK_SEPARATION))
@@ -733,7 +724,7 @@ public enum DefaultVersionFeatures {
 	private static long getWorldSeed(VersionFeatures features) {
 		return features.get(FeatureKey.WORLD_OPTIONS).getWorldSeed().getLong();
 	}
-	
+
 	private static BiomeDataOracle getBiomeOracle(VersionFeatures features, Dimension dimension) {
 		switch (dimension) {
 		case OVERWORLD:
@@ -752,9 +743,8 @@ public enum DefaultVersionFeatures {
 			Resolution resolution,
 			int offsetInWorld,
 			FeatureKey<List<Biome>> validBiomes,
-			WorldIconTypeProvider<Void> provider,
+			DefaultWorldIconTypes iconType,
 			Dimension dimension,
-			boolean displayDimension,
 			FeatureKey<Long> salt,
 			FeatureKey<Byte> spacing,
 			FeatureKey<Byte> separation) {
@@ -764,9 +754,9 @@ public enum DefaultVersionFeatures {
 				offsetInWorld,
 				getBiomeOracle(features, dimension),
 				validBiomes == null ? null : features.get(validBiomes),
-				provider,
+				new ImmutableWorldIconTypeProvider(iconType),
 				dimension,
-				displayDimension,
+				false,
 				getWorldSeed(features),
 				features.get(salt),
 				features.get(spacing),
@@ -780,9 +770,8 @@ public enum DefaultVersionFeatures {
 			Resolution resolution,
 			int offsetInWorld,
 			FeatureKey<List<Biome>> validBiomes,
-			WorldIconTypeProvider<Void> provider,
+			DefaultWorldIconTypes iconType,
 			Dimension dimension,
-			boolean displayDimension,
 			FeatureKey<Long> salt) {
 		return VersionFeature.fixed(features ->
 			new ScatteredFeaturesProducer(
@@ -790,9 +779,9 @@ public enum DefaultVersionFeatures {
 				offsetInWorld,
 				getBiomeOracle(features, dimension),
 				validBiomes == null ? null : features.get(validBiomes),
-				provider,
+				new ImmutableWorldIconTypeProvider(iconType),
 				dimension,
-				displayDimension,
+				false,
 				getWorldSeed(features),
 				features.get(salt),
 				features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
