@@ -49,6 +49,8 @@ public class EndIslandOracle {
 	 */
 	private static final int OUTER_LANDS_DISTANCE_IN_CHUNKS = 64;
 
+	private static final long OUTER_LANDS_DISTANCE_IN_BLOCKS = Resolution.CHUNK.convertFromThisToWorld(OUTER_LANDS_DISTANCE_IN_CHUNKS);
+
 	private final SimplexNoise noiseFunction;
 	private final long worldSeed;
 	private final boolean canGenerateSmallIslands;
@@ -58,9 +60,9 @@ public class EndIslandOracle {
 		this.worldSeed = worldSeed;
 		this.canGenerateSmallIslands = canGenerateSmallIslands;
 	}
-	
+
 	public static int getBiomeAtBlock(long x, long y, List<LargeEndIsland> largeIslands) {		
-		if (x * x + y * y <= 1048576L) {
+		if (isInRange(x, y, OUTER_LANDS_DISTANCE_IN_BLOCKS)) {
 			return DefaultBiomes.theEnd;
 		} else {
 			float influence = getInfluenceAtBlock(x, y, largeIslands);
@@ -73,7 +75,7 @@ public class EndIslandOracle {
 			}
 		}
 	}
-	
+
 	public static float getInfluenceAtBlock(long x, long y, List<LargeEndIsland> largeIslands) {
 		float highestInfluence = -100.0f;
 		
@@ -96,7 +98,7 @@ public class EndIslandOracle {
 				steps,
 				steps);
 	}
-	
+
 	/**
 	 * Returns a list of all islands that might be touching a chunk-area.
 	 */
@@ -109,7 +111,7 @@ public class EndIslandOracle {
 		List<SmallEndIsland> smallEndIslands = findSurroundingSmallIslands(chunkX, chunkY, chunksPerFragmentX, chunksPerFragmentY, largeEndIslands);
 		return new EndIslandList(smallEndIslands, largeEndIslands);
 	}
-	
+
 	public List<LargeEndIsland> getLargeIslandsAt(CoordinatesInWorld corner) {
 		int steps = Resolution.CHUNK.getStepsPerFragment();
 		return findSurroundingLargeIslands(
@@ -182,17 +184,11 @@ public class EndIslandOracle {
 	    // Convert coordinates to long to guard against overflow
 		return (int) ((Math.abs(chunkX) * 3439 + Math.abs(chunkY) * 147) % 13 + 9);
 	}
-
-    /**
-     * Is the point (x, y) inside the disk of radius d centered at the origin?
-     */
-    private boolean isInRange(long x, long y, int d) {
-        // Guard against overflow
-        if (x < -d || x > d || y < -d || y > d)
-            return false;
-        return x * x + y * y <= d * d;
-    }
 	
+	private static boolean isInRange(long x, long y, long d) {
+		return x * x + y * y <= d * d;
+	}
+
 	private List<SmallEndIsland> findSurroundingSmallIslands(
 			long chunkX,
 			long chunkY,
@@ -213,10 +209,10 @@ public class EndIslandOracle {
 		}
 		return result;
 	}
-	
+
 	private static final int SMALL_ISLANDS_FEATURE_INDEX = 0;
 	private static final int SMALL_ISLANDS_GENERATION_STAGE = 0;
-    
+   
     private List<SmallEndIsland>  getSmallIslandsInChunk(long chunkX, long chunkY, List<LargeEndIsland> largeIslands) {
 		long blockX = chunkX << 4;
 		long blockY = chunkY << 4;
@@ -261,7 +257,7 @@ public class EndIslandOracle {
 		}
 		return null;
 	}
-    
+
     public boolean canGenerateSmallIslands() {
     	return canGenerateSmallIslands;
     }
