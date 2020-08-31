@@ -1,8 +1,7 @@
 package amidst.mojangapi.world.oracle;
 
-import java.util.Random;
-
 import amidst.documentation.Immutable;
+import amidst.util.FastRand;
 
 @Immutable
 public class SlimeChunkOracle {
@@ -13,7 +12,7 @@ public class SlimeChunkOracle {
 	}
 
 	public boolean isSlimeChunk(long chunkX, long chunkY) {
-		Random random = new Random(getSeed((int) chunkX, (int) chunkY));
+		FastRand random = new FastRand(getSeed((int) chunkX, (int) chunkY));
 		return isSlimeChunk(random);
 	}
 
@@ -26,7 +25,7 @@ public class SlimeChunkOracle {
 				^ 0x3ad8025f;
 	}
 
-	private boolean isSlimeChunk(Random random) {
+	private boolean isSlimeChunk(FastRand random) {
 		return random.nextInt(10) == 0;
 	}
 }

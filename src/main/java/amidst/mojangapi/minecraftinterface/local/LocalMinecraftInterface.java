@@ -1,10 +1,8 @@
 package amidst.mojangapi.minecraftinterface.local;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -25,6 +23,7 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.ReflectionUtils;
 import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
@@ -84,11 +83,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    	Object overworldBiomeProvider;
 	    	Object netherBiomeProvider;
 	    	if (dimensionSettingsClass == null) {
-	    		Map<?, ?> generators = (Map<?, ?>) callParameterlessMethodReturning(worldSettings, Map.class);
+	    		Map<?, ?> generators = (Map<?, ?>) ReflectionUtils.callParameterlessMethodReturning(worldSettings, Map.class);
 	    		overworldBiomeProvider = getBiomesFromGeneratorsMap(generators, overworldResourceKey);
 	    		netherBiomeProvider = getBiomesFromGeneratorsMap(generators, netherResourceKey);
 	    	} else {
-	    		Object dimensions = callParameterlessMethodReturning(worldSettings, registryClass.getClazz());
+	    		Object dimensions = ReflectionUtils.callParameterlessMethodReturning(worldSettings, registryClass.getClazz());
 	    		overworldBiomeProvider = getBiomesFromDimensionRegistry(dimensions, overworldResourceKey);
 	    		netherBiomeProvider = getBiomesFromDimensionRegistry(dimensions, netherResourceKey);
 	    	}
@@ -145,7 +144,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			registry.callMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, key)
 		);
 		Object generator = dimension.getFieldValue(SymbolicNames.FIELD_DIMENSION_SETTINGS_GENERATOR);
-		return callParameterlessMethodReturning(generator, noiseBiomeProviderClass.getClazz());
+		return ReflectionUtils.callParameterlessMethodReturning(generator, noiseBiomeProviderClass.getClazz());
 	}
 
 	private Object getBiomesFromGeneratorsMap(Map<?, ?> generators, Object key)
@@ -153,7 +152,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		String stringKey = key.toString();
 		for (Map.Entry<?, ?> entry: generators.entrySet()) {
 			if(stringKey.equals(entry.getKey().toString())) {
-				return callParameterlessMethodReturning(entry.getValue(), noiseBiomeProviderClass.getClazz());
+				return ReflectionUtils.callParameterlessMethodReturning(entry.getValue(), noiseBiomeProviderClass.getClazz());
 			}
 		}
 		return null;
@@ -205,9 +204,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
         	stopAllExecutors();
 
-            registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
-            biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
-            biomeZoomerGetBiomeMethod = getMethodHandle(biomeZoomerClass, SymbolicNames.METHOD_BIOME_ZOOMER_GET_BIOME);
+            registryGetIdMethod = ReflectionUtils.getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
+            biomeProviderGetBiomeMethod = ReflectionUtils.getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
+            biomeZoomerGetBiomeMethod = ReflectionUtils.getMethodHandle(biomeZoomerClass, SymbolicNames.METHOD_BIOME_ZOOMER_GET_BIOME);
 
             overworldResourceKey = createResourceKey("overworld");
             netherResourceKey = createResourceKey("the_nether");
@@ -248,34 +247,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, MinecraftInterfaceException {
 		return resourceKeyClass.callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key).getObject();
-	}
-
-	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
-	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
-	    MethodHandle mh = MethodHandles.lookup().unreflect(rawMethod);
-	    return mh.asType(mh.type().erase());
-	}
-
-	private static Object callParameterlessMethodReturning(Object obj, Class<?> retClass)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, MinecraftInterfaceException {
-		Method candidate = null;
-		for (Method meth: obj.getClass().getMethods()) {
-			if (((meth.getModifiers() & Modifier.STATIC) == 0)
-			&& meth.getParameterCount() == 0
-			&& retClass.isAssignableFrom(meth.getReturnType())) {
-				if (candidate == null) {
-					candidate = meth;
-				} else {
-					throw new MinecraftInterfaceException("found multiple methods returning " + retClass.getCanonicalName()
-						+ " on class " + obj.getClass().getCanonicalName());
-				}
-			}
-		}
-		if (candidate == null) {
-			throw new MinecraftInterfaceException("couldn't find method returning " + retClass.getCanonicalName()
-				+ " on class " + obj.getClass().getCanonicalName());
-		}
-		return candidate.invoke(obj);
 	}
 
 	private class World implements MinecraftInterface.World {
