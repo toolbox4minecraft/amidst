@@ -15,9 +15,7 @@ import amidst.mojangapi.world.oracle.end.EndIslandList;
 import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 import amidst.mojangapi.world.oracle.end.LargeEndIsland;
 import amidst.mojangapi.world.oracle.end.SmallEndIsland;
-import kaptainwutax.seedutils.mc.ChunkRand;
-import kaptainwutax.seedutils.mc.MCVersion;
-
+import amidst.util.FastRand;
 import static amidst.mojangapi.world.icon.type.DefaultWorldIconTypes.END_GATEWAY;
 import static amidst.mojangapi.world.icon.type.DefaultWorldIconTypes.POSSIBLE_END_GATEWAY;;
 
@@ -45,23 +43,23 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 	 * Used as a cache only for the spawn gateways.
 	 */
 	private final EndSpawnGatewayProducer spawnProducer;
-	private final long seed;
+	private final long worldSeed;
 	
 	private final boolean generateDecoratorGateways;
 	private final int featureIndex;
 	private final int generationStage;
 
-	public EndGatewayProducer(long seed, int featureIndex, int generationStage, EndIslandOracle oracle) {
+	public EndGatewayProducer(long worldSeed, int featureIndex, int generationStage, EndIslandOracle oracle) {
 		this.spawnProducer = new EndSpawnGatewayProducer(oracle);
-		this.seed = seed;
+		this.worldSeed = worldSeed;
 		this.featureIndex = featureIndex;
 		this.generationStage = generationStage;
 		this.generateDecoratorGateways = true;
 	}
 	
-	public EndGatewayProducer(long seed, EndIslandOracle oracle) {
+	public EndGatewayProducer(long worldSeed, EndIslandOracle oracle) {
 		this.spawnProducer = new EndSpawnGatewayProducer(oracle);
-		this.seed = seed;
+		this.worldSeed = worldSeed;
 		this.featureIndex = 0;
 		this.generationStage = 0;
 		this.generateDecoratorGateways = false;
@@ -107,11 +105,15 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 	public CoordinatesInWorld tryGetValidLocationFromChunk(long chunkX, long chunkY, EndIslandList endIslands, CoordinatesInWorld corner) {
 		
 		if((chunkX * chunkX + chunkY * chunkY) > 4096) {
-			ChunkRand rand = new ChunkRand();
 			long blockX = chunkX << 4;
 			long blockY = chunkY << 4;
 			
-			rand.setDecoratorSeed(seed, (int) blockX, (int) blockY, featureIndex, generationStage, MCVersion.v1_13);
+			FastRand rand = new FastRand(worldSeed);
+			long a = rand.nextLong() | 1L;
+			long b = rand.nextLong() | 1L;
+			long populationSeed = (long)(int) blockX * a + (long)(int) blockY * b ^ worldSeed; // we do the long -> int -> long conversion to replicate what minecraft does.
+			long decoratorSeed = populationSeed + featureIndex + 10000 * generationStage;
+			rand.setSeed(decoratorSeed);
 			
 			if(rand.nextInt(END_GATEWAY_CHANCE) == 0) {
 				for(LargeEndIsland largeIsland : endIslands.getLargeIslands()) {

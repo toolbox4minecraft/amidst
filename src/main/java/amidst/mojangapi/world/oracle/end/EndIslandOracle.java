@@ -8,22 +8,19 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SimplexNoise;
 import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
-
-import kaptainwutax.seedutils.lcg.rand.JRand;
-import kaptainwutax.seedutils.mc.ChunkRand;
-import kaptainwutax.seedutils.mc.MCVersion;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class EndIslandOracle {
-	public static EndIslandOracle from(long seed, boolean canGenerateSmallIslands) {
-		return new EndIslandOracle(createNoiseFunction(seed), seed, canGenerateSmallIslands);
+	public static EndIslandOracle from(long worldSeed, boolean canGenerateSmallIslands) {
+		return new EndIslandOracle(createNoiseFunction(worldSeed), worldSeed, canGenerateSmallIslands);
 	}
 
 	/**
 	 * Returns the noise function using the current seed.
 	 */
-	private static SimplexNoise createNoiseFunction(long seed) {
-		JRand random = new JRand(seed);
+	private static SimplexNoise createNoiseFunction(long worldSeed) {
+		FastRand random = new FastRand(worldSeed);
 		// Mimics the side-effects to the random number generator caused by Minecraft.
 		// Past 1.13, it just skips the random 17292 times.
 		random.advance(17292);
@@ -53,12 +50,12 @@ public class EndIslandOracle {
 	private static final int OUTER_LANDS_DISTANCE_IN_CHUNKS = 64;
 
 	private final SimplexNoise noiseFunction;
-	private final long seed;
+	private final long worldSeed;
 	private final boolean canGenerateSmallIslands;
 
-	public EndIslandOracle(SimplexNoise noiseFunction, long seed, boolean canGenerateSmallIslands) {
+	public EndIslandOracle(SimplexNoise noiseFunction, long worldSeed, boolean canGenerateSmallIslands) {
 		this.noiseFunction = noiseFunction;
-		this.seed = seed;
+		this.worldSeed = worldSeed;
 		this.canGenerateSmallIslands = canGenerateSmallIslands;
 	}
 	
@@ -216,13 +213,20 @@ public class EndIslandOracle {
 		}
 		return result;
 	}
+	
+	private static final int SMALL_ISLANDS_FEATURE_INDEX = 0;
+	private static final int SMALL_ISLANDS_GENERATION_STAGE = 0;
     
     private List<SmallEndIsland>  getSmallIslandsInChunk(long chunkX, long chunkY, List<LargeEndIsland> largeIslands) {
 		long blockX = chunkX << 4;
 		long blockY = chunkY << 4;
 		if (getBiomeAtBlock(blockX, blockY, largeIslands) == DefaultBiomes.theEndLow) {
-			ChunkRand rand = new ChunkRand();
-			rand.setDecoratorSeed(seed, (int) blockX, (int) blockY, 0, 0, MCVersion.v1_13);
+			FastRand rand = new FastRand(worldSeed);
+			long a = rand.nextLong() | 1L;
+			long b = rand.nextLong() | 1L;
+			long populationSeed = (long)(int) blockX * a + (long)(int) blockY * b ^ worldSeed; // we do the long -> int -> long conversion to replicate what minecraft does.
+			long decoratorSeed = populationSeed + SMALL_ISLANDS_FEATURE_INDEX + 10000 * SMALL_ISLANDS_GENERATION_STAGE;
+			rand.setSeed(decoratorSeed);
 			
 			List<SmallEndIsland> smallIslands = new ArrayList<>();
 			
