@@ -124,10 +124,5 @@
 			<scope>provided</scope>
 			<type>maven-plugin</type>
 		</dependency>
-		<dependency>
-			<groupId>com.github.KaptainWutax</groupId>
-			<artifactId>SeedUtils</artifactId> 
-			<version>master-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 </project>
