@@ -1,11 +1,11 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class BuriedTreasureLocationChecker extends AllValidLocationChecker {
@@ -33,8 +33,7 @@ public class BuriedTreasureLocationChecker extends AllValidLocationChecker {
 
 		@Override
 		public boolean isValidLocation(int x, int y) {
-			Random random = new Random();
-			random.setSeed(x*MAGIC_NUMBER_FOR_SEED_1 + y*MAGIC_NUMBER_FOR_SEED_2 + seed);
+			FastRand random = new FastRand(x*MAGIC_NUMBER_FOR_SEED_1 + y*MAGIC_NUMBER_FOR_SEED_2 + seed);
 			return random.nextFloat() < chance;
 		}
 	}

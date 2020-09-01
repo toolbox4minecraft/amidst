@@ -1,7 +1,6 @@
 package amidst.mojangapi.world.oracle;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,6 +16,7 @@ import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class BiomeDataOracle {
@@ -84,7 +84,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	public boolean isValidBiomeForStructureAtMiddleOfChunk(int chunkX, int chunkY, int size, List<Biome> validBiomes) {
+	public boolean isValidBiomeForStructureAtMiddleOfChunk(int chunkX, int chunkY, int size, List<Biome> validBiomes) { //FIXME: 1.16 changed to quarter res?
 		return isValidBiomeForStructure(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), size, validBiomes);
 	}
 
@@ -118,11 +118,11 @@ public class BiomeDataOracle {
 			int chunkY,
 			int size,
 			List<Biome> validBiomes,
-			Random random) {
+			FastRand random) {
 		return findValidLocation(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), size, validBiomes, random);
 	}
 
-	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
+	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, FastRand random) {
 		return doFindValidLocation(x, y, size, validBiomes, random, accurateLocationCount);
 	}
 
@@ -131,7 +131,7 @@ public class BiomeDataOracle {
 	// succeeded; it is now always incremented.
 	private CoordinatesInWorld doFindValidLocation(
 			int x, int y, int size, List<Biome> validBiomes,
-			Random random, boolean accurateLocationCount) {
+			FastRand random, boolean accurateLocationCount) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
