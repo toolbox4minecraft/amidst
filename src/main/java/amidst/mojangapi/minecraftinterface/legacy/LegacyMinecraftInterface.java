@@ -168,9 +168,7 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 				throws MinecraftInterfaceException {
 			try {
 				Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
-				SymbolicObject quarterResolutionGen = new SymbolicObject(genLayerClass, genLayers[0]);
-				SymbolicObject fullResolutionGen = new SymbolicObject(genLayerClass, genLayers[1]);
-				return new WorldAccessor(quarterResolutionGen, fullResolutionGen);
+				return new WorldAccessor(genLayers[0], genLayers[1]);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new MinecraftInterfaceException("unable to create world", e);
 			}

@@ -248,10 +248,8 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 					getGenSettings(generatorOptions).getObject()
 				);
 				// @formatter:on
-
-				SymbolicObject quarterResolutionGen = new SymbolicObject(genLayerClass, genLayers[0]);
-				SymbolicObject fullResolutionGen = new SymbolicObject(genLayerClass, genLayers[1]);
-				return new WorldAccessor(quarterResolutionGen, fullResolutionGen);
+				
+				return new WorldAccessor(genLayers[0], genLayers[1]);
 
 			} catch (
 					IllegalAccessException
