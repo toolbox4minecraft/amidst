@@ -1,11 +1,11 @@
 package amidst.mojangapi.world.icon.producer;
 
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.util.FastRand;
 
 /**
  * This is the fixed version of the 128 stronghold algorithm. It introduced in
@@ -25,7 +25,7 @@ public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128
 	}
 
 	@Override
-	protected double getNextValue_startAngle(double currentValue, Random random) {
+	protected double getNextValue_startAngle(double currentValue, FastRand random) {
 		// In this algorithm, the getInitialValue_startAngle() formula is used
 		// at the start of each new ring.
 		return currentValue + getInitialValue_startAngle(random);
@@ -37,7 +37,7 @@ public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128
 	}
 
 	@Override
-	protected double getNextValue_distance(int currentRing, Random random) {
+	protected double getNextValue_distance(int currentRing, FastRand random) {
 		return (4.0 * DISTANCE_IN_CHUNKS) + (6.0 * currentRing * DISTANCE_IN_CHUNKS)
 				+ (random.nextDouble() - 0.5) * (DISTANCE_IN_CHUNKS * 2.5);
 	}
@@ -47,7 +47,7 @@ public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128
 			int currentValue,
 			int currentRing,
 			int structuresRemaining,
-			Random random) {
+			FastRand random) {
 		int result = currentValue + 2 * currentValue / (currentRing + 1);
 		result = Math.min(result, structuresRemaining);
 		return result;

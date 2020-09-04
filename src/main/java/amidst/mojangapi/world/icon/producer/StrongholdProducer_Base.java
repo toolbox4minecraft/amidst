@@ -2,7 +2,6 @@ package amidst.mojangapi.world.icon.producer;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
@@ -11,6 +10,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
@@ -30,7 +30,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	@Override
 	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<>();
-		Random random = new Random(seed);
+		FastRand random = new FastRand(seed);
 		int ring = getInitialValue_ring();
 		int structuresPerRing = STRUCTURES_ON_FIRST_RING;
 		int currentRingStructureCount = 0;
@@ -67,7 +67,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private CoordinatesInWorld findStronghold(Random random, int chunkX, int chunkY) {
+	private CoordinatesInWorld findStronghold(FastRand random, int chunkX, int chunkY) {
 		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY, 112, validBiomes, random);
 	}
 
@@ -110,12 +110,12 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
-	protected double getInitialValue_startAngle(Random random) {
+	protected double getInitialValue_startAngle(FastRand random) {
 		return random.nextDouble() * 3.141592653589793D * 2.0D;
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
-	protected double getNextValue_startAngle(double currentValue, Random random) {
+	protected double getNextValue_startAngle(double currentValue, FastRand random) {
 		return currentValue;
 	}
 
@@ -125,7 +125,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
-	protected double getNextValue_distance(int currentRing, Random random) {
+	protected double getNextValue_distance(int currentRing, FastRand random) {
 		return (1.25D * currentRing + random.nextDouble()) * (DISTANCE_IN_CHUNKS * currentRing);
 	}
 
@@ -141,7 +141,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 			int currentValue,
 			int currentRing,
 			int structuresRemaining,
-			Random random) {
+			FastRand random) {
 		return currentValue + currentValue + random.nextInt(currentValue);
 	}
 }
