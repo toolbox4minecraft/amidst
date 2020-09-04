@@ -20,7 +20,7 @@ import amidst.util.FastRand;
 
 @ThreadSafe
 public class BiomeDataOracle {
-	private final MinecraftInterface.World minecraftWorld;
+	private final MinecraftInterface.WorldAccessor worldAccessor;
 	private final Dimension dimension;
 	private final BiomeList biomeList;
 	private final boolean quarterResOverride;
@@ -33,8 +33,8 @@ public class BiomeDataOracle {
 		public boolean accurateLocationCount = true;
 	}
 
-	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, Dimension dimension, BiomeList biomeList, Config config) {
-		this.minecraftWorld = minecraftWorld;
+	public BiomeDataOracle(MinecraftInterface.WorldAccessor worldAccessor, Dimension dimension, BiomeList biomeList, Config config) {
+		this.worldAccessor = worldAccessor;
 		this.dimension = dimension;
 		this.biomeList = biomeList;
 		this.quarterResOverride = config.quarterResOverride;
@@ -58,7 +58,7 @@ public class BiomeDataOracle {
 		int left = (int) corner.getXAs(resolution);
 		int top = (int) corner.getYAs(resolution);
 		try {
-			return minecraftWorld.getBiomeData(dimension, left, top, width, height, useQuarterResolution, biomeDataMapper);
+			return worldAccessor.getBiomeData(dimension, left, top, width, height, useQuarterResolution, biomeDataMapper);
 		} catch (MinecraftInterfaceException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
@@ -179,12 +179,12 @@ public class BiomeDataOracle {
 
 	public Biome getBiomeAt(int x, int y, boolean useQuarterResolution)
 			throws UnknownBiomeIdException, MinecraftInterfaceException {
-		int biomeIndex = minecraftWorld.getBiomeData(dimension, x, y, 1, 1, useQuarterResolution, biomeData -> biomeData[0]);
+		int biomeIndex = worldAccessor.getBiomeData(dimension, x, y, 1, 1, useQuarterResolution, biomeData -> biomeData[0]);
 		return biomeList.getById(biomeIndex);
 	}
 
 	private<T> T getQuarterResolutionBiomeData(int x, int y, int width, int height, Function<int[], T> biomeDataMapper)
 			throws MinecraftInterfaceException {
-		return minecraftWorld.getBiomeData(dimension, x, y, width, height, true, biomeDataMapper);
+		return worldAccessor.getBiomeData(dimension, x, y, width, height, true, biomeDataMapper);
 	}
 }

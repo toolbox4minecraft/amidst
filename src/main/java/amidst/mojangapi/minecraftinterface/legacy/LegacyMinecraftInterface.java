@@ -33,7 +33,6 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	private final RecognisedVersion recognisedVersion;
 
     private boolean isInitialized = false;
-	private boolean isIntCacheInUse = false;
 
 	private MethodHandle resetIntCacheMethod;
 	private MethodHandle getIntsMethod;
@@ -63,34 +62,32 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 			recognisedVersion);
 	}
 
-	// Only one thread can manipulate the Minecraft int cache at a time
-	private synchronized int[] getBiomeData(int x, int y, int width, int height, Object biomeGenerator)
-			throws MinecraftInterfaceException {
-		if (isIntCacheInUse) {
-			throw new IllegalStateException("This thread is already generating biome data");
-		}
-		isIntCacheInUse = true;
+	@Override
+	public synchronized MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
 		try {
-			resetIntCacheMethod.invokeExact();
-			return (int[]) getIntsMethod.invokeExact(biomeGenerator, x, y, width, height);
-		} catch (Throwable e) {
-			throw new MinecraftInterfaceException("unable to get biome data", e);
-		} finally {
-			isIntCacheInUse = false;
+			initializeIfNeeded();
+			return new WorldConfig();
+		} catch (IllegalArgumentException e) {
+			throw new MinecraftInterfaceException("unable to create config", e);
 		}
 	}
 
-	@Override
-	public World createWorld(long seed, WorldType worldType, String generatorOptions)
+	// Only one thread can manipulate the Minecraft int cache at a time
+	private synchronized int[] getBiomeData(int x, int y, int width, int height, Object biomeGenerator)
 			throws MinecraftInterfaceException {
 		try {
-			initializeIfNeeded();
-
-			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
-			return new World(genLayers[0], genLayers[1]);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new MinecraftInterfaceException("unable to create world", e);
+			resetIntCacheMethod.invokeExact();
+			int[] biomeInts = (int[]) getIntsMethod.invokeExact(biomeGenerator, x, y, width, height);
+			return cloneArray(biomeInts);
+		} catch (Throwable e) {
+			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
+	}
+
+	private static int[] cloneArray(int[] originalArray) {
+		int[] newArray = new int[originalArray.length];
+		System.arraycopy(originalArray, 0, newArray, 0, newArray.length);
+		return newArray;
 	}
 
 	private synchronized void initializeIfNeeded() throws MinecraftInterfaceException {
@@ -99,7 +96,11 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	    }
 	    
 	    try {
-	    	initializeBlock();
+	    	// Minecraft 1.8 and higher require block initialization to be called before
+	    	// creating a biome generator.
+	    	if (blockInitClass != null) {
+				blockInitClass.callStaticMethod(LegacySymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
+			}
 
 	    	resetIntCacheMethod = ReflectionUtils.getMethodHandle(intCacheClass, LegacySymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
 	    	getIntsMethod = ReflectionUtils.getMethodHandle(genLayerClass, LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS);
@@ -108,16 +109,6 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
         }
 	    
 	    isInitialized = true;
-	}
-
-	/**
-	 * Minecraft 1.8 and higher require block initialization to be called before
-	 * creating a biome generator.
-	 */
-	private synchronized void initializeBlock() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		if (blockInitClass != null) {
-			blockInitClass.callStaticMethod(LegacySymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
-		}
 	}
 
 	private Object[] getGenLayers(long seed, WorldType worldType, String generatorOptions)
@@ -164,12 +155,31 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
+	
+	private class WorldConfig implements MinecraftInterface.WorldConfig {
+		
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
+		}
 
-	private class World implements MinecraftInterface.World {
-		private final Object quarterResolutionBiomeGenerator;
-		private final Object fullResolutionBiomeGenerator;
+		@Override
+		public synchronized WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+				throws MinecraftInterfaceException {
+			try {
+				Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
+				return new WorldAccessor(genLayers[0], genLayers[1]);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new MinecraftInterfaceException("unable to create world", e);
+			}
+		}
+	}
 
-		private World(Object quarterResolutionGen, Object fullResolutionGen) {
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
+	private final Object quarterResolutionBiomeGenerator;
+	private final Object fullResolutionBiomeGenerator;
+
+		private WorldAccessor(Object quarterResolutionGen, Object fullResolutionGen) {
 			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
 			this.fullResolutionBiomeGenerator = fullResolutionGen;
 		}
@@ -185,11 +195,6 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 			Object biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
 			int[] data = LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
 			return biomeDataMapper.apply(data);
-		}
-
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }

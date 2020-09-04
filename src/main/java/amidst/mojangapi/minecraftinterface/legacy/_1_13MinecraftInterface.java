@@ -108,28 +108,12 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-
+	public synchronized MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
 		try {
 			initializeIfNeeded();
-
-			// @formatter:off
-			Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
-				_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
-				seed,
-				getWorldType(worldType).getObject(),
-				getGenSettings(generatorOptions).getObject()
-			);
-			// @formatter:on
-			
-			return new World(genLayers[0], genLayers[1]);
-
-		} catch (IllegalAccessException
-			   | IllegalArgumentException
-			   | InvocationTargetException
-			   | InstantiationException e) {
-			throw new MinecraftInterfaceException("unable to create world", e);
+			return new WorldConfig();
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+			throw new MinecraftInterfaceException("unable to create config", e);
 		}
 	}
 
@@ -141,7 +125,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		if (isInitialized) {
 			return;
 		}
-
+		
 		String register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER;
 		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
 			if(bootstrapClass.getMethod(_1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
@@ -183,7 +167,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		
 		isInitialized = true;
 	}
-	
+
 	private synchronized void initBiomeGetIdHandle()
 			throws IllegalArgumentException,
 			IllegalAccessException,
@@ -244,7 +228,40 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		return recognisedVersion;
 	}
 
-	private class World implements MinecraftInterface.World {
+	private class WorldConfig implements MinecraftInterface.WorldConfig {
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
+		}
+
+		@Override
+		public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+				throws MinecraftInterfaceException {
+
+			try {
+				// @formatter:off
+				Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
+					_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
+					seed,
+					getWorldType(worldType).getObject(),
+					getGenSettings(generatorOptions).getObject()
+				);
+				// @formatter:on
+				
+				return new WorldAccessor(genLayers[0], genLayers[1]);
+
+			} catch (
+					IllegalAccessException
+					| IllegalArgumentException
+					| InvocationTargetException
+					| InstantiationException e) {
+				throw new MinecraftInterfaceException("unable to create world", e);
+			}
+		}
+	}
+
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
 		/**
 		 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 		 * axis are divided by 4). Minecraft calculates biomes at
@@ -253,7 +270,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		 * interpolated.
 		 */
 		private final Object quarterResolutionBiomeGenerator;
-		
+
 		/**
 		 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
 		 * biomes at quarter-resolution, then noisily interpolates the biome-map up
@@ -261,7 +278,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		 */
 		private final Object fullResolutionBiomeGenerator;
 
-		private World(Object quarterResolutionGen, Object fullResolutionGen) {
+		private WorldAccessor(Object quarterResolutionGen, Object fullResolutionGen) {
 			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
 			this.fullResolutionBiomeGenerator = fullResolutionGen;
 		}
@@ -282,7 +299,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			    		data[0] = getBiomeId(getBiomeData(x, y, width, height, biomeGenerator));
 			    		return biomeDataMapper.apply(data);
 			    	}
-
+			    	
 			        /**
 			         * We break the region in 16x16 chunks, to get better performance out
 			         * of the LazyArea used by the game. This gives a ~2x improvement.
@@ -331,7 +348,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				return (Object[]) getBiomesMethod.invokeExact(biomeGen, x, y, width, height);
 			}
 		}
-		
+
 		private int getBiomeId(Object biome) throws MinecraftInterfaceException {
 			try {
 				if (biomeRegistry != null) {
@@ -343,11 +360,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				e.printStackTrace();
 				throw new MinecraftInterfaceException("unable to get biome data", e);
 			}
-		}
-
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }

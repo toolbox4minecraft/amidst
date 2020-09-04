@@ -1,6 +1,9 @@
 package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -18,13 +21,29 @@ public class FragmentManager {
 	
 	private final AvailableFragmentCache availableCache;
 	private final OffScreenFragmentCache offscreenCache;
+	
+	private final Setting<Integer> threadsSetting;
+	private ThreadPoolExecutor fragWorkers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers) {
+	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers, Setting<Integer> threadsSetting) {
 		this.availableCache = new AvailableFragmentCache(constructors, numberOfLayers);
 		this.offscreenCache = new OffScreenFragmentCache(recycleQueue);
+		this.threadsSetting = threadsSetting;
+		this.fragWorkers = createThreadPool();
 	}
 
+	public ThreadPoolExecutor createThreadPool() {
+		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
+			private int num;
+			
+			@Override
+			public Thread newThread(Runnable r) {
+				return new Thread(r, "Fragment-Worker-" + num++);
+			}
+		});
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void invalidateCaches() {
 		offscreenCache.invalidate();
@@ -75,7 +94,8 @@ public class FragmentManager {
 				offscreenCache,
 				layerManager,
 				dimensionSetting,
-				graph);
+				graph,
+				fragWorkers);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -98,4 +118,16 @@ public class FragmentManager {
 		return recycleQueue.size();
 	}
 	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void clear() {
+		offscreenCache.clear();
+		loadingQueue.clear();
+		recycleQueue.clear();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void restartThreadPool() {
+		fragWorkers.shutdownNow();
+		this.fragWorkers = createThreadPool();
+	}
 }

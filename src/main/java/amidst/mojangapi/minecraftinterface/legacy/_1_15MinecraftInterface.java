@@ -86,22 +86,11 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
         this.netherBiomeSettingsClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_NETHER_BIOME_SETTINGS);
         this.utilClass = symbolicClassMap.get(_1_15SymbolicNames.CLASS_UTIL);
 	}
-
+	
 	@Override
-	public synchronized MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-	    initializeIfNeeded();
-
-	    try {
-	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
-	        Object netherBiomeProvider = manuallyCreateNetherBiomeProvider(seed);
-	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
-            long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
-            return new World(overworldBiomeProvider, netherBiomeProvider, biomeZoomer, seedForBiomeZoomer);
-
-        } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new MinecraftInterfaceException("unable to create world", e);
-        }
+	public MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
+		initializeIfNeeded();
+		return new WorldConfig(netherBiomeProviderClass != null);
 	}
 
 	private static long makeSeedForBiomeZoomer(long seed) throws MinecraftInterfaceException {
@@ -309,8 +298,41 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	    Method getByKey = registryClass.getMethod(_1_15SymbolicNames.METHOD_REGISTRY_GET_BY_KEY).getRawMethod();
 	    return getByKey.invoke(registry, registryKey);
 	}
+	
+	private class WorldConfig implements MinecraftInterface.WorldConfig {
+		private final Set<Dimension> supportedDimensions;
 
-	private class World implements MinecraftInterface.World {
+		private WorldConfig(boolean netherSupported) {
+	    	Set<Dimension> supportedDimensions = EnumSet.of(Dimension.OVERWORLD);
+	    	if (netherSupported) {
+	    		supportedDimensions.add(Dimension.NETHER);
+	    	}
+	    	this.supportedDimensions = Collections.unmodifiableSet(supportedDimensions);
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return supportedDimensions;
+		}
+
+		@Override
+		public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+				throws MinecraftInterfaceException {
+			
+		    try {
+		        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
+		        Object netherBiomeProvider = manuallyCreateNetherBiomeProvider(seed);
+		        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
+	            long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
+	            return new WorldAccessor(overworldBiomeProvider, netherBiomeProvider, biomeZoomer, seedForBiomeZoomer);
+
+	        } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+	            throw new MinecraftInterfaceException("unable to create world", e);
+	        }
+		}
+	}
+
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
 		/**
 		 * A BiomeProvider instance for the current overworld, giving
 		 * access to the quarter-scale biome data.
@@ -332,19 +354,11 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	     */
 		private final long seedForBiomeZoomer;
 
-		private final Set<Dimension> supportedDimensions;
-
-	    private World(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
+	    private WorldAccessor(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
 	    	this.overworldBiomeProvider = overworldBiomeProvider;
 	    	this.netherBiomeProvider = netherBiomeProvider;
 	    	this.biomeZoomer = biomeZoomer;
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
-
-	    	Set<Dimension> supportedDimensions = EnumSet.of(Dimension.OVERWORLD);
-	    	if (netherBiomeProvider != null) {
-	    		supportedDimensions.add(Dimension.NETHER);
-	    	}
-	    	this.supportedDimensions = Collections.unmodifiableSet(supportedDimensions);
 	    }
 
 		@Override
@@ -414,11 +428,6 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		        biome = biomeZoomerGetBiomeMethod.invokeExact(biomeZoomer, seedForBiomeZoomer, x, biomeHeight, y, biomeProvider);
 		    }
 		    return (int) registryGetIdMethod.invokeExact(biomeRegistry, biome);
-		}
-
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return supportedDimensions;
 		}
 	}
 }

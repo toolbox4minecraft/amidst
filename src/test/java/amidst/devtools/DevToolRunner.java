@@ -68,7 +68,7 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateBiomeColorImages() throws IOException {
-		new GenerateBiomeColorImages(DefaultVersionFeatures.builder(null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST).iterable(), Paths.get(biomeColorImagesDirectory())).run();
+		new GenerateBiomeColorImages(DefaultVersionFeatures.builder(null, null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST).iterable(), Paths.get(biomeColorImagesDirectory())).run();
 	}
 
 	@Ignore

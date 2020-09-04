@@ -17,7 +17,10 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public interface MinecraftInterface {
 
-	public World createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
+	/**
+	 * All of the first run initialization stuff should be done here.
+	 */
+	public WorldConfig createWorldConfig() throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
 
@@ -27,12 +30,12 @@ public interface MinecraftInterface {
 	 * Implementing classes need to be thread-safe!
 	 */
 	@ThreadSafe
-	public static interface World {
+	public static interface WorldAccessor {
 
 		/**
 		 * Calling this method from different threads must be valid, but implementations
 		 * may allow only one thread to progress at any given moment. To ensure true
-		 * concurrency, it is best to obtain a separate World object for each thread.
+		 * concurrency, it is best to obtain a separate WorldAccessor object for each thread.
 		 *
 		 * @param useQuarterResolution Minecraft calculates biomes at
 		 *            quarter-resolution, then noisily interpolates the biome-map up
@@ -59,7 +62,23 @@ public interface MinecraftInterface {
 				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException;
-
+	}
+	
+	/**
+	 * An interface that includes methods for retrieving all of the configuration options
+	 * needed for creation of a world that don't require things like a seed, world type,
+	 * or generation options.
+	 * 
+	 * This should be able to access methods supplied in the SymbolicClasses just like
+	 * WorldAccessor can.
+	 * 
+	 * This also includes the createWorldAccessor method so it's required to create
+	 * a WorldConfig first.
+	 */
+	public static interface WorldConfig {
+		
 		public Set<Dimension> supportedDimensions();
+		
+		public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
 	}
 }

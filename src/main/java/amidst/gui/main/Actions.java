@@ -81,7 +81,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		biomeExporterDialog.dispose();
+		biomeExporterDialog.softDispose();
 		newFromSeed(WorldSeed.random());
 	}
 
@@ -89,7 +89,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			biomeExporterDialog.dispose();
+			biomeExporterDialog.softDispose();
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -103,7 +103,7 @@ public class Actions {
 	public void openSaveGame() {
 		Path file = dialogs.askForSaveGame();
 		if (file != null) {
-			biomeExporterDialog.dispose();
+			biomeExporterDialog.softDispose();
 			worldSwitcher.displayWorld(file);
 		}
 	}
@@ -381,6 +381,14 @@ public class Actions {
 			}
 		}
 		return false;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void tryChangeThreads() {
+		if (dialogs.askToConfirmYesNo("Change Threads",
+				"This setting does not take effect until you restart the program. Restart now?")) {
+			application.restart();
+		}
 	}
 
 	@CalledByAny
