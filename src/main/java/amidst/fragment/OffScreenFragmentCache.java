@@ -1,6 +1,5 @@
 package amidst.fragment;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import amidst.documentation.AmidstThread;
@@ -14,7 +13,7 @@ import amidst.util.SelfExpiringSoftHashMap;
 public class OffScreenFragmentCache {
 	private static final long EXPIRATION_MILLIS = 30000; // 30 seconds
 	
-	private final Map<CoordinatesInWorld, Fragment> cache = new SelfExpiringSoftHashMap<>(EXPIRATION_MILLIS);
+	private final SelfExpiringSoftHashMap<CoordinatesInWorld, Fragment> cache = new SelfExpiringSoftHashMap<>(EXPIRATION_MILLIS);
 	private final ConcurrentLinkedDeque<Fragment> recycleQueue;
 
 	public OffScreenFragmentCache(ConcurrentLinkedDeque<Fragment> recycleQueue) {
@@ -50,7 +49,12 @@ public class OffScreenFragmentCache {
 	public void clear() {
 		cache.clear();
 	}
-	
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	public void clean() {
+		cache.clean();
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
 		return cache.size();

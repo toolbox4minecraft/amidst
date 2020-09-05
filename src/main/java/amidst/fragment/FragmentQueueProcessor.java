@@ -47,14 +47,21 @@ public class FragmentQueueProcessor {
 	}
 
 	/**
+	 * Returns if there are fragments that still need to be processed.
+	 */
+	private boolean hasFragments() {
+		return !loadingQueue.isEmpty();
+	}
+
+	/**
 	 * Return the next fragment the loader should process, or null if no more fragments are available.
 	 */
 	private Fragment getNextFragment() {
 		return loadingQueue.poll();
 	}
-	
+
 	private static final int PARK_MILLIS = 1000;
-	
+
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
@@ -62,6 +69,7 @@ public class FragmentQueueProcessor {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
+		offscreenCache.clean();
 		final Thread flThread = Thread.currentThread(); // the fragment loader thread
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
@@ -75,7 +83,7 @@ public class FragmentQueueProcessor {
 		 * as possible.
 		 */
 		int maxSize = fragWorkers.getMaximumPoolSize();
-		while (loadingQueue.isEmpty() == false) {
+		while (hasFragments()) {
 			if (fragWorkers.getActiveCount() < maxSize) {
 				fragWorkers.execute(() -> {
 					Fragment f = getNextFragment();
@@ -89,6 +97,7 @@ public class FragmentQueueProcessor {
 			} else {
 				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after time expires
 			}
+			offscreenCache.clean();
 		}
 		layerManager.clearInvalidatedLayers();
 	}

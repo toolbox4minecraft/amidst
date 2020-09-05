@@ -33,17 +33,21 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import amidst.documentation.ThreadSafe;
+
 /**
  * A HashMap which entries expires after the specified life time.
  * The life-time can be defined on a per-value basis, or using a default one, that is passed to the 
- * constructor.
- * 
- * This class was completely refactored to use SoftReferences for use with amidst.
+ * constructor.<br>
+ * <br>
+ * This class was completely refactored to use SoftReferences for use with amidst. In this implementation,
+ * the clean() method needs to be called very often in order to maintain the map.
  * 
  * @author Pierantonio Cangianiello
  * @param <K> the Key type
  * @param <V> the Value type
  */
+@ThreadSafe
 public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 
     private final Map<K, SoftExpiringValue> internalMap;
@@ -78,7 +82,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public int size() {
-        cleanup();
         return internalMap.size();
     }
 
@@ -87,7 +90,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean isEmpty() {
-        cleanup();
         return internalMap.isEmpty();
     }
 
@@ -96,7 +98,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsKey(Object key) {
-        cleanup();
         return internalMap.containsKey(key);
     }
 
@@ -105,13 +106,11 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsValue(Object value) {
-        cleanup();
         return internalMap.containsValue(value);
     }
 
 	@Override
     public V get(Object key) {
-        cleanup();
         SoftExpiringValue valueRef = internalMap.get(key);
         renewValue(valueRef);
         return valueRef != null ? valueRef.getValue() : null;
@@ -135,7 +134,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      * @return a previously associated object for the given key (if exists).
      */
     public V put(K key, V value, long lifeTimeMillis) {
-        cleanup();
         SoftExpiringValue newValue = new SoftExpiringValue(value, lifeTimeMillis);
         SoftExpiringValue oldValue = internalMap.put(key, newValue);
         if(oldValue != null) {
@@ -163,7 +161,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
     }
 
     public void putAll(Map<? extends K, ? extends V> m, long lifeTimeMillis) {
-    	cleanup();
         for(Entry<? extends K, ? extends V> entry : m.entrySet()) {
             SoftExpiringValue newValue = new SoftExpiringValue(entry.getValue(), lifeTimeMillis);
             SoftExpiringValue oldValue = internalMap.put(entry.getKey(), newValue);
@@ -190,7 +187,6 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
     private void expireValue(SoftExpiringValue valueRef) {
         if (valueRef != null) {
         	valueRef.expire();
-            cleanup();
         }
     }
 
@@ -207,25 +203,26 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<K> keySet() {
-    	cleanup();
     	return internalMap.keySet();
     }
 
     /**
+     * <b>WARNING:</b> This implementation does not reflect the changes made on the return value in the original Map.<br>
+     * <br>
      * {@inheritDoc}
      */
     @Override
     public Collection<V> values() {
-    	cleanup();
     	return Collections.synchronizedSet(internalMap.values().stream().map(sv -> sv.getValue()).filter(v -> v != null).collect(Collectors.toSet()));
     }
 
     /**
+     * <b>WARNING:</b> This implementation does not reflect the changes made on the return value in the original Map.<br>
+     * <br>
      * {@inheritDoc}
      */
     @Override
     public Set<Entry<K, V>> entrySet() {
-    	cleanup();
     	return Collections.synchronizedSet(internalMap.entrySet().stream().map(e -> {
 		    		V realValue = e.getValue().getValue();
 		    		if (realValue != null) {
@@ -235,7 +232,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	    		}).filter(e -> e != null).collect(Collectors.toSet()));
     }
 
-    private void cleanup() {
+    public synchronized void clean() {
     	Iterator<SoftExpiringValue> valueRefIterator = internalMap.values().iterator();
         for(SoftExpiringValue valueRef : (Iterable<SoftExpiringValue>) () -> valueRefIterator) {
         	V realValue = valueRef.getValue();
