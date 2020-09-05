@@ -1,5 +1,6 @@
 package amidst.fragment;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -17,7 +18,7 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
-	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedDeque<Fragment> recycleQueue = new ConcurrentLinkedDeque<>();
 	
 	private final AvailableFragmentCache availableCache;
 	private final OffScreenFragmentCache offscreenCache;
@@ -33,6 +34,7 @@ public class FragmentManager {
 		this.fragWorkers = createThreadPool();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public ThreadPoolExecutor createThreadPool() {
 		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
 			private int num;
@@ -43,7 +45,13 @@ public class FragmentManager {
 			}
 		});
 	}
-	
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void restartThreadPool() {
+		fragWorkers.shutdownNow();
+		this.fragWorkers = createThreadPool();
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void invalidateCaches() {
 		offscreenCache.invalidate();
@@ -70,13 +78,12 @@ public class FragmentManager {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void retireFragment(Fragment fragment) {
-		if (!fragment.isLoaded()) {
+		if (!fragment.isLoaded() && fragment.recycle()) { // try to recycle if it's not loaded
 			// Send it back to the available cache
-			fragment.recycle();
 			loadingQueue.remove(fragment);
 			availableCache.put(fragment);
 		} else {
-			// We store the fragment if it's loaded and it goes offscreen
+			// We store the fragment if it's loaded or not properly recycling and it goes offscreen
 			offscreenCache.put(fragment);
 		}
 	}
@@ -123,11 +130,5 @@ public class FragmentManager {
 		offscreenCache.clear();
 		loadingQueue.clear();
 		recycleQueue.clear();
-	}
-	
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void restartThreadPool() {
-		fragWorkers.shutdownNow();
-		this.fragWorkers = createThreadPool();
 	}
 }

@@ -1,5 +1,6 @@
 package amidst.fragment;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.LockSupport;
@@ -15,7 +16,7 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
+	private final ConcurrentLinkedDeque<Fragment> recycleQueue;
 	private final AvailableFragmentCache availableCache;
 	private final OffScreenFragmentCache offscreenCache;
 	
@@ -27,7 +28,7 @@ public class FragmentQueueProcessor {
 	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> recycleQueue,
+			ConcurrentLinkedDeque<Fragment> recycleQueue,
 			AvailableFragmentCache availableCache,
 			OffScreenFragmentCache offscreenCache,
 			LayerManager layerManager,
@@ -115,7 +116,10 @@ public class FragmentQueueProcessor {
 	private void processRecycleQueue() {
 		Fragment fragment;
 		while ((fragment = recycleQueue.poll()) != null) {
-			recycleFragment(fragment);
+			// the fragment goes back in the queue if it didn't fully recycle
+			if (!recycleFragment(fragment)) {
+				recycleQueue.addLast(fragment);
+			}
 		}
 	}
 
@@ -132,11 +136,14 @@ public class FragmentQueueProcessor {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void recycleFragment(Fragment fragment) {
-		if (fragment.recycle()) {
+	private boolean recycleFragment(Fragment fragment) {		
+		boolean recycled = fragment.recycle();
+		if (recycled) {
 			removeFromLoadingQueue(fragment);
 			availableCache.put(fragment);
 		}
+		
+		return recycled;
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since

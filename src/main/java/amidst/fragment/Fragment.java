@@ -187,6 +187,7 @@ public class Fragment {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	// can be recycled if it's not loading
 	public boolean recycle() {
 		if (!this.isLoading.get()) {
 			this.isLoaded.set(false);

@@ -37,12 +37,16 @@ public class AvailableFragmentCache {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Fragment poll() {
 		SoftReference<Fragment> ref = (SoftReference<Fragment>) cache.poll();
-		if(ref != null) {
-			return ref.get();
-		} else {
-			cache.remove(ref);
-			return null;
+		if (ref != null) {
+			Fragment frag = ref.get();
+			if (frag != null) {
+				return ref.get();
+			}
 		}
+		
+		// this must have been null, remove it
+		cache.remove(ref);
+		return null;
 	}
 
 	/**

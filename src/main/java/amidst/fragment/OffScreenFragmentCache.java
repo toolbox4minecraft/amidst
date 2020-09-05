@@ -1,60 +1,48 @@
 package amidst.fragment;
 
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.util.SelfExpiringSoftHashMap;
 
 /**
  * This contains fragments that have been loaded and are currently off-screen.
  */
 public class OffScreenFragmentCache {
-	private final Map<CoordinatesInWorld, SoftReference<Fragment>> cache = new HashMap<>();
-	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
+	private static final long EXPIRATION_MILLIS = 30000; // 30 seconds
+	
+	private final Map<CoordinatesInWorld, Fragment> cache = new SelfExpiringSoftHashMap<>(EXPIRATION_MILLIS);
+	private final ConcurrentLinkedDeque<Fragment> recycleQueue;
 
-	public OffScreenFragmentCache(ConcurrentLinkedQueue<Fragment> recycleQueue) {
+	public OffScreenFragmentCache(ConcurrentLinkedDeque<Fragment> recycleQueue) {
 		this.recycleQueue = recycleQueue;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment get(CoordinatesInWorld coordinates) {
-		SoftReference<Fragment> softref = cache.get(coordinates);
-		if (softref != null) {
-			return softref.get();
-		} else {
-			// No cache hit
-			cache.remove(coordinates, softref);
-			return null;
-		}
+		return cache.get(coordinates);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void put(Fragment fragment) {
 		if (fragment != null) {
-			cache.putIfAbsent(fragment.getCorner(), new SoftReference<Fragment>(fragment));
+			cache.putIfAbsent(fragment.getCorner(), fragment);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment remove(CoordinatesInWorld coordinates) {
-		SoftReference<Fragment> ref = cache.remove(coordinates);
-		return ref == null ? null : ref.get();
+		return cache.remove(coordinates);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void invalidate() {
 		// When we invalidate the cache, we can recycle the fragments.
 		// (This recycling is probably neither necessary nor efficient, but let's keep it for now)
-		recycleQueue.addAll(cache.values().stream()
-				.map(softref -> softref.get()).filter(fragment -> fragment != null)
-				.collect(Collectors.toList()));
+		recycleQueue.addAll(cache.values());
 		clear();
 	}
 
@@ -62,21 +50,9 @@ public class OffScreenFragmentCache {
 	public void clear() {
 		cache.clear();
 	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public synchronized void clean() {
-		Iterator<Entry<CoordinatesInWorld, SoftReference<Fragment>>> entrySet = cache.entrySet().iterator();
-		
-		for(Entry<CoordinatesInWorld, SoftReference<Fragment>> entry : (Iterable<Entry<CoordinatesInWorld, SoftReference<Fragment>>>) () -> entrySet) {
-			if(entry.getValue().get() == null) {
-				entrySet.remove();
-			}
-		}
-	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
-		clean();
 		return cache.size();
 	}
 }
