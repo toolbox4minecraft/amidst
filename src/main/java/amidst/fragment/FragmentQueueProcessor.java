@@ -69,7 +69,6 @@ public class FragmentQueueProcessor {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
-		offscreenCache.clean();
 		final Thread flThread = Thread.currentThread(); // the fragment loader thread
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
@@ -97,7 +96,6 @@ public class FragmentQueueProcessor {
 			} else {
 				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after time expires
 			}
-			offscreenCache.clean();
 		}
 		layerManager.clearInvalidatedLayers();
 	}

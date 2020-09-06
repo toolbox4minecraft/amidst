@@ -47,7 +47,7 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void restartThreadPool() {
+	public void restart() {
 		fragWorkers.shutdownNow();
 		this.fragWorkers = createThreadPool();
 	}

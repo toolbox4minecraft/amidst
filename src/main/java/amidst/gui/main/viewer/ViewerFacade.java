@@ -102,7 +102,7 @@ public class ViewerFacade {
 		zoom.skipFading();
 		zoom.reset();
 		fragmentManager.clear();
-		fragmentManager.restartThreadPool();
+		fragmentManager.restart();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -50,10 +50,14 @@ public class OffScreenFragmentCache {
 		cache.clear();
 	}
 
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void clean() {
 		cache.clean();
 	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void shutdownCleaner() {
+		cache.shutdownCleaner();
+	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
