@@ -3,8 +3,10 @@ package amidst.fragment;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -24,6 +26,7 @@ public class FragmentManager {
 	private final OffScreenFragmentCache offscreenCache;
 	
 	private final Setting<Integer> threadsSetting;
+	private final ScheduledExecutorService cleanerThread;
 	private ThreadPoolExecutor fragWorkers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -31,6 +34,7 @@ public class FragmentManager {
 		this.availableCache = new AvailableFragmentCache(constructors, numberOfLayers);
 		this.offscreenCache = new OffScreenFragmentCache(recycleQueue);
 		this.threadsSetting = threadsSetting;
+		this.cleanerThread = createCleanerThread();
 		this.fragWorkers = createThreadPool();
 	}
 
@@ -46,10 +50,25 @@ public class FragmentManager {
 		});
 	}
 
+	private ScheduledExecutorService createCleanerThread() {
+		ScheduledExecutorService scheduledExecutor =
+				Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "CacheCleanerThread"));
+		scheduledExecutor.scheduleAtFixedRate(() -> {
+			offscreenCache.clean();
+			availableCache.clean();
+		}, 0, 500, TimeUnit.MILLISECONDS); // cleans both caches 2 times a second
+		return scheduledExecutor;
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void restart() {
 		fragWorkers.shutdownNow();
 		this.fragWorkers = createThreadPool();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void shutdownCleaner() {
+		cleanerThread.shutdownNow();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

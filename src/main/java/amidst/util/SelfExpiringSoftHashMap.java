@@ -33,9 +33,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import amidst.documentation.ThreadSafe;
@@ -54,51 +51,34 @@ import amidst.documentation.ThreadSafe;
  */
 @ThreadSafe
 public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
-	
+
 	private final Map<K, SoftExpiringValue> internalMap;
-	
-	private final ScheduledExecutorService cleanerThread;
-	
+
 	/**
 	 * The default max life time in milliseconds.
 	 */
 	private final long maxLifeTimeMillis;
-	
+
 	public SelfExpiringSoftHashMap() {
 		internalMap = new ConcurrentHashMap<>();
-		this.cleanerThread = createCleanerThread();
 		this.maxLifeTimeMillis = Long.MAX_VALUE;
 	}
-	
+
 	public SelfExpiringSoftHashMap(long defaultMaxLifeTimeMillis) {
 		internalMap = new ConcurrentHashMap<>();
-		this.cleanerThread = createCleanerThread();
 		this.maxLifeTimeMillis = defaultMaxLifeTimeMillis;
 	}
-	
+
 	public SelfExpiringSoftHashMap(long defaultMaxLifeTimeMillis, int initialCapacity) {
 		internalMap = new ConcurrentHashMap<>(initialCapacity);
-		this.cleanerThread = createCleanerThread();
 		this.maxLifeTimeMillis = defaultMaxLifeTimeMillis;
 	}
-	
+
 	public SelfExpiringSoftHashMap(long defaultMaxLifeTimeMillis, int initialCapacity, float loadFactor) {
 		internalMap = new ConcurrentHashMap<>(initialCapacity, loadFactor);
-		this.cleanerThread = createCleanerThread();
 		this.maxLifeTimeMillis = defaultMaxLifeTimeMillis;
 	}
-	
-	private ScheduledExecutorService createCleanerThread() {
-		ScheduledExecutorService scheduledExecutor =
-				Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "CacheCleanerThread"));
-		scheduledExecutor.scheduleAtFixedRate(() -> this.clean(), 0, 500, TimeUnit.MILLISECONDS); // cleans 2 times a second
-		return scheduledExecutor;
-	}
-	
-	public void shutdownCleaner() {
-		cleanerThread.shutdownNow();
-	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -106,7 +86,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public int size() {
 		return internalMap.size();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -114,7 +94,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public boolean isEmpty() {
 		return internalMap.isEmpty();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -122,7 +102,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public boolean containsKey(Object key) {
 		return internalMap.containsKey(key);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -130,14 +110,14 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public boolean containsValue(Object value) {
 		return internalMap.containsValue(value);
 	}
-	
+
 	@Override
 	public V get(Object key) {
 		SoftExpiringValue valueRef = internalMap.get(key);
 		renewValue(valueRef);
 		return valueRef != null ? valueRef.getValue() : null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -145,7 +125,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public V put(K key, V value) {
 		return this.put(key, value, maxLifeTimeMillis);
 	}
-	
+
 	/**
 	 * Associates the given key to the given value in this map, with the
 	 * specified life times in milliseconds.
@@ -164,7 +144,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -174,7 +154,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 		expireValue(removedValue);
 		return removedValue != null ? removedValue.getValue() : null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -182,7 +162,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public void putAll(Map<? extends K, ? extends V> m) {
 		putAll(m, maxLifeTimeMillis);
 	}
-	
+
 	public void putAll(Map<? extends K, ? extends V> m, long lifeTimeMillis) {
 		for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
 			SoftExpiringValue newValue = new SoftExpiringValue(entry.getValue(), lifeTimeMillis);
@@ -192,7 +172,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			}
 		}
 	}
-	
+
 	/**
 	 * Renews the specified value, setting the life time to the initial
 	 * value.
@@ -208,13 +188,13 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 		}
 		return false;
 	}
-	
+
 	private void expireValue(SoftExpiringValue valueRef) {
 		if (valueRef != null) {
 			valueRef.expire();
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -222,7 +202,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public void clear() {
 		internalMap.clear();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -230,7 +210,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public Set<K> keySet() {
 		return internalMap.keySet();
 	}
-	
+
 	/**
 	 * <b>WARNING:</b> This implementation does not reflect the changes
 	 * made on the return value in the original Map.<br>
@@ -241,7 +221,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	public Collection<V> values() {
 		return Collections.synchronizedSet(internalMap.values().stream().map(sv -> sv.getValue()).filter(v -> v != null).collect(Collectors.toSet()));
 	}
-	
+
 	/**
 	 * <b>WARNING:</b> This implementation does not reflect the changes
 	 * made on the return value in the original Map.<br>
@@ -258,7 +238,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			return null;
 		}).filter(e -> e != null).collect(Collectors.toSet()));
 	}
-	
+
 	public synchronized void clean() {
 		Iterator<SoftExpiringValue> valueRefIterator = internalMap.values().iterator();
 		for (SoftExpiringValue valueRef : (Iterable<SoftExpiringValue>) () -> valueRefIterator) {
@@ -268,21 +248,21 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			}
 		}
 	}
-	
+
 	private class SoftExpiringValue {
 		private long startTime = System.currentTimeMillis();
 		private final long maxLifeTimeMillis;
 		private final SoftReference<V> valueRef;
-		
+
 		public SoftExpiringValue(V value, long maxLifeTimeMillis) {
 			this.maxLifeTimeMillis = maxLifeTimeMillis;
 			this.valueRef = new SoftReference<>(value);
 		}
-		
+
 		public V getValue() {
 			return valueRef.get();
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -302,7 +282,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			}
 			return true;
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -312,15 +292,15 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			hash = 31 * hash + (this.getValue() != null ? this.getValue().hashCode() : 0);
 			return hash;
 		}
-		
+
 		public long getDelayMillis() {
 			return (startTime + maxLifeTimeMillis) - System.currentTimeMillis();
 		}
-		
+
 		public void renew() {
 			startTime = System.currentTimeMillis();
 		}
-		
+
 		public void expire() {
 			startTime = Long.MIN_VALUE;
 		}

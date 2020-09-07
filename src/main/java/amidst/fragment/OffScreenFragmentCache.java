@@ -4,12 +4,14 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.util.SelfExpiringSoftHashMap;
 
 /**
  * This contains fragments that have been loaded and are currently off-screen.
  */
+@NotThreadSafe
 public class OffScreenFragmentCache {
 	private static final long EXPIRATION_MILLIS = 30000; // 30 seconds
 	
@@ -53,11 +55,6 @@ public class OffScreenFragmentCache {
 	public void clean() {
 		cache.clean();
 	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void shutdownCleaner() {
-		cache.shutdownCleaner();
-	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
