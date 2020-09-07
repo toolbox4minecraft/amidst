@@ -116,12 +116,20 @@ public class FragmentQueueProcessor {
 		}
 	}
 
+	private volatile boolean firstLoad = true;
+
 	/**
-	 * Gets all of the fragments currently on the graph to offer, as they aren't stored in any cache.
+	 * Gets all of the fragments currently on the graph to offer, as they aren't
+	 * stored in any cache. However, we don't want to do this on the first load.
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private synchronized void reloadAll() {
-		loadingQueue.clear();		
+		if (firstLoad) {
+			firstLoad = false;
+			return;
+		}
+		
+		loadingQueue.clear();
 		for (FragmentGraphItem graphItem : getGraphIterable()) {
 			loadingQueue.offer(graphItem.getFragment());
 		}
@@ -129,12 +137,13 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private Iterable<FragmentGraphItem> getGraphIterable() {
-		CompletableFuture<Iterator<FragmentGraphItem>> graphIterator = new CompletableFuture<>();
-		SwingUtilities.invokeLater(() -> graphIterator.complete(graph.iterator())); // we have to get this on the EDT
+		CompletableFuture<Iterator<FragmentGraphItem>> graphIteratorFuture = new CompletableFuture<>();
+		// we have to get this on the EDT because it isn't thread safe
+		SwingUtilities.invokeLater(() -> graphIteratorFuture.complete(graph.iterator()));
 		
-		return (Iterable<FragmentGraphItem>) () -> {
+		return () -> {
 			try {
-				return graphIterator.get();
+				return graphIteratorFuture.get();
 			} catch (InterruptedException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
