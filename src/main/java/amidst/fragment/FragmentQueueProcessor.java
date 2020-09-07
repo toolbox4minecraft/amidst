@@ -1,9 +1,14 @@
 package amidst.fragment;
 
+import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.LockSupport;
+
+import javax.swing.SwingUtilities;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -49,6 +54,7 @@ public class FragmentQueueProcessor {
 	/**
 	 * Returns if there are fragments that still need to be processed.
 	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private boolean hasFragments() {
 		return !loadingQueue.isEmpty();
 	}
@@ -56,6 +62,7 @@ public class FragmentQueueProcessor {
 	/**
 	 * Return the next fragment the loader should process, or null if no more fragments are available.
 	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private Fragment getNextFragment() {
 		return loadingQueue.poll();
 	}
@@ -94,7 +101,8 @@ public class FragmentQueueProcessor {
 					}
 				});
 			} else {
-				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after time expires
+				// if for some reason unpark was never called, unpark after time expires
+				LockSupport.parkNanos(PARK_MILLIS * 1000000);
 			}
 		}
 		layerManager.clearInvalidatedLayers();
@@ -113,10 +121,24 @@ public class FragmentQueueProcessor {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private synchronized void reloadAll() {
-		loadingQueue.clear();
-		for (FragmentGraphItem graphItem : (Iterable<FragmentGraphItem>) () -> graph.iterator()) {
+		loadingQueue.clear();		
+		for (FragmentGraphItem graphItem : getGraphIterable()) {
 			loadingQueue.offer(graphItem.getFragment());
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private Iterable<FragmentGraphItem> getGraphIterable() {
+		CompletableFuture<Iterator<FragmentGraphItem>> graphIterator = new CompletableFuture<>();
+		SwingUtilities.invokeLater(() -> graphIterator.complete(graph.iterator())); // we have to get this on the EDT
+		
+		return (Iterable<FragmentGraphItem>) () -> {
+			try {
+				return graphIterator.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		};
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
