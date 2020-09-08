@@ -87,11 +87,11 @@ public enum Menus {
 	}
 
 	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text) {
-		return checkbox(menu, setting, new JCheckBoxMenuItem(text));
+		return checkbox(menu, setting, new ModifiedCheckBoxItem(text));
 	}
 
 	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text, ImageIcon icon) {
-		return checkbox(menu, setting, new JCheckBoxMenuItem(text, icon));
+		return checkbox(menu, setting, new ModifiedCheckBoxItem(text, icon));
 	}
 
 	public static JCheckBoxMenuItem checkbox(
@@ -99,7 +99,7 @@ public enum Menus {
 			Setting<Boolean> setting,
 			String text,
 			MenuShortcut menuShortcut) {
-		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text);
+		JCheckBoxMenuItem menuItem = new ModifiedCheckBoxItem(text);
 		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return checkbox(menu, setting, menuItem);
 	}
@@ -110,7 +110,7 @@ public enum Menus {
 			String text,
 			ImageIcon icon,
 			MenuShortcut menuShortcut) {
-		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text, icon);
+		JCheckBoxMenuItem menuItem = new ModifiedCheckBoxItem(text, icon);
 		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return checkbox(menu, setting, menuItem);
 	}
