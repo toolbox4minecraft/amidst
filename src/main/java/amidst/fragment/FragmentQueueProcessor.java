@@ -111,8 +111,8 @@ public class FragmentQueueProcessor {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void updateLayerManager(Dimension dimension) {
 		if (layerManager.updateAll(dimension)) {
-			reloadAll();
-			offscreenCache.clear();
+			tryReloadGraph();
+			offscreenCache.invalidate();
 		}
 	}
 
@@ -123,7 +123,7 @@ public class FragmentQueueProcessor {
 	 * stored in any cache. However, we don't want to do this on the first load.
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private synchronized void reloadAll() {
+	private synchronized void tryReloadGraph() {
 		if (firstLoad) {
 			firstLoad = false;
 			return;
