@@ -57,9 +57,7 @@ public class ImageDrawer extends FragmentDrawer {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Fragment fragment, Graphics2D g2d, float time) {
-		if (!fragment.isLoaded()) return;
-		
+	public void draw(Fragment fragment, Graphics2D g2d, float time) {		
 		int scale = resolution.getStep();
 		g2d.scale(scale, scale);
 		
