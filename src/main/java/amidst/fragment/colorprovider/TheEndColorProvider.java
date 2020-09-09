@@ -115,7 +115,7 @@ public class TheEndColorProvider implements ColorProvider {
 		double alpha = 0;
 		for(SmallEndIsland smallIsland : smallIslands) {
 			for(int i = 0; i <= 3; i++) {
-				if(smallIsland.isOnIsland(x + NEIGHBORING_PIXEL_TABLE[i], y + NEIGHBORING_PIXEL_TABLE[i + 1])) {
+				if(smallIsland.isOnIsland(x + NEIGHBORING_PIXEL_TABLE[(i * 2)], y + NEIGHBORING_PIXEL_TABLE[(i * 2) + 1])) {
 					alpha += ALPHA_INCREMENT;
 				}
 			}
