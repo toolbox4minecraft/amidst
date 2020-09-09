@@ -38,9 +38,11 @@ public class ModifiedCheckBoxItem extends JCheckBoxMenuItem {
 	
 	@Override
 	protected void processMouseEvent(MouseEvent evt) {
-		if (evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {
-			doClick();
-			setArmed(true);
+		if (evt.getID() == MouseEvent.MOUSE_RELEASED) {
+			if (contains(evt.getPoint())) {
+				doClick();
+				setArmed(true);
+			}
 		} else {
 			super.processMouseEvent(evt);
 		}
