@@ -13,9 +13,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.swing.JComponent;
@@ -144,7 +143,7 @@ public class BiomeWidget extends Widget {
 			isInitialized = true;
 		}
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setupSearchField(FontMetrics fontMetrics) {
 		parentComponentSupplier.get().addMouseListener(new MouseAdapter() {
@@ -169,7 +168,7 @@ public class BiomeWidget extends Widget {
 		searchField.setSize(1,1);
 		parentComponentSupplier.get().add(searchField);
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void changeCaretSize(DefaultCaret c, int size) {
 		try {
@@ -180,7 +179,7 @@ public class BiomeWidget extends Widget {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean tryUpdateSearch() {
 		searchField.setVisible(isVisible());
@@ -188,26 +187,23 @@ public class BiomeWidget extends Widget {
 		if(!currentText.equals(lastUpdateSearchText)) {
 			// optimization for if the text gets added to
 			if(currentText.length() > lastUpdateSearchText.length() && currentText.contains(lastUpdateSearchText)) {
-				Set<Biome> biomesToRemove = new HashSet<>();
-				for (Biome biome : displayedBiomes) {
+				Iterator<Biome> displayedIterator = displayedBiomes.iterator();
+				for (Biome biome : (Iterable<Biome>)() -> displayedIterator) {
 					if(!biome.getName().toLowerCase().contains(currentText)) {
-						biomesToRemove.add(biome);
+						displayedIterator.remove();
 					}
 				}
-				displayedBiomes.removeAll(biomesToRemove);
 				sortBiomeList(displayedBiomes, currentText);
 			} else {
 				displayedBiomes.clear();
 				if(currentText.equals("")) {
 					displayedBiomes.addAll(biomes);
 				} else {
-					Set<Biome> biomesToAdd = new HashSet<>();
 					for (Biome biome : biomes) {
 						if(biome.getName().toLowerCase().contains(currentText)) {
-							biomesToAdd.add(biome);
+							displayedBiomes.add(biome);
 						}
 					}
-					displayedBiomes.addAll(biomesToAdd);
 				}
 				sortBiomeList(displayedBiomes, currentText);
 			}
@@ -217,7 +213,7 @@ public class BiomeWidget extends Widget {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * first sort by index of string, then by id
 	 */
@@ -232,7 +228,7 @@ public class BiomeWidget extends Widget {
 			}
 		});
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void tryUpdateHighlightRects() {
 		if (updateHighlightRects) {
