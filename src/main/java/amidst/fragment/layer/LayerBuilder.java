@@ -76,7 +76,9 @@ public class LayerBuilder {
 				new LayerLoader(
 						createLoaders(declarations, world, biomeSelection, settings),
 						LayerIds.NUMBER_OF_LAYERS),
-				createDrawers(declarations, zoom, worldIconSelection, accelerationCounter));
+				createDrawers(declarations, zoom, worldIconSelection, accelerationCounter,
+						settings)
+			);
 	}
 
 	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, List<Integer> enabledLayers) {
@@ -156,24 +158,25 @@ public class LayerBuilder {
 			List<LayerDeclaration> declarations,
 			Zoom zoom,
 			WorldIconSelection worldIconSelection,
-			Graphics2DAccelerationCounter accelerationCounter) {
+			Graphics2DAccelerationCounter accelerationCounter,
+			AmidstSettings settings) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
-				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter),
-				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter),
+				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter, settings.useHybridScaling),
+				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter, settings.useHybridScaling),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
-				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.WOODLAND_MANSION),zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_FEATURES),  zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FEATURES), zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),        zoom, worldIconSelection)
+				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.WOODLAND_MANSION),zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_FEATURES),  zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FEATURES), zoom, worldIconSelection, settings.useHybridScaling),
+				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),        zoom, worldIconSelection, settings.useHybridScaling)
 		));
 		// @formatter:on
 	}
