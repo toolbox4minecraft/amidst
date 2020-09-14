@@ -1,5 +1,6 @@
 package amidst.fragment;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
@@ -14,6 +15,7 @@ import amidst.settings.Setting;
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedDeque<Fragment> backgroundQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
@@ -23,16 +25,34 @@ public class FragmentQueueProcessor {
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedDeque<Fragment> backgroundQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
 			FragmentCache cache,
 			LayerManager layerManager,
 			Setting<Dimension> dimensionSetting) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
+		this.backgroundQueue = backgroundQueue;
 		this.recycleQueue = recycleQueue;
 		this.cache = cache;
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
+	}
+
+	/**
+	 * Return the next fragment the loader should process, or null if no more fragments are available.
+	 */
+	private Fragment getNextFragment() {
+		Fragment fragment;
+
+		// First process all visible fragments
+		fragment = loadingQueue.poll();
+		if (fragment != null) {
+			return fragment;
+		}
+		// If there are no visible fragments, then we can process previously enqueued
+		// but currently hidden fragments
+		return backgroundQueue.poll();
 	}
 
 	/**
@@ -46,7 +66,7 @@ public class FragmentQueueProcessor {
 		updateLayerManager(dimension);
 		processRecycleQueue();
 		Fragment fragment;
-		while ((fragment = loadingQueue.poll()) != null) {
+		while ((fragment = getNextFragment()) != null) {
 			loadFragment(dimension, fragment);
 			dimension = dimensionSetting.get();
 			updateLayerManager(dimension);
@@ -86,6 +106,7 @@ public class FragmentQueueProcessor {
 	private void recycleFragment(Fragment fragment) {
 		fragment.recycle();
 		removeFromLoadingQueue(fragment);
+		backgroundQueue.remove(fragment);
 		availableQueue.offer(fragment);
 	}
 
