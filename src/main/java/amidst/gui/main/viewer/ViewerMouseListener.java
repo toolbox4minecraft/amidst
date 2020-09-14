@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -13,9 +14,10 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.widget.WidgetManager;
+import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
-public class ViewerMouseListener implements MouseListener, MouseWheelListener {
+public class ViewerMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
 	private final WidgetManager widgetManager;
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
@@ -44,6 +46,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point mousePosition = e.getPoint();
 		int notches = e.getWheelRotation();
+		ThreadMaster.theThreadMaster().setNeedsRepaint();		
 		if (!widgetManager.mouseWheelMoved(mousePosition, notches)) {
 			doMouseWheelMoved(mousePosition, notches);
 		}
@@ -53,6 +56,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Point mousePosition = e.getPoint();
+		ThreadMaster.theThreadMaster().setNeedsRepaint();		
 		if (isRightClick(e)) {
 			// noop
 		} else if (!widgetManager.mouseClicked(mousePosition)) {
@@ -63,6 +67,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void mousePressed(MouseEvent e) {
+		ThreadMaster.theThreadMaster().setNeedsRepaint();
 		Point mousePosition = e.getPoint();
 		if (isPopup(e)) {
 			showPopupMenu(mousePosition, e.getComponent(), e.getX(), e.getY());
@@ -76,6 +81,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		ThreadMaster.theThreadMaster().setNeedsRepaint();
 		Point mousePosition = e.getPoint();
 		if (isPopup(e)) {
 			showPopupMenu(mousePosition, e.getComponent(), e.getX(), e.getY());
@@ -130,5 +136,15 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void showPopupMenu(Point mousePosition, Component component, int x, int y) {
 		actions.showPlayerPopupMenu(translator.screenToWorld(mousePosition), component, x, y);
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		ThreadMaster.theThreadMaster().setNeedsRepaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		ThreadMaster.theThreadMaster().setNeedsRepaint();
 	}
 }

@@ -6,6 +6,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
+import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public class Movement {
@@ -25,6 +26,8 @@ public class Movement {
 		updateMovementSpeed(currentMouse);
 		adjustTranslator(translator);
 		throttleMovementSpeed();
+		if (Math.abs(speedX) > .01 || Math.abs(speedY) > .01)
+			ThreadMaster.theThreadMaster().setNeedsRepaint();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

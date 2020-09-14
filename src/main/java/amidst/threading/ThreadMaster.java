@@ -26,6 +26,10 @@ public class ThreadMaster {
 
 	private volatile Runnable onRepaintTick;
 	private volatile Runnable onFragmentLoadTick;
+	
+	private boolean needsRepaint;
+	private boolean needsProcessFragments;
+	private static ThreadMaster theThreadMaster;
 
 	public ThreadMaster() {
 		this.repaintExecutorService = createRepaintExecutorService();
@@ -34,10 +38,11 @@ public class ThreadMaster {
 		this.workerExecutor = createWorkerExecutor();
 		this.onRepaintTick = NOOP;
 		this.onFragmentLoadTick = NOOP;
-		startRepainter();
-		startFragmentLoader();
+		theThreadMaster = this;
 	}
 
+	public static ThreadMaster theThreadMaster() { return theThreadMaster; }
+	
 	private ScheduledExecutorService createRepaintExecutorService() {
 		return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
 			@Override
@@ -79,24 +84,36 @@ public class ThreadMaster {
 		return new WorkerExecutor(workerExecutorService);
 	}
 
-	private void startRepainter() {
-		repaintExecutorService.scheduleAtFixedRate(new Runnable() {
+	// schedule a repaint if we have not done so already
+	public void setNeedsRepaint() {
+		if (needsRepaint)
+			return;
+		needsRepaint = true;
+		repaintExecutorService.schedule(new Runnable() {
 			@CalledOnlyBy(AmidstThread.REPAINTER)
 			@Override
 			public void run() {
 				onRepaintTick.run();
+				needsRepaint = false;
 			}
-		}, 0, 20, TimeUnit.MILLISECONDS);
+		}, 20, TimeUnit.MILLISECONDS);
+		
+		needToProcessFragments();
 	}
-
-	private void startFragmentLoader() {
-		fragmentLoaderExecutorService.scheduleWithFixedDelay(new Runnable() {
+	
+	// schedule fragment processing if it's not already planned
+	public void needToProcessFragments() {
+		if (needsProcessFragments)
+			return;
+		needsProcessFragments = true;
+		fragmentLoaderExecutorService.schedule(new Runnable() {
 			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
 			public void run() {
+				needsProcessFragments = false;
 				onFragmentLoadTick.run();
 			}
-		}, 0, 20, TimeUnit.MILLISECONDS);
+		}, 20, TimeUnit.MILLISECONDS);
 	}
 
 	public WorkerExecutor getWorkerExecutor() {

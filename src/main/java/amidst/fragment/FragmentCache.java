@@ -9,6 +9,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.logging.AmidstLogger;
+import amidst.threading.ThreadMaster;
 
 @ThreadSafe
 public class FragmentCache {
@@ -67,6 +68,7 @@ public class FragmentCache {
 		for (Fragment fragment : cache) {
 			loadingQueue.offer(fragment);
 		}
+        ThreadMaster.theThreadMaster().needToProcessFragments();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
