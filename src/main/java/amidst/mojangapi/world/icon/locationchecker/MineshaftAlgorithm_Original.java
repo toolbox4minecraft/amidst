@@ -1,8 +1,7 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
-import java.util.Random;
-
 import amidst.documentation.Immutable;
+import amidst.util.FastRand;
 
 /**
  * Empirical testing suggests this version of the algorithm works all the way
@@ -26,7 +25,7 @@ public class MineshaftAlgorithm_Original extends MineshaftAlgorithm_Base {
 	}
 
 	@Override
-	protected boolean getResult(int chunkX, int chunkY, Random random) {
+	protected boolean getResult(int chunkX, int chunkY, FastRand random) {
 		return random.nextInt(100) == 0;
 	}
 }
