@@ -123,6 +123,7 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showFPS,              "Show Framerate & CPU");
 		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
+		Menus.checkbox(result, settings.useHybridScaling,     "Use Hybrid Scaling");
 		// @formatter:on
 		result.addSeparator();
 		result.add(create_Settings_LookAndFeel());

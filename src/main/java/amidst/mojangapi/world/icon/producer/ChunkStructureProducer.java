@@ -12,7 +12,7 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
 @ThreadSafe
-public class StructureProducer<T> extends WorldIconProducer<T> {
+public class ChunkStructureProducer<T> extends WorldIconProducer<T> {
 	private final Resolution resolution;
 	private final int size;
 	private final int offsetInWorld;
@@ -21,7 +21,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
-	public StructureProducer(
+	public ChunkStructureProducer(
 			Resolution resolution,
 			int offsetInWorld,
 			LocationChecker checker,
@@ -39,7 +39,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
-		if(!checker.hasValidLocations()) {
+		if(checker != null && !checker.hasValidLocations()) {
 			return; // No need to check if the LocationChecker will never accept anything
 		}
 
@@ -59,7 +59,9 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 			int yRelativeToFragment) {
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
-		if (checker.isValidLocation(x, y)) {
+		
+		// if there is no checker provided, skip it
+		if (checker == null || checker.isValidLocation(x, y)) {
 			DefaultWorldIconTypes worldIconType = provider.get(x, y, additionalData);
 			if (worldIconType != null) {
 				CoordinatesInWorld coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);

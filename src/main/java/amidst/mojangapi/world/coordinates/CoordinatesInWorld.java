@@ -114,6 +114,14 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld, yInWorld);
 	}
 
+	public long getDistanceChebyshev(CoordinatesInWorld other) {
+		return Math.max(Math.abs(xInWorld - other.xInWorld), Math.abs(yInWorld - other.yInWorld));
+	}
+
+	public long getDistanceChebyshev(long xInWorld, long yInWorld) {
+		return Math.max(Math.abs(this.xInWorld - xInWorld), Math.abs(this.yInWorld - yInWorld));
+	}
+
 	public CoordinatesInWorld add(CoordinatesInWorld other) {
 		return add(other.xInWorld, other.yInWorld);
 	}

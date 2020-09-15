@@ -2,11 +2,11 @@ package amidst.mojangapi.world.oracle;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.util.FastRand;
 
 @ThreadSafe
 public class EndIslandOracle {
@@ -18,7 +18,7 @@ public class EndIslandOracle {
 	 * Returns the noise function using the current seed.
 	 */
 	private static SimplexNoise createNoiseFunction(long seed) {
-		Random random = new Random(seed);
+		FastRand random = new FastRand(seed);
 		fakePerlin3dOctavesConstructor(random, 16);
 		fakePerlin3dOctavesConstructor(random, 16);
 		fakePerlin3dOctavesConstructor(random, 8);
@@ -31,7 +31,7 @@ public class EndIslandOracle {
 	 * Mimics the side-effects to the random number generator caused by
 	 * constructing a Perlin3dOctaves instance.
 	 */
-	private static void fakePerlin3dOctavesConstructor(Random random, int octaveCount) {
+	private static void fakePerlin3dOctavesConstructor(FastRand random, int octaveCount) {
 		for (int i = 0; i < octaveCount; i++) {
 			fakePerlin3dConstructor(random);
 		}
@@ -41,7 +41,7 @@ public class EndIslandOracle {
 	 * Mimics the side-effects to the random number generator caused by
 	 * constructing a Perlin3d instance.
 	 */
-	private static void fakePerlin3dConstructor(Random random) {
+	private static void fakePerlin3dConstructor(FastRand random) {
 		random.nextDouble();
 		random.nextDouble();
 		random.nextDouble();

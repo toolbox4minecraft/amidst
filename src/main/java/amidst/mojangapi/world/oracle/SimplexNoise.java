@@ -1,6 +1,7 @@
 package amidst.mojangapi.world.oracle;
 
-import java.util.Random;
+import amidst.documentation.ThreadSafe;
+import amidst.util.FastRand;
 
 /**
  * A speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
@@ -15,12 +16,13 @@ import java.util.Random;
  *
  * This code was placed in the public domain by its original author, Stefan
  * Gustavson. You may use it as you see fit, but attribution is appreciated.
- * 
+ *
  * This file has been adapted for use in AmidstExporter/Amidst, it *should* be
  * compatible with the SimplexNoise generator Minecraft uses. The original
  * SimplexNoise code by Stefan and Peter, and related documents can be found at:
  * http://webstaff.itn.liu.se/~stegu/simplexnoise/
  */
+@ThreadSafe
 public class SimplexNoise {
 	// @formatter:off
 	private static final Grad[] GRAD_3 = {
@@ -54,7 +56,7 @@ public class SimplexNoise {
 	private static final double F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
 	private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
-	public SimplexNoise(Random random) {
+	public SimplexNoise(FastRand random) {
 		// To remove the need for index wrapping, double the permutation table
 		// length
 		perm = new short[512];
