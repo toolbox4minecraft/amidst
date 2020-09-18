@@ -78,16 +78,11 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		try {
 			resetIntCacheMethod.invokeExact();
 			int[] biomeInts = (int[]) getIntsMethod.invokeExact(biomeGenerator, x, y, width, height);
-			return cloneArray(biomeInts);
+			// we have to clone the array so we aren't using a reference to an array that's still in the IntCache
+			return biomeInts.clone();
 		} catch (Throwable e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
-	}
-
-	private static int[] cloneArray(int[] originalArray) {
-		int[] newArray = new int[originalArray.length];
-		System.arraycopy(originalArray, 0, newArray, 0, newArray.length);
-		return newArray;
 	}
 
 	private synchronized void initializeIfNeeded() throws MinecraftInterfaceException {
