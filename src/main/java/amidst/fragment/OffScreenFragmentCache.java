@@ -41,8 +41,7 @@ public class OffScreenFragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void invalidate() {
-		// When we invalidate the cache, we can recycle the fragments.
-		// (This recycling is probably neither necessary nor efficient, but let's keep it for now)
+		// When we invalidate the cache, we can recycle the fragments
 		recycleQueue.addAll(cache.values());
 		clear();
 	}

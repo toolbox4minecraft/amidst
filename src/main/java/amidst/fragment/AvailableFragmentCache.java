@@ -2,7 +2,7 @@ package amidst.fragment;
 
 import java.lang.ref.SoftReference;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -11,7 +11,7 @@ import amidst.fragment.constructor.FragmentConstructor;
 
 @NotThreadSafe
 public class AvailableFragmentCache {
-	private final ConcurrentLinkedQueue<SoftReference<Fragment>> cache = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedDeque<SoftReference<Fragment>> cache = new ConcurrentLinkedDeque<>();
 	
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
@@ -37,7 +37,7 @@ public class AvailableFragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Fragment poll() {
-		SoftReference<Fragment> ref = (SoftReference<Fragment>) cache.poll();
+		SoftReference<Fragment> ref = (SoftReference<Fragment>) cache.pollFirst();
 		return ref != null ? ref.get() : null;
 	}
 
@@ -47,7 +47,7 @@ public class AvailableFragmentCache {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void put(Fragment fragment) {
-		cache.offer(new SoftReference<>(fragment));
+		cache.addLast(new SoftReference<>(fragment));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

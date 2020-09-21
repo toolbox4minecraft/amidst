@@ -97,12 +97,14 @@ public class FragmentManager {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void retireFragment(Fragment fragment) {
-		if (!fragment.isLoaded() && fragment.recycle()) { // try to recycle if it's not loaded
+		if (!fragment.isLoaded() && !fragment.recycle()) { // try to recycle if it's not loaded
 			// Send it back to the available cache
-			loadingQueue.remove(fragment);
+			// We also don't want this to load while it's in the availableCache so we remove it from the loadingQueue
+			while (loadingQueue.remove(fragment));
 			availableCache.put(fragment);
 		} else {
 			// We store the fragment if it's loaded or not properly recycling and it goes offscreen
+			// If it doesn't properly recycle, we know it'll just get loaded by the loadingQueue anyway
 			offscreenCache.put(fragment);
 		}
 	}

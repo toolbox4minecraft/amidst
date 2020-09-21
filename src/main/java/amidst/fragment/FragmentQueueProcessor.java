@@ -177,20 +177,12 @@ public class FragmentQueueProcessor {
 	private boolean recycleFragment(Fragment fragment) {		
 		boolean recycled = fragment.recycle();
 		if (recycled) {
-			removeFromLoadingQueue(fragment);
+			// We also don't want this to load while it's in the availableCache so we remove it from the loadingQueue
+			while (loadingQueue.remove(fragment));
 			availableCache.put(fragment);
 		}
 		
+		// if the recycle fails, it just ends up getting loaded and then recycled later
 		return recycled;
-	}
-
-	// TODO: Check performance with and without this. It is not needed, since
-	// loadFragment checks for isInitialized(). It helps to keep the
-	// loadingQueue small, but it costs time to remove fragments from the queue.
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void removeFromLoadingQueue(Object fragment) {
-		while (loadingQueue.remove(fragment)) {
-			// noop
-		}
 	}
 }
