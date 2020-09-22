@@ -56,6 +56,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 
 	/**
 	 * The default max life time in milliseconds.
+	 * TODO: make this able to be set by the user
 	 */
 	private final long maxLifeTimeMillis;
 
