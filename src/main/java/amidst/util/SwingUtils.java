@@ -2,6 +2,7 @@ package amidst.util;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Window;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
@@ -20,10 +21,8 @@ public enum SwingUtils {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public static void destroyComponentTree(Component c) {
 		// calls the component's dispose method if it has it.
-		try {
-			Method m = c.getClass().getMethod("dispose");
-			m.invoke(c);
-		} catch (Exception e) {
+		if (c instanceof Window) {
+			((Window) c).dispose();
 		}
 		
 		SwingUtils.removeListeners(c);

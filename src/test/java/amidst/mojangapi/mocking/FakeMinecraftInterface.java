@@ -27,45 +27,38 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		this.quarterBiomeData = quarterBiomeData;
 		this.fullBiomeData = fullBiomeData;
 	}
-	
+
 	@Override
-	public MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
-		return new WorldConfig();
+	public MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
+		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
+				&& generatorOptions.isEmpty()) {
+			return new WorldAccessor();
+		} else {
+			throw new MinecraftInterfaceException("the world has to match");
+		}
 	}
 
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return worldMetadataJson.getRecognisedVersion();
 	}
-	
-	private class WorldConfig implements MinecraftInterface.WorldConfig {
-
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return EnumSet.allOf(Dimension.class);
-		}
-
-		@Override
-		public MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-				throws MinecraftInterfaceException {
-			if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
-					&& generatorOptions.isEmpty()) {
-				return new WorldAccessor();
-			} else {
-				throw new MinecraftInterfaceException("the world has to match");
-			}
-		}
-		
-	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
-		
+		private WorldAccessor() {
+		}
+
 		@Override
 		public<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			BiomeDataJson biomes = useQuarterResolution ? quarterBiomeData : fullBiomeData;
 			return biomeDataMapper.apply(biomes.get(dimension, x, y, width, height));
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return EnumSet.allOf(Dimension.class);
 		}
 	}
 }

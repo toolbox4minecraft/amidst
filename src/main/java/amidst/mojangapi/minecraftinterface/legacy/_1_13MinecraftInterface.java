@@ -108,64 +108,81 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
+	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
+		initializeIfNeeded();
+				
 		try {
-			initializeIfNeeded();
-			return new WorldConfig();
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-			throw new MinecraftInterfaceException("unable to create config", e);
+			// @formatter:off
+			Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
+				_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
+				seed,
+				getWorldType(worldType).getObject(),
+				getGenSettings(generatorOptions).getObject()
+			);
+			// @formatter:on
+			
+			return new WorldAccessor(genLayers[0], genLayers[1]);
+
+		} catch (
+				IllegalAccessException
+				| IllegalArgumentException
+				| InvocationTargetException
+				| InstantiationException e) {
+			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}
 
-	private synchronized void initializeIfNeeded()
-			throws IllegalAccessException,
-			IllegalArgumentException,
-			InvocationTargetException,
-			InstantiationException {
+	private synchronized void initializeIfNeeded() throws MinecraftInterfaceException {
 		if (isInitialized) {
 			return;
 		}
 		
-		String register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER;
-		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
-			if(bootstrapClass.getMethod(_1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
-				register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3;
-			} else if (bootstrapClass.getMethod(register).hasModifiers(Modifier.PRIVATE)) {
-				register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER2;
+		try {
+			String register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER;
+			if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
+				if(bootstrapClass.getMethod(_1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
+					register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3;
+				} else if (bootstrapClass.getMethod(register).hasModifiers(Modifier.PRIVATE)) {
+					register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER2;
+				}
 			}
-		}
-		
-		initBiomeGetIdHandle();
-		
-		if(genLayerClass.hasMethod(_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
-			getBiomesMethod = ReflectionUtils.getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA);
-			use113GetBiomesMethod = true;
-		} else {
-			getBiomesMethod = ReflectionUtils.getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2);
-		}
-		
-		bootstrapClass.callStaticMethod(register);
-		
-		// Minecraft's datafixers have been created during the initialization
-		// of the DataFixesManager class since 1.13 (I think). In our case,
-		// the class gets initialized during the bootstrapping stage. For our
-		// use case of the minecraft code, the datafixers are useless. The
-		// creation of the datafixers take valuable processor time and memory,
-		// so it's best to disable them in any way we can. Unfortunately, the
-		// only way to do this is to just shut down the thread pool that creates
-		// them. This doesn't work for versions before 1.14 because they use
-		// ForkJoinPool.commonPool(), which is unaffected by shutdown() and
-		// shutdownNow().
-		
-		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
-			try {
-				((ExecutorService) utilClass.getStaticFieldValue(_1_13SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
-			} catch (NullPointerException e) {
-				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			
+			initBiomeGetIdHandle();
+			
+			if(genLayerClass.hasMethod(_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
+				getBiomesMethod = ReflectionUtils.getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA);
+				use113GetBiomesMethod = true;
+			} else {
+				getBiomesMethod = ReflectionUtils.getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2);
 			}
-		}
-		
-		isInitialized = true;
+			
+			bootstrapClass.callStaticMethod(register);
+			
+			// Minecraft's datafixers have been created during the initialization
+			// of the DataFixesManager class since 1.13 (I think). In our case,
+			// the class gets initialized during the bootstrapping stage. For our
+			// use case of the minecraft code, the datafixers are useless. The
+			// creation of the datafixers take valuable processor time and memory,
+			// so it's best to disable them in any way we can. Unfortunately, the
+			// only way to do this is to just shut down the thread pool that creates
+			// them. This doesn't work for versions before 1.14 because they use
+			// ForkJoinPool.commonPool(), which is unaffected by shutdown() and
+			// shutdownNow().
+			
+			if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
+				try {
+					((ExecutorService) utilClass.getStaticFieldValue(_1_13SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
+				} catch (NullPointerException e) {
+					AmidstLogger.warn("Unable to shut down Server-Worker threads");
+				}
+			}
+			
+			isInitialized = true;
+        } catch(IllegalArgumentException | IllegalAccessException | InstantiationException
+                | InvocationTargetException e) {
+            throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
+        }
 	}
 
 	private synchronized void initBiomeGetIdHandle()
@@ -226,39 +243,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
-	}
-
-	private class WorldConfig implements MinecraftInterface.WorldConfig {
-
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return Collections.singleton(Dimension.OVERWORLD);
-		}
-
-		@Override
-		public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-				throws MinecraftInterfaceException {
-
-			try {
-				// @formatter:off
-				Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
-					_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
-					seed,
-					getWorldType(worldType).getObject(),
-					getGenSettings(generatorOptions).getObject()
-				);
-				// @formatter:on
-				
-				return new WorldAccessor(genLayers[0], genLayers[1]);
-
-			} catch (
-					IllegalAccessException
-					| IllegalArgumentException
-					| InvocationTargetException
-					| InstantiationException e) {
-				throw new MinecraftInterfaceException("unable to create world", e);
-			}
-		}
 	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
@@ -360,6 +344,11 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				e.printStackTrace();
 				throw new MinecraftInterfaceException("unable to get biome data", e);
 			}
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }

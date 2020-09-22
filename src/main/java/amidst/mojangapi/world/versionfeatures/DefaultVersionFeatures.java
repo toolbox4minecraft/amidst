@@ -52,21 +52,17 @@ import amidst.util.FastRand;
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions,
-			MinecraftInterface.WorldConfig worldConfig, MinecraftInterface.WorldAccessor worldAccessor) {
-
-		if (worldOptions == null || worldAccessor == null || worldConfig == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface.WorldAccessor worldAccessor) {
+		if (worldOptions == null || worldAccessor == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(WORLD_CONFIG, worldConfig)
 							.withValue(WORLD_ACCESSOR, worldAccessor);
 		}
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface.WorldConfig> WORLD_CONFIG               = FeatureKey.make();
 	private static final FeatureKey<MinecraftInterface.WorldAccessor> WORLD_ACCESSOR           = FeatureKey.make();
 	public static final FeatureKey<List<Biome>>      SPAWN_VALID_BIOMES                        = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES      = FeatureKey.make();
@@ -118,9 +114,10 @@ public enum DefaultVersionFeatures {
 				))
 			)
 			.with(FeatureKey.NETHER_BIOME_DATA_ORACLE, VersionFeature.fixed(features -> {
-				if (features.get(WORLD_CONFIG).supportedDimensions().contains(Dimension.NETHER)) {
+				MinecraftInterface.WorldAccessor worldAccessor = features.get(WORLD_ACCESSOR);
+				if (worldAccessor.supportedDimensions().contains(Dimension.NETHER)) {
 					return Optional.of(new BiomeDataOracle(
-						features.get(WORLD_ACCESSOR),
+						worldAccessor,
 						Dimension.NETHER,
 						features.get(FeatureKey.BIOME_LIST),
 						getBiomeOracleConfig(features)

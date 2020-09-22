@@ -71,23 +71,17 @@ public class WorldBuilder {
 	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
 		throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		MinecraftInterface.WorldConfig worldConfig = minecraftInterface.createWorldConfig();
 		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(
-			() -> {
-				try {
-					return worldConfig.createWorldAccessor(
+				v -> {
+					return minecraftInterface.createWorldAccessor(
 						worldOptions.getWorldSeed().getLong(),
 						worldOptions.getWorldType(),
 						worldOptions.getGeneratorOptions()
 					);
-				} catch (MinecraftInterfaceException e) {
-					throw new RuntimeException(e);
 				}
-			}
-		);
-		
+			);
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, worldConfig, worldAccessor).create(recognisedVersion);
+		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 	}
 
 	private World create(
