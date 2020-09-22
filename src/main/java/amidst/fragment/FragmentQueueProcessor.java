@@ -14,6 +14,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.Fragment.State;
 import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
@@ -163,19 +164,18 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void loadFragment(Dimension dimension, Fragment fragment) {
-		if (fragment.isInitialized()) {
-			if (fragment.isLoaded()) {
-				layerManager.reloadInvalidated(dimension, fragment);
-			} else if (!fragment.getAndSetLoading()) {
-				layerManager.loadAll(dimension, fragment);
-				fragment.setLoaded();
-			}
+		if (fragment.getState().equals(Fragment.State.LOADED)) {
+			layerManager.reloadInvalidated(dimension, fragment);
+		} else if (!fragment.getAndSetState(Fragment.State.LOADING).equals(Fragment.State.LOADING)) {
+			//If it's not loading, set loading and continue. If it is already loading, don't continue.
+			layerManager.loadAll(dimension, fragment);
+			fragment.setState(State.LOADED);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private boolean recycleFragment(Fragment fragment) {		
-		boolean recycled = fragment.recycle();
+	private boolean recycleFragment(Fragment fragment) {
+		boolean recycled = fragment.tryRecycle();
 		if (recycled) {
 			// We also don't want this to load while it's in the availableCache so we remove it from the loadingQueue
 			while (loadingQueue.remove(fragment));
