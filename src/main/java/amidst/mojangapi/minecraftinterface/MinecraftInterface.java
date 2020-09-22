@@ -17,10 +17,7 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public interface MinecraftInterface {
 
-	/**
-	 * All of the first run initialization stuff should be done here.
-	 */
-	public WorldConfig createWorldConfig() throws MinecraftInterfaceException;
+	public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
 
@@ -62,23 +59,7 @@ public interface MinecraftInterface {
 				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException;
-	}
-	
-	/**
-	 * An interface that includes methods for retrieving all of the configuration options
-	 * needed for creation of a world that don't require things like a seed, world type,
-	 * or generation options.
-	 * 
-	 * This should be able to access methods supplied in the SymbolicClasses just like
-	 * WorldAccessor can.
-	 * 
-	 * This also includes the createWorldAccessor method so it's required to create
-	 * a WorldConfig first.
-	 */
-	public static interface WorldConfig {
 		
 		public Set<Dimension> supportedDimensions();
-		
-		public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
 	}
 }
