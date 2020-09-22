@@ -73,13 +73,14 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	}
 
 	// Only one thread can manipulate the Minecraft int cache at a time
-	private synchronized int[] getBiomeData(int x, int y, int width, int height, Object biomeGenerator)
+	private synchronized<T> T getBiomeData(int x, int y, int width, int height, Object biomeGenerator, Function<int[], T> biomeDataMapper)
 			throws MinecraftInterfaceException {
 		try {
 			resetIntCacheMethod.invokeExact();
 			int[] biomeInts = (int[]) getIntsMethod.invokeExact(biomeGenerator, x, y, width, height);
-			// we have to clone the array so we aren't using a reference to an array that's still in the IntCache
-			return biomeInts.clone();
+			// we have to map the array inside the synchronized method so we don't
+			// using a reference to an array that's still in the IntCache
+			return biomeDataMapper.apply(biomeInts);
 		} catch (Throwable e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
@@ -188,8 +189,7 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 				throw new UnsupportedDimensionException(dimension);
 
 			Object biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
-			int[] data = LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
-			return biomeDataMapper.apply(data);
+			return LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator, biomeDataMapper);
 		}
 	}
 }
