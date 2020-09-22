@@ -22,16 +22,24 @@ import amidst.mojangapi.world.oracle.EndIsland;
  * setters. </br>
  * </br>
  * The life-cycle of a Fragment is quite complex to prevent the garbage
- * collection from running too often. When a fragment is no longer needed it
- * will be kept available in a queue, so it can be reused later on. The
- * life-cycle consists of the three flags: isInitialized, isLoading, and
- * isLoaded. isInitialized can be set to true from any thread, however setting
- * isInitialized to false as well as any modification to isLoading and isLoaded
- * will always be called from the fragment loading thread, to ensure a
- * consistent state. Also, isInitialized will only be set to true again after it
- * was set to false. It is not possible that isLoading or isLoaded is true while
- * isInitialized is false. It is also not possible for isLoaded to be true while
- * isLoading is true. </br>
+ * collection from running too often. The cycle consists of four states:
+ * uninitialized, initialized, loading, and loaded. These all govern what can be
+ * done to the fragment and any given time. A fragment starts off as
+ * uninitialized on creation. Soon after its creation, the EDT sets some of its
+ * variables and changes the state to initialized. From there, the fragment
+ * is put into the fragment graph to be displayed, and in the loading queue
+ * to be loaded. The fragment loader and worker threads are the only threads
+ * that can modify its state beyond this point. The loading queue is polled by
+ * the fragment worker threads and the fragment retrieved is set to LOADING to be
+ * loaded. Once it's finished loading, it gets set to LOADED.</br>
+ * </br>
+ * When a fragment ends up going off screen, a check is done to determine how to
+ * use it. If the fragment is loading or loaded, it gets sent to the off-screen
+ * cache, where it will be able to exist for a set amount of time without being
+ * refreshed before it gets cleaned out of the queue and garbage collected. If
+ * the fragment isn't being loaded or loading, it gets recycled. When a fragment
+ * is recycled, its state gets reset to initialized and it gets sent to the
+ * available cache to be re-used.</br>
  * </br>
  * It is possible that a thread that uses the data in the fragment continues to
  * use them after isLoaded is set to false. However, all write operations are
@@ -70,9 +78,9 @@ import amidst.mojangapi.world.oracle.EndIsland;
  * done by enqueuing the fragment to the recycle queue. The recycle queue is
  * processed by the fragment loading thread with a very high priority. Even
  * though the fragment loading thread only calls the method
- * {@link Fragment#recycle()} and enqueues the fragment to the available queue,
- * it is important that this is done by the fragment loading queue. This is,
- * because if any other thread sets the isLoaded variable to false, it might be
+ * {@link Fragment#tryRecycle()} and enqueues the fragment to the available
+ * queue, it is important that this is done by the fragment loading queue. This
+ * is because if any other thread sets the isLoaded variable to false, it might be
  * set to true by the fragment loading thread afterwards, because the fragment
  * was not yet loaded. This problem is solved by modifying the isLoaded variable
  * only in the fragment loading thread. This issue only arises, since the
