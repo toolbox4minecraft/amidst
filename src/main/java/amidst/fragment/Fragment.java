@@ -3,11 +3,11 @@ package amidst.fragment;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.function.UnaryOperator;
 
 import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.gui.main.viewer.Drawer;
@@ -91,9 +91,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
-	private final AtomicBoolean isLoading = new AtomicBoolean(false);
-	private final AtomicBoolean isLoaded = new AtomicBoolean(false);
+	private final AtomicReference<State> state;
 	private volatile CoordinatesInWorld corner;
 
 	private volatile float alpha;
@@ -103,6 +101,7 @@ public class Fragment {
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
 
 	public Fragment(int numberOfLayers) {
+		this.state = new AtomicReference<State>(State.UNINITIALIZED);
 		this.images = new AtomicReferenceArray<>(numberOfLayers);
 		this.worldIcons = new AtomicReferenceArray<>(numberOfLayers);
 	}
@@ -161,7 +160,7 @@ public class Fragment {
 	}
 
 	public List<WorldIcon> getWorldIcons(int layerId) {
-		if (isLoaded.get()) {
+		if (state.get().equals(State.LOADED)) {
 			List<WorldIcon> result = worldIcons.get(layerId);
 			if (result != null) {
 				return result;
@@ -170,43 +169,32 @@ public class Fragment {
 		return Collections.emptyList();
 	}
 
-	@CalledByAny
-	public void setInitialized() {
-		this.isInitialized.set(true);
+	public void setState(State state) {
+		this.state.set(state);
+	}
+
+	public State getState() {
+		return this.state.get();
+	}
+
+	public State getAndSetState(State state) {
+		return this.state.getAndSet(state);
+	}
+
+	public State updateAndGetState(UnaryOperator<State> updateFunction) {
+		return this.state.updateAndGet(updateFunction);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public boolean getAndSetLoading() {
-		return this.isLoading.getAndSet(true);
+	// can only be recycled if it's not loading
+	public boolean tryRecycle() {
+		return this.state.updateAndGet(s -> s.equals(State.LOADING) ? State.LOADING : State.UNINITIALIZED).equals(State.UNINITIALIZED);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void setLoaded() {
-		this.isLoading.set(false);
-		this.isLoaded.set(true);
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public boolean recycle() {
-		if (!this.isLoading.get()) {
-			this.isLoaded.set(false);
-			this.isInitialized.set(false);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public boolean isInitialized() {
-		return isInitialized.get();
-	}
-
-	public boolean isLoading() {
-		return isLoading.get();
-	}
-
-	public boolean isLoaded() {
-		return isLoaded.get();
+	// can only be recycled if it's not loading
+	public boolean tryRecycleNotLoaded() {
+		return this.state.updateAndGet(s -> s.equals(State.LOADING) || s.equals(State.LOADED) ? s : State.UNINITIALIZED).equals(State.UNINITIALIZED);
 	}
 
 	public void setCorner(CoordinatesInWorld corner) {
@@ -215,5 +203,12 @@ public class Fragment {
 
 	public CoordinatesInWorld getCorner() {
 		return corner;
+	}
+	
+	public static enum State {
+		UNINITIALIZED,
+		INITIALIZED,
+		LOADING,
+		LOADED;
 	}
 }

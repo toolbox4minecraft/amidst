@@ -9,10 +9,11 @@ import javax.swing.MenuElement;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.logging.AmidstLogger;
 
 public enum SwingUtils {
 	;
-
+	
 	/**
 	 * This helps with allowing swing components to get garbage collected.
 	 */
@@ -40,9 +41,10 @@ public enum SwingUtils {
 			}
 		}
 	}
-
+	
 	/**
-	 * <a href="https://bugs.openjdk.java.net/browse/JDK-4380536?focusedCommentId=12103089&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-12103089">source</a>
+	 * <a href=
+	 * "https://bugs.openjdk.java.net/browse/JDK-4380536?focusedCommentId=12103089&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-12103089">source</a>
 	 */
 	@SuppressWarnings("unchecked")
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -61,15 +63,15 @@ public enum SwingUtils {
 					} catch (Exception e) {
 						// It is possible that someone could create a listener
 						// that doesn't extend from EventListener. If so, ignore it
-						System.out.println("Listener " + params[0] + " does not extend EventListener");
+						AmidstLogger.info("Listener " + params[0] + " does not extend EventListener");
 						continue;
 					}
 					for (int j = 0; j < listeners.length; j++) {
 						try {
 							method.invoke(comp, new Object[] { listeners[j] });
-							//System.out.println("removed Listener " + name + " for comp " + comp + "\n");
+							//AmidstLogger.info("removed Listener " + name + " for comp " + comp + "\n");
 						} catch (Exception e) {
-							System.out.println("Cannot invoke removeListener method " + e);
+							AmidstLogger.info("Cannot invoke removeListener method " + e);
 							// Continue on. The reason for removing all listeners is to
 							// make sure that we don't have a listener holding on to something
 							// which will keep it from being garbage collected. We want to
@@ -82,7 +84,7 @@ public enum SwingUtils {
 					// one argument is removePropertyChangeListener. If it is
 					// something other than that, flag it and move on.
 					if (!name.equals("removePropertyChangeListener"))
-						System.out.println(" Wrong number of Args " + name);
+						AmidstLogger.info(" Wrong number of Args " + name);
 				}
 			}
 		}

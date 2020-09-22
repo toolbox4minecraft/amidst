@@ -201,7 +201,7 @@ public class Drawer {
 						setAlphaComposite(1.0f);
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d, time);
-					} else if (fragment.isLoaded()) {
+					} else if (fragment.getState().equals(Fragment.State.LOADED)) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d, time);

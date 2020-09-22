@@ -49,7 +49,7 @@ public class FragmentManager {
 			cache.increaseSize();
 		}
 		fragment.setCorner(coordinates);
-		fragment.setInitialized();
+		fragment.setState(Fragment.State.INITIALIZED);
 		loadingQueue.offer(fragment);
 		return fragment;
 	}
