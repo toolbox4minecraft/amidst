@@ -22,34 +22,16 @@ public class BenchmarkingMinecraftInterface implements MinecraftInterface {
 		this.inner = inner;
 		this.records = Collections.synchronizedList(records);
 	}
-	
+
 	@Override
-	public MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
-		return new WorldConfig(inner.createWorldConfig());
+	public MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
+		return new WorldAccessor(inner.createWorldAccessor(seed, worldType, generatorOptions));
 	}
 
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return inner.getRecognisedVersion();
-	}
-	
-	private class WorldConfig implements MinecraftInterface.WorldConfig {
-		private final MinecraftInterface.WorldConfig innerConfig;
-
-		private WorldConfig(MinecraftInterface.WorldConfig innerConfig) {
-			this.innerConfig = innerConfig;
-		}
-		
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return innerConfig.supportedDimensions();
-		}
-		
-		@Override
-		public MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-				throws MinecraftInterfaceException {
-			return new WorldAccessor(innerConfig.createWorldAccessor(seed, worldType, generatorOptions));
-		}
 	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
@@ -70,6 +52,11 @@ public class BenchmarkingMinecraftInterface implements MinecraftInterface {
 
 				return biomeDataMapper.apply(biomeData);
 			});
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return innerWorld.supportedDimensions();
 		}
 	}
 }

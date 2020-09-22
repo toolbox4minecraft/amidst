@@ -61,14 +61,17 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 			symbolicClassMap.get(LegacySymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 			recognisedVersion);
 	}
-
+	
 	@Override
-	public synchronized MinecraftInterface.WorldConfig createWorldConfig() throws MinecraftInterfaceException {
+	public synchronized WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
+		initializeIfNeeded();
+		
 		try {
-			initializeIfNeeded();
-			return new WorldConfig();
-		} catch (IllegalArgumentException e) {
-			throw new MinecraftInterfaceException("unable to create config", e);
+			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
+			return new WorldAccessor(genLayers[0], genLayers[1]);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}
 
@@ -151,29 +154,10 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-	
-	private class WorldConfig implements MinecraftInterface.WorldConfig {
-		
-		@Override
-		public Set<Dimension> supportedDimensions() {
-			return Collections.singleton(Dimension.OVERWORLD);
-		}
-
-		@Override
-		public synchronized WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-				throws MinecraftInterfaceException {
-			try {
-				Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
-				return new WorldAccessor(genLayers[0], genLayers[1]);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new MinecraftInterfaceException("unable to create world", e);
-			}
-		}
-	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
-	private final Object quarterResolutionBiomeGenerator;
-	private final Object fullResolutionBiomeGenerator;
+		private final Object quarterResolutionBiomeGenerator;
+		private final Object fullResolutionBiomeGenerator;
 
 		private WorldAccessor(Object quarterResolutionGen, Object fullResolutionGen) {
 			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
@@ -190,6 +174,11 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 
 			Object biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
 			return LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator, biomeDataMapper);
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }
