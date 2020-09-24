@@ -25,7 +25,6 @@
  */
 package amidst.util;
 
-import java.lang.ref.SoftReference;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import amidst.documentation.ThreadSafe;
@@ -52,7 +52,7 @@ import amidst.documentation.ThreadSafe;
 @ThreadSafe
 public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 
-	private final Map<K, SoftExpiringValue> internalMap;
+	private final Map<K, SoftExpiringReference<V>> internalMap;
 
 	/**
 	 * The default max life time in milliseconds.
@@ -114,7 +114,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V get(Object key) {
-		SoftExpiringValue valueRef = internalMap.get(key);
+		SoftExpiringReference<V> valueRef = internalMap.get(key);
 		renewValue(valueRef);
 		return valueRef != null ? valueRef.getValue() : null;
 	}
@@ -138,8 +138,8 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	 *         exists).
 	 */
 	public V put(K key, V value, long lifeTimeMillis) {
-		SoftExpiringValue newValue = new SoftExpiringValue(value, lifeTimeMillis);
-		SoftExpiringValue oldValue = internalMap.put(key, newValue);
+		SoftExpiringReference<V> newValue = new SoftExpiringReference<V>(value, lifeTimeMillis);
+		SoftExpiringReference<V> oldValue = internalMap.put(key, newValue);
 		if (oldValue != null) {
 			expireValue(oldValue);
 		}
@@ -151,7 +151,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V remove(Object key) {
-		SoftExpiringValue removedValue = internalMap.remove(key);
+		SoftExpiringReference<V> removedValue = internalMap.remove(key);
 		expireValue(removedValue);
 		return removedValue != null ? removedValue.getValue() : null;
 	}
@@ -166,8 +166,8 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 
 	public void putAll(Map<? extends K, ? extends V> m, long lifeTimeMillis) {
 		for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
-			SoftExpiringValue newValue = new SoftExpiringValue(entry.getValue(), lifeTimeMillis);
-			SoftExpiringValue oldValue = internalMap.put(entry.getKey(), newValue);
+			SoftExpiringReference<V> newValue = new SoftExpiringReference<V>(entry.getValue(), lifeTimeMillis);
+			SoftExpiringReference<V> oldValue = internalMap.put(entry.getKey(), newValue);
 			if (oldValue != null) {
 				expireValue(oldValue);
 			}
@@ -182,7 +182,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 	 * @return true if the value is found and hasn't been dereferenced,
 	 *         false otherwise
 	 */
-	public boolean renewValue(SoftExpiringValue valueRef) {
+	public boolean renewValue(SoftExpiringReference<V> valueRef) {
 		if (valueRef != null && valueRef.getValue() != null) {
 			valueRef.renew();
 			return true;
@@ -190,7 +190,7 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 		return false;
 	}
 
-	private void expireValue(SoftExpiringValue valueRef) {
+	private void expireValue(SoftExpiringReference<V> valueRef) {
 		if (valueRef != null) {
 			valueRef.expire();
 		}
@@ -239,71 +239,29 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 			return null;
 		}).filter(e -> e != null).collect(Collectors.toSet()));
 	}
-
-	public synchronized void clean() {
-		Iterator<SoftExpiringValue> valueRefIterator = internalMap.values().iterator();
-		for (SoftExpiringValue valueRef : (Iterable<SoftExpiringValue>) () -> valueRefIterator) {
-			V realValue = valueRef.getValue();
-			if (realValue == null || valueRef.getDelayMillis() < 0) {
-				valueRefIterator.remove();
-			}
-		}
+	
+	public void clean() {
+		clean(null);
 	}
 
-	private class SoftExpiringValue {
-		private long startTime = System.currentTimeMillis();
-		private final long maxLifeTimeMillis;
-		private final SoftReference<V> valueRef;
-
-		public SoftExpiringValue(V value, long maxLifeTimeMillis) {
-			this.maxLifeTimeMillis = maxLifeTimeMillis;
-			this.valueRef = new SoftReference<>(value);
-		}
-
-		public V getValue() {
-			return valueRef.get();
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@SuppressWarnings("unchecked")
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == null) {
-				return false;
+	public synchronized void clean(Consumer<V> expiredConsumer) {
+		Iterator<SoftExpiringReference<V>> valueRefIterator = internalMap.values().iterator();
+		for (SoftExpiringReference<V> valueRef : (Iterable<SoftExpiringReference<V>>) () -> valueRefIterator) {
+			V realValue = valueRef.getValue();
+			
+			boolean isNull = (realValue == null);
+			if (isNull) {
+				valueRefIterator.remove();
+				// dont pass to consumer if null
 			}
-			if (getClass() != obj.getClass()) {
-				return false;
+			
+			if(valueRef.getDelayMillis() < 0) {
+				valueRefIterator.remove();
+				// pass to consumer if expired and not null
+				if(!isNull && expiredConsumer != null) {
+					expiredConsumer.accept(realValue);
+				}
 			}
-			final SoftExpiringValue other = (SoftExpiringValue) obj;
-			if (this.getValue() != other.getValue()
-					&& (this.getValue() == null || !this.getValue().equals(other.getValue()))) {
-				return false;
-			}
-			return true;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public int hashCode() {
-			int hash = 7;
-			hash = 31 * hash + (this.getValue() != null ? this.getValue().hashCode() : 0);
-			return hash;
-		}
-
-		public long getDelayMillis() {
-			return (startTime + maxLifeTimeMillis) - System.currentTimeMillis();
-		}
-
-		public void renew() {
-			startTime = System.currentTimeMillis();
-		}
-
-		public void expire() {
-			startTime = Long.MIN_VALUE;
 		}
 	}
 }

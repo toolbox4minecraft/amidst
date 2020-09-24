@@ -52,9 +52,8 @@ import amidst.mojangapi.world.oracle.EndIsland;
  * to exist for a set amount of time without being refreshed before it gets
  * recycled. If the fragment isn't loaded or loading, it also gets recycled.
  * When a fragment is recycled, its state gets reset to initialized and it gets
- * sent to the available cache to be re-used. If a fragment in the available queue
- * doesn't get used for long enough, it gets cleared out and garbage
- * collected.</br>
+ * sent to the available cache to be re-used. If a fragment stays in the available
+ * queue for too long, it gets cleared and eventually garbage collected.</br>
  * </br>
  * It is possible that a thread that uses the data in the fragment continues to
  * use them after its state gets reset to uninitialized. However, all write

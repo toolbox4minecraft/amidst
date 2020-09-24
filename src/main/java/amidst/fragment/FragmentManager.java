@@ -54,7 +54,7 @@ public class FragmentManager {
 		ScheduledExecutorService scheduledExecutor =
 				Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "CacheCleanerThread"));
 		scheduledExecutor.scheduleAtFixedRate(() -> {
-			offscreenCache.clean();
+			offscreenCache.clean(f -> recycleQueue.add(f));
 			availableCache.clean();
 		}, 0, 500, TimeUnit.MILLISECONDS); // cleans both caches 2 times a second
 		return scheduledExecutor;

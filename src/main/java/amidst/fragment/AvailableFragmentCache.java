@@ -1,6 +1,5 @@
 package amidst.fragment;
 
-import java.lang.ref.SoftReference;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -8,10 +7,13 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
+import amidst.util.SoftExpiringReference;
 
 @NotThreadSafe
 public class AvailableFragmentCache {
-	private final ConcurrentLinkedDeque<SoftReference<Fragment>> cache = new ConcurrentLinkedDeque<>();
+	private static final long EXPIRATION_MILLIS = 60000; // 1 minute
+	
+	private final ConcurrentLinkedDeque<SoftExpiringReference<Fragment>> cache = new ConcurrentLinkedDeque<>();
 	
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
@@ -26,8 +28,10 @@ public class AvailableFragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment getOrCreate() {
-		Fragment fragment;
-		if((fragment = poll()) == null) {
+		Fragment fragment = null;
+		while(!isEmpty() && (fragment = poll()) == null); // try to retrieve a non-null fragment from the cache
+		
+		if(fragment == null) {
 			fragment = new Fragment(numberOfLayers);
 			construct(fragment);
 		}
@@ -37,8 +41,8 @@ public class AvailableFragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Fragment poll() {
-		SoftReference<Fragment> ref = (SoftReference<Fragment>) cache.pollFirst();
-		return ref != null ? ref.get() : null;
+		SoftExpiringReference<Fragment> value = (SoftExpiringReference<Fragment>) cache.pollFirst();
+		return value != null ? value.getValue() : null;
 	}
 
 	/**
@@ -47,7 +51,7 @@ public class AvailableFragmentCache {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void put(Fragment fragment) {
-		cache.addLast(new SoftReference<>(fragment));
+		cache.addLast(new SoftExpiringReference<>(fragment, EXPIRATION_MILLIS));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -57,10 +61,10 @@ public class AvailableFragmentCache {
 		}
 	}
 
-	public void clean() {
-		Iterator<SoftReference<Fragment>> fragRefIterator = cache.iterator();
-		for (SoftReference<Fragment> fragRef : (Iterable<SoftReference<Fragment>>) () -> fragRefIterator) {
-			if (fragRef == null || fragRef.get() == null) {
+	public synchronized void clean() {
+		Iterator<SoftExpiringReference<Fragment>> fragRefIterator = cache.iterator();
+		for (SoftExpiringReference<Fragment> fragRef : (Iterable<SoftExpiringReference<Fragment>>) () -> fragRefIterator) {
+			if (fragRef == null || fragRef.getValue() == null || fragRef.getDelayMillis() < 0) {
 				fragRefIterator.remove();
 			}
 		}
@@ -69,5 +73,10 @@ public class AvailableFragmentCache {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
 		return cache.size();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean isEmpty() {
+		return cache.size() <= 0;
 	}
 }

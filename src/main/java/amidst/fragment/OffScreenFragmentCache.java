@@ -1,6 +1,7 @@
 package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -53,6 +54,10 @@ public class OffScreenFragmentCache {
 
 	public void clean() {
 		cache.clean();
+	}
+
+	public void clean(Consumer<Fragment> fragmentConsumer) {
+		cache.clean(fragmentConsumer);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
