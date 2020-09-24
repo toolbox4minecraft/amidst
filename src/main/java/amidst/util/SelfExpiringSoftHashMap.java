@@ -248,14 +248,9 @@ public class SelfExpiringSoftHashMap<K, V> implements Map<K, V> {
 		Iterator<SoftExpiringReference<V>> valueRefIterator = internalMap.values().iterator();
 		for (SoftExpiringReference<V> valueRef : (Iterable<SoftExpiringReference<V>>) () -> valueRefIterator) {
 			V realValue = valueRef.getValue();
-			
 			boolean isNull = (realValue == null);
-			if (isNull) {
-				valueRefIterator.remove();
-				// dont pass to consumer if null
-			}
 			
-			if(valueRef.getDelayMillis() < 0) {
+			if (isNull || valueRef.getDelayMillis() < 0) {
 				valueRefIterator.remove();
 				// pass to consumer if expired and not null
 				if(!isNull && expiredConsumer != null) {

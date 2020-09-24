@@ -2,6 +2,7 @@ package amidst.fragment;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -62,10 +63,21 @@ public class AvailableFragmentCache {
 	}
 
 	public synchronized void clean() {
+		clean(null);
+	}
+
+	public synchronized void clean(Consumer<Fragment> expiredConsumer) {
 		Iterator<SoftExpiringReference<Fragment>> fragRefIterator = cache.iterator();
 		for (SoftExpiringReference<Fragment> fragRef : (Iterable<SoftExpiringReference<Fragment>>) () -> fragRefIterator) {
-			if (fragRef == null || fragRef.getValue() == null || fragRef.getDelayMillis() < 0) {
+			Fragment realFrag = null;
+			boolean isNull = (fragRef == null || (realFrag = fragRef.getValue()) == null);
+			
+			if (isNull || fragRef.getDelayMillis() < 0) {
 				fragRefIterator.remove();
+				// pass to consumer if expired and not null
+				if(!isNull && expiredConsumer != null) {
+					expiredConsumer.accept(realFrag);
+				}
 			}
 		}
 	}

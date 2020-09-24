@@ -93,13 +93,13 @@ public class FragmentManager {
 	}
 
 	/**
-	 * Called when a fragment is no longer shown on the screen.
+	 * Called when a fragment is no longer shown on the screen. 
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void retireFragment(Fragment fragment) {
-		if (fragment.tryRecycleNotLoaded()) { // try to recycle if it's not loaded
-			// Send it back to the available cache
-			// We also don't want this to load while it's in the availableCache so we remove it from the loadingQueue
+		// This isn't recycled normally because we want to have a different outcome if it fails the first try
+		if (fragment.tryRecycleNotLoaded()) {
+			// We don't want this to load while it's in the availableCache so we remove it from the loadingQueue
 			while (loadingQueue.remove(fragment));
 			availableCache.put(fragment);
 		} else {
