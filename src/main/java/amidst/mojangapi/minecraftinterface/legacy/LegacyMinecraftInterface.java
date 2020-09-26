@@ -16,6 +16,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.ReflectionUtils;
 import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
@@ -63,12 +64,11 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	}
 	
 	@Override
-	public synchronized WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
+	public synchronized WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		initializeIfNeeded();
 		
 		try {
-			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
+			Object[] genLayers = getGenLayers(worldOptions.getWorldSeed().getLong(), worldOptions.getWorldType(), worldOptions.getGeneratorOptions());
 			return new WorldAccessor(genLayers[0], genLayers[1]);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);

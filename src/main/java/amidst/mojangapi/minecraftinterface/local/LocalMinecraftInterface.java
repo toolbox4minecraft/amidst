@@ -26,6 +26,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.ReflectionUtils;
 import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -74,12 +75,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
+	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		initializeIfNeeded();
 		
 	    try {
-	    	Object worldSettings = createWorldSettingsObject(seed, worldType, generatorOptions).getObject();
+	    	long seed = worldOptions.getWorldSeed().getLong();
+	    	
+	    	Object worldSettings = createWorldSettingsObject(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions()).getObject();
 	    	Object overworldBiomeProvider;
 	    	Object netherBiomeProvider;
 	    	if (dimensionSettingsClass == null) {

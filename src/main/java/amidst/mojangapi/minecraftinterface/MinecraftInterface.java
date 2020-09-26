@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
@@ -17,7 +17,7 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public interface MinecraftInterface {
 
-	public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
+	public WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
 
