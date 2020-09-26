@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class LoggingMinecraftInterface implements MinecraftInterface {
@@ -19,15 +19,15 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	}
 	
 	@Override
-	public WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
+	public WorldAccessor createWorldAccessor(WorldOptions worldOptions)
 			throws MinecraftInterfaceException {
 		WorldAccessor innerAccessor;
 		
 		if(shouldLogAccessor.getAndSet(false)) {
-			AmidstLogger.info("Creating world with seed '{}' and type '{}'", seed, worldType.getName());
-			AmidstLogger.info("Using the following generator options: {}", generatorOptions);
+			AmidstLogger.info("Creating world with seed '{}' and type '{}'", worldOptions.getWorldSeed().getLong(), worldOptions.getWorldType().getName());
+			AmidstLogger.info("Using the following generator options: {}", worldOptions.getGeneratorOptions());
 			
-			innerAccessor = inner.createWorldAccessor(seed, worldType, generatorOptions);
+			innerAccessor = inner.createWorldAccessor(worldOptions);
 			
 			StringBuilder sb = new StringBuilder("Supported dimensions for world: ");
 			boolean firstDim = true;
@@ -42,7 +42,7 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 			}
 			AmidstLogger.info(sb.toString());
 		} else {
-			innerAccessor = inner.createWorldAccessor(seed, worldType, generatorOptions);
+			innerAccessor = inner.createWorldAccessor(worldOptions);
 		}
 		
 		return innerAccessor;

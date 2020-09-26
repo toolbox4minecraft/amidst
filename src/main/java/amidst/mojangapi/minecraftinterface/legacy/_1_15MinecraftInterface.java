@@ -31,6 +31,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.ReflectionUtils;
 import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -88,12 +89,13 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
+	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		initializeIfNeeded();
 		
 	    try {
-	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
+	    	long seed = worldOptions.getWorldSeed().getLong();
+	    	
+	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions());
 	        Object netherBiomeProvider = manuallyCreateNetherBiomeProvider(seed);
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
             long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
