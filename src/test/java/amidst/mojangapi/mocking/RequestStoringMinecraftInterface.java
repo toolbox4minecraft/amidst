@@ -8,7 +8,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class RequestStoringMinecraftInterface implements MinecraftInterface {
@@ -25,9 +25,8 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-		return new WorldAccessor(realMinecraftInterface.createWorldAccessor(seed, worldType, generatorOptions));
+	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+		return new WorldAccessor(realMinecraftInterface.createWorldAccessor(worldOptions));
 	}
 
 	@Override
