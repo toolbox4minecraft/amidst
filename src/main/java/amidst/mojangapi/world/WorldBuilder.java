@@ -6,6 +6,7 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
+import amidst.mojangapi.minecraftinterface.LoggingMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -71,15 +72,10 @@ public class WorldBuilder {
 	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
 		throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(
-				v -> {
-					return minecraftInterface.createWorldAccessor(
-						worldOptions.getWorldSeed().getLong(),
-						worldOptions.getWorldType(),
-						worldOptions.getGeneratorOptions()
-					);
-				}
-			);
+		if(minecraftInterface instanceof LoggingMinecraftInterface) {
+			((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
+		}
+		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
 		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 	}

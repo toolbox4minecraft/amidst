@@ -17,10 +17,13 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	public LoggingMinecraftInterface(MinecraftInterface minecraftInterface) {
 		this.inner = minecraftInterface;
 	}
-	
+
+	public void logNextAccessor() {
+		shouldLogAccessor.set(true);
+	}
+
 	@Override
-	public WorldAccessor createWorldAccessor(WorldOptions worldOptions)
-			throws MinecraftInterfaceException {
+	public WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		WorldAccessor innerAccessor;
 		
 		if(shouldLogAccessor.getAndSet(false)) {
