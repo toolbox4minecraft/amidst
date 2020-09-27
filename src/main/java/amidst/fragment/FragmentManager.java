@@ -30,9 +30,14 @@ public class FragmentManager {
 	private ThreadPoolExecutor fragWorkers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers, Setting<Integer> threadsSetting) {
-		this.availableCache = new AvailableFragmentCache(constructors, numberOfLayers);
-		this.offscreenCache = new OffScreenFragmentCache(recycleQueue);
+	public FragmentManager(
+			Iterable<FragmentConstructor> constructors,
+			int numberOfLayers,
+			Setting<Integer> threadsSetting,
+			Setting<Integer> availableCacheTime,
+			Setting<Integer> offscreenCacheTime) {
+		this.availableCache = new AvailableFragmentCache(constructors, numberOfLayers, availableCacheTime);
+		this.offscreenCache = new OffScreenFragmentCache(recycleQueue, offscreenCacheTime);
 		this.threadsSetting = threadsSetting;
 		this.cleanerThread = createCleanerThread();
 		this.fragWorkers = createThreadPool();

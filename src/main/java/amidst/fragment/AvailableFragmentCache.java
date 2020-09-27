@@ -8,23 +8,25 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
+import amidst.settings.Setting;
 import amidst.util.SoftExpiringReference;
 
 @NotThreadSafe
-public class AvailableFragmentCache {
-	private static final long EXPIRATION_MILLIS = 60000; // 1 minute
-	
+public class AvailableFragmentCache {	
 	private final ConcurrentLinkedDeque<SoftExpiringReference<Fragment>> cache = new ConcurrentLinkedDeque<>();
 	
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
+	private final Setting<Integer> availableCacheTime;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AvailableFragmentCache(
 			Iterable<FragmentConstructor> constructors,
-			int numberOfLayers) {
+			int numberOfLayers,
+			Setting<Integer> availableCacheTime) {
 		this.constructors = constructors;
 		this.numberOfLayers = numberOfLayers;
+		this.availableCacheTime = availableCacheTime;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -52,7 +54,7 @@ public class AvailableFragmentCache {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void put(Fragment fragment) {
-		cache.addLast(new SoftExpiringReference<>(fragment, EXPIRATION_MILLIS));
+		cache.addLast(new SoftExpiringReference<>(fragment, availableCacheTime.get()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

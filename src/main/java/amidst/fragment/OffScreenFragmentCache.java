@@ -6,20 +6,21 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.settings.Setting;
 import amidst.util.SelfExpiringSoftHashMap;
 
 /**
  * This contains fragments that have been loaded and are currently off-screen.
  */
 @NotThreadSafe
-public class OffScreenFragmentCache {
-	private static final long EXPIRATION_MILLIS = 30000; // 30 seconds
-	
-	private final SelfExpiringSoftHashMap<CoordinatesInWorld, Fragment> cache = new SelfExpiringSoftHashMap<>(EXPIRATION_MILLIS);
+public class OffScreenFragmentCache {	
+	private final SelfExpiringSoftHashMap<CoordinatesInWorld, Fragment> cache = new SelfExpiringSoftHashMap<>();
 	private final ConcurrentLinkedDeque<Fragment> recycleQueue;
+	private final Setting<Integer> offscreenCacheTime;
 
-	public OffScreenFragmentCache(ConcurrentLinkedDeque<Fragment> recycleQueue) {
+	public OffScreenFragmentCache(ConcurrentLinkedDeque<Fragment> recycleQueue, Setting<Integer> offscreenCacheTime) {
 		this.recycleQueue = recycleQueue;
+		this.offscreenCacheTime = offscreenCacheTime;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -30,7 +31,10 @@ public class OffScreenFragmentCache {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void put(Fragment fragment) {
 		if (fragment != null) {
-			cache.putIfAbsent(fragment.getCorner(), fragment);
+			Fragment frag = get(fragment.getCorner());
+	        if (frag == null) {
+	        	cache.put(fragment.getCorner(), fragment, offscreenCacheTime.get());
+	        }
 		}
 	}
 
