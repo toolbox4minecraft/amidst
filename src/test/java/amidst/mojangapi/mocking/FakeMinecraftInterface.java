@@ -9,7 +9,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
@@ -29,11 +29,10 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
-				&& generatorOptions.isEmpty()) {
-			return new World();
+	public MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+		if (worldMetadataJson.getSeed() == worldOptions.getWorldSeed().getLong() && worldMetadataJson.getWorldType().equals(worldOptions.getWorldType())
+				&& worldOptions.getGeneratorOptions().isEmpty()) {
+			return new WorldAccessor();
 		} else {
 			throw new MinecraftInterfaceException("the world has to match");
 		}
@@ -44,8 +43,8 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		return worldMetadataJson.getRecognisedVersion();
 	}
 
-	private class World implements MinecraftInterface.World {
-		private World() {
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
+		private WorldAccessor() {
 		}
 
 		@Override

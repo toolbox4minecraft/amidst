@@ -70,6 +70,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
+import amidst.util.SwingUtils;
 
 @NotThreadSafe
 public class BiomeExporterDialog {
@@ -421,6 +422,11 @@ public class BiomeExporterDialog {
 	}
 
 	public void dispose() {
+		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
+		SwingUtils.destroyComponentTree(dialog);
+	}
+	
+	public void softDispose() {
 		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
 		dialog.dispose();
 	}

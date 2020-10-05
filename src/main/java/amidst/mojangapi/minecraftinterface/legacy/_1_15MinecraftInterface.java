@@ -31,6 +31,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.ReflectionUtils;
 import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -88,16 +89,17 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-	    initializeIfNeeded();
-
+	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+		initializeIfNeeded();
+		
 	    try {
-	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
+	    	long seed = worldOptions.getWorldSeed().getLong();
+	    	
+	        Object overworldBiomeProvider = createBiomeProviderObject(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions());
 	        Object netherBiomeProvider = manuallyCreateNetherBiomeProvider(seed);
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
             long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
-            return new World(overworldBiomeProvider, netherBiomeProvider, biomeZoomer, seedForBiomeZoomer);
+            return new WorldAccessor(overworldBiomeProvider, netherBiomeProvider, biomeZoomer, seedForBiomeZoomer);
 
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
@@ -310,7 +312,7 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	    return getByKey.invoke(registry, registryKey);
 	}
 
-	private class World implements MinecraftInterface.World {
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
 		/**
 		 * A BiomeProvider instance for the current overworld, giving
 		 * access to the quarter-scale biome data.
@@ -334,7 +336,7 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 
 		private final Set<Dimension> supportedDimensions;
 
-	    private World(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
+	    private WorldAccessor(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
 	    	this.overworldBiomeProvider = overworldBiomeProvider;
 	    	this.netherBiomeProvider = netherBiomeProvider;
 	    	this.biomeZoomer = biomeZoomer;

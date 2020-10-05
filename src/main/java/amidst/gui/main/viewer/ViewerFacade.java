@@ -101,6 +101,8 @@ public class ViewerFacade {
 		graph.dispose();
 		zoom.skipFading();
 		zoom.reset();
+		fragmentManager.clear();
+		fragmentManager.restartThreadPool();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

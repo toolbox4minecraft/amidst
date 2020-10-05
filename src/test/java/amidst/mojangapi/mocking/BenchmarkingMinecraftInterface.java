@@ -11,7 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.mocking.json.BiomeRequestRecordJson;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class BenchmarkingMinecraftInterface implements MinecraftInterface {
@@ -24,9 +24,8 @@ public class BenchmarkingMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
-			throws MinecraftInterfaceException {
-		return new World(inner.createWorld(seed, worldType, generatorOptions));
+	public MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+		return new WorldAccessor(inner.createWorldAccessor(worldOptions));
 	}
 
 	@Override
@@ -34,10 +33,10 @@ public class BenchmarkingMinecraftInterface implements MinecraftInterface {
 		return inner.getRecognisedVersion();
 	}
 
-	private class World implements MinecraftInterface.World {
-		private final MinecraftInterface.World innerWorld;
+	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
+		private final MinecraftInterface.WorldAccessor innerWorld;
 
-		private World(MinecraftInterface.World innerWorld) {
+		private WorldAccessor(MinecraftInterface.WorldAccessor innerWorld) {
 			this.innerWorld = innerWorld;
 		}
 

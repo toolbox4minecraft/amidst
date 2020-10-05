@@ -15,7 +15,6 @@ public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
 	private final List<Fragment> cache = new LinkedList<>();
-	private volatile int cacheSize = 0;
 
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
@@ -51,7 +50,6 @@ public class FragmentCache {
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
-		cacheSize = cache.size();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -68,9 +66,15 @@ public class FragmentCache {
 			loadingQueue.offer(fragment);
 		}
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public synchronized void clear() {
+		AmidstLogger.info("fragment cache cleared");
+		cache.clear();
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
-		return cacheSize;
+		return cache.size();
 	}
 }

@@ -52,18 +52,18 @@ import amidst.util.FastRand;
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface.World minecraftWorld) {
-		if (worldOptions == null || minecraftWorld == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface.WorldAccessor worldAccessor) {
+		if (worldOptions == null || worldAccessor == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(MINECRAFT_WORLD, minecraftWorld);
+							.withValue(WORLD_ACCESSOR, worldAccessor);
 		}
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                  = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface.WorldAccessor> WORLD_ACCESSOR           = FeatureKey.make();
 	public static final FeatureKey<List<Biome>>      SPAWN_VALID_BIOMES                        = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES      = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     VILLAGE_VALID_BIOMES                      = FeatureKey.make();
@@ -97,8 +97,8 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Byte>            OCEAN_RUINS_SEPARATION                    = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_BUILDING_SPACING                   = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_BUILDING_SEPARATION                = FeatureKey.make();
-	private static final FeatureKey<Function<FastRand, Boolean>> NETHER_FORTRESS_FUNCTION         = FeatureKey.make();
-	private static final FeatureKey<Function<FastRand, Boolean>> BASTION_REMNANT_FUNCTION         = FeatureKey.make();
+	private static final FeatureKey<Function<FastRand, Boolean>> NETHER_FORTRESS_FUNCTION      = FeatureKey.make();
+	private static final FeatureKey<Function<FastRand, Boolean>> BASTION_REMNANT_FUNCTION      = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE    = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT = FeatureKey.make();
@@ -107,17 +107,17 @@ public enum DefaultVersionFeatures {
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
 			.with(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE,
 				VersionFeature.fixed(features -> new BiomeDataOracle(
-					features.get(MINECRAFT_WORLD),
+					features.get(WORLD_ACCESSOR),
 					Dimension.OVERWORLD,
 					features.get(FeatureKey.BIOME_LIST),
 					getBiomeOracleConfig(features)
 				))
 			)
 			.with(FeatureKey.NETHER_BIOME_DATA_ORACLE, VersionFeature.fixed(features -> {
-				MinecraftInterface.World world = features.get(MINECRAFT_WORLD);
-				if (world.supportedDimensions().contains(Dimension.NETHER)) {
+				MinecraftInterface.WorldAccessor worldAccessor = features.get(WORLD_ACCESSOR);
+				if (worldAccessor.supportedDimensions().contains(Dimension.NETHER)) {
 					return Optional.of(new BiomeDataOracle(
-						features.get(MINECRAFT_WORLD),
+						worldAccessor,
 						Dimension.NETHER,
 						features.get(FeatureKey.BIOME_LIST),
 						getBiomeOracleConfig(features)

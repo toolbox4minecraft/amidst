@@ -31,6 +31,13 @@ public interface Setting<T> extends Supplier<T> {
 			value -> preferences.putBoolean(key, value));
 	}
 
+	public static Setting<Integer> createInteger(Preferences preferences, String key, @NotNull Integer defaultValue) {
+		return new SettingBase<>(
+			defaultValue,
+			value -> preferences.getInt(key, value),
+			value -> preferences.putInt(key, value));
+	}
+
 	public static Setting<Dimension> createDimension(Preferences preferences, String key, Dimension defaultValue) {
 		return new SettingBase<>(
 			defaultValue,
