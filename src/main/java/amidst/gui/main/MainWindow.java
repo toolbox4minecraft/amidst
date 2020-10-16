@@ -20,6 +20,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.util.SwingUtils;
 
 @NotThreadSafe
 public class MainWindow {
@@ -78,7 +79,7 @@ public class MainWindow {
 		worldSwitcher.clearWorld();
 		if (FeatureToggles.SEED_SEARCH) {
 			seedSearcherWindow.dispose();
-		}
-		frame.dispose();
+		}		
+		SwingUtils.destroyComponentTree(frame);
 	}
 }

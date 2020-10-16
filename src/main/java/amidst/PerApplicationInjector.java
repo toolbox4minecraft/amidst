@@ -74,7 +74,7 @@ public class PerApplicationInjector {
 				.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
 		this.layerBuilder = new LayerBuilder();
 		this.zoom = new Zoom(settings.maxZoom);
-		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
+		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers(), settings.threads);
 		this.biomeSelection = new BiomeSelection();
 		this.application = new Application(
 				preferredLauncherProfile,

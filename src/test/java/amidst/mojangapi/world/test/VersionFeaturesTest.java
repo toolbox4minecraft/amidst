@@ -38,7 +38,7 @@ public class VersionFeaturesTest {
 
 	public VersionFeatures.Builder createVersionFeaturesBuilder() {
 		WorldOptions worldOptions = new WorldOptions(WorldSeed.fromSaveGame(0), WorldType.DEFAULT);
-		MinecraftInterface.World minecraftWorld = new MockMinecraftWorld();
+		MinecraftInterface.WorldAccessor minecraftWorld = new MockMinecraftWorldAccessor();
 		return DefaultVersionFeatures.builder(worldOptions, minecraftWorld);
 	}
 
@@ -55,7 +55,7 @@ public class VersionFeaturesTest {
 		return features;
 	}
 
-	private static class MockMinecraftWorld implements MinecraftInterface.World {
+	private static class MockMinecraftWorldAccessor implements MinecraftInterface.WorldAccessor {
 		@Override
 		public<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height, boolean useQuarterResolution,
 				Function<int[], T> biomeDataMapper) {

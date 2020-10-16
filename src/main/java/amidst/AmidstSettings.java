@@ -37,6 +37,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showScale;
 	public final Setting<Boolean> showDebug;
 	public final Setting<Boolean> useHybridScaling;
+	public final Setting<Integer> threads;
 	public final Setting<AmidstLookAndFeel> lookAndFeel;
 
 	public final Setting<String> lastProfile;
@@ -76,6 +77,7 @@ public class AmidstSettings {
 		showScale                  = Setting.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
 		useHybridScaling           = Setting.createBoolean(  preferences, "useHybridScaling",     true);
+		threads                    = Setting.createInteger(  preferences, "threads",              (Runtime.getRuntime().availableProcessors() / 2) + 1);
 		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");

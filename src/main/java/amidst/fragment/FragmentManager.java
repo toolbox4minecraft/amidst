@@ -1,6 +1,9 @@
 package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -17,10 +20,26 @@ public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
 	private final FragmentCache cache;
+	
+	private final Setting<Integer> threadsSetting;
+	private ThreadPoolExecutor fragWorkers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers) {
+	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers, Setting<Integer> threadsSetting) {
 		this.cache = new FragmentCache(availableQueue, loadingQueue, constructors, numberOfLayers);
+		this.threadsSetting = threadsSetting;
+		this.fragWorkers = createThreadPool();
+	}
+	
+	public ThreadPoolExecutor createThreadPool() {
+		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
+			private int num;
+			
+			@Override
+			public Thread newThread(Runnable r) {
+				return new Thread(r, "Fragment-Worker-" + num++);
+			}
+		});
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -30,7 +49,7 @@ public class FragmentManager {
 			cache.increaseSize();
 		}
 		fragment.setCorner(coordinates);
-		fragment.setInitialized();
+		fragment.setState(Fragment.State.INITIALIZED);
 		loadingQueue.offer(fragment);
 		return fragment;
 	}
@@ -48,6 +67,7 @@ public class FragmentManager {
 				recycleQueue,
 				cache,
 				layerManager,
+				fragWorkers,
 				dimensionSetting);
 	}
 
@@ -64,6 +84,20 @@ public class FragmentManager {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int getRecycleQueueSize() {
 		return recycleQueue.size();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void clear() {
+		cache.clear();
+		availableQueue.clear();
+		loadingQueue.clear();
+		recycleQueue.clear();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void restartThreadPool() {
+		fragWorkers.shutdownNow();
+		this.fragWorkers = createThreadPool();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

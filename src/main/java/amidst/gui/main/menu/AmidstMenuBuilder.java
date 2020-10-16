@@ -1,13 +1,20 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.AbstractButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSlider;
+import javax.swing.MenuSelectionManager;
+import javax.swing.UIManager;
 
 import amidst.AmidstSettings;
 import amidst.FeatureToggles;
@@ -127,6 +134,7 @@ public class AmidstMenuBuilder {
 		// @formatter:on
 		result.addSeparator();
 		result.add(create_Settings_LookAndFeel());
+		result.add(create_Settings_Threads());
 		return result;
 	}
 
@@ -139,7 +147,7 @@ public class AmidstMenuBuilder {
 	}
 
 	private JMenu create_Settings_LookAndFeel() {
-		JMenu result = new JMenu("Select Look & Feel");
+		JMenu result = new JMenu("Look & Feel");
 
 		List<AbstractButton> radios = new ArrayList<>();
 		Setting<AmidstLookAndFeel> lookAndFeelSetting = settings.lookAndFeel.withListener(
@@ -152,6 +160,36 @@ public class AmidstMenuBuilder {
 
 		radios.addAll(Menus.radios(result, lookAndFeelSetting, AmidstLookAndFeel.values()));
 		return result;
+	}
+	
+	private JMenu create_Settings_Threads() {
+		UIManager.put("Slider.focus", UIManager.get("Slider.background"));
+		int cores = Runtime.getRuntime().availableProcessors();
+		JMenu submenu = new JMenu("No. of Threads");
+		JSlider slider = new JSlider(JSlider.VERTICAL, 1, cores, settings.threads.get());
+		submenu.add(slider);
+		slider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (e.getSource() instanceof JSlider) {
+					if(settings.threads.get().intValue() != ((JSlider) e.getSource()).getValue()) {
+						settings.threads.set(((JSlider) e.getSource()).getValue());
+						MenuSelectionManager.defaultManager().clearSelectedPath();
+						actions.tryChangeThreads();
+					}
+				}
+			}			
+		});
+		slider.setMinorTickSpacing(1);
+		slider.setPaintTicks(true);
+		slider.setSnapToTicks(true);
+		slider.setPaintLabels(true);
+		Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>(3);
+		table.put(1, new JLabel("1"));
+		table.put(cores / 2, new JLabel("" + cores / 2));
+		table.put(cores, new JLabel("" + cores));
+		slider.setLabelTable(table);
+		return submenu;
 	}
 
 	private JMenu create_Settings_BiomeProfile() {
