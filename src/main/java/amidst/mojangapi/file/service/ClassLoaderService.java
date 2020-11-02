@@ -47,16 +47,19 @@ public class ClassLoaderService {
 		AmidstLogger.info("Loading libraries.");
 		for (LibraryJson library : libraries) {
 			if (isLibraryActive(library)) {
-				Optional<Path> libraryFile = getLibraryFile(path, library);
-				if (libraryFile.isPresent()) {
+				Path[] libraryFiles = getLibraryFiles(path, library);
+				boolean found = false;
+				for (Path libraryFile : libraryFiles) {
 					try {
-						URL libraryUrl = libraryFile.get().toUri().toURL();
+						URL libraryUrl = libraryFile.toUri().toURL();
 						result.add(libraryUrl);
 						AmidstLogger.info("Found library " + library.getName() + " at " + libraryUrl);
+						found = true;
 					} catch (MalformedURLException e) {
 						AmidstLogger.warn(e, "Skipping erroneous library {}", library.getName());
 					}
-				} else {
+				}
+				if (!found) {
 					AmidstLogger.warn("Skipping missing library {}", library.getName());
 				}
 			} else {
@@ -109,11 +112,10 @@ public class ClassLoaderService {
 		return Objects.equals(rule.getAction(), ACTION_ALLOW);
 	}
 
-	private Optional<Path> getLibraryFile(Path path, LibraryJson library) {
+	private Path[] getLibraryFiles(Path path, LibraryJson library) {
 		return getLibrarySearchFiles(path, library)
-				.filter(f -> hasFileExtension(f, "jar"))
-				.findFirst()
-				.filter(Files::exists);
+				.filter(f -> hasFileExtension(f, "jar") && Files.exists(f))
+				.toArray(i -> new Path[i]);
 	}
 
 	private Stream<Path> getLibrarySearchFiles(Path path, LibraryJson library) {
