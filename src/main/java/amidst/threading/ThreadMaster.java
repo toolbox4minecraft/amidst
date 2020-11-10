@@ -1,5 +1,8 @@
 package amidst.threading;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -86,7 +89,7 @@ public class ThreadMaster {
 			public void run() {
 				onRepaintTick.run();
 			}
-		}, 0, 20, TimeUnit.MILLISECONDS);
+		}, 0, 1000000 / getRefreshRate(), TimeUnit.MICROSECONDS);
 	}
 
 	private void startFragmentLoader() {
@@ -96,7 +99,7 @@ public class ThreadMaster {
 			public void run() {
 				onFragmentLoadTick.run();
 			}
-		}, 0, 20, TimeUnit.MILLISECONDS);
+		}, 0, 1000000 / getRefreshRate(), TimeUnit.MICROSECONDS);
 	}
 
 	public WorkerExecutor getWorkerExecutor() {
@@ -118,4 +121,19 @@ public class ThreadMaster {
 	public void clearOnFragmentLoadTick() {
 		this.onFragmentLoadTick = NOOP;
 	}
+	
+	/**
+	 * @return the highest refresh rate out of all graphics devices recognized by the JVM
+	 */
+	public int getRefreshRate() {
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		int refreshRate = DisplayMode.REFRESH_RATE_UNKNOWN;
+		
+		for(GraphicsDevice device : devices) {
+			refreshRate = Math.max(refreshRate, device.getDisplayMode().getRefreshRate());
+		}
+		
+		return refreshRate;
+	}
+	
 }
