@@ -1,10 +1,12 @@
 package amidst.threading;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -23,6 +25,7 @@ public class ThreadMaster {
 	private final ScheduledExecutorService fragmentLoaderExecutorService;
 	private final ExecutorService workerExecutorService;
 	private final WorkerExecutor workerExecutor;
+	private final CompletableFuture<Thread> fragmentLoaderThread;
 
 	private volatile Runnable onRepaintTick;
 	private volatile Runnable onFragmentLoadTick;
@@ -32,6 +35,7 @@ public class ThreadMaster {
 		this.fragmentLoaderExecutorService = createFragmentLoaderExecutorService();
 		this.workerExecutorService = createWorkerExecutorService();
 		this.workerExecutor = createWorkerExecutor();
+		this.fragmentLoaderThread = getFragmentLoader();
 		this.onRepaintTick = NOOP;
 		this.onFragmentLoadTick = NOOP;
 		startRepainter();
@@ -56,6 +60,7 @@ public class ThreadMaster {
 				Thread thread = new Thread(r);
 				thread.setDaemon(true);
 				thread.setPriority(Thread.MIN_PRIORITY);
+				thread.setName("FragmentLoaderExecutor");
 				return thread;
 			}
 		});
@@ -89,6 +94,10 @@ public class ThreadMaster {
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
+	private CompletableFuture<Thread> getFragmentLoader() {
+		return CompletableFuture.supplyAsync(Thread::currentThread, fragmentLoaderExecutorService);
+	}
+
 	private void startFragmentLoader() {
 		fragmentLoaderExecutorService.scheduleWithFixedDelay(new Runnable() {
 			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
@@ -108,6 +117,9 @@ public class ThreadMaster {
 	}
 
 	public void setOnFragmentLoadTick(Runnable onFragmentLoadTick) {
+		if (fragmentLoaderThread.isDone()) {
+			LockSupport.unpark(fragmentLoaderThread.join());
+		}
 		this.onFragmentLoadTick = onFragmentLoadTick;
 	}
 
