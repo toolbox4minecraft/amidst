@@ -44,6 +44,7 @@ public class RealClass {
 	private final RealClassConstant<?>[] constants;
 
 	private final List<String> utf8Constants;
+	private final List<Integer> intConstants;
 	private final List<Float> floatConstants;
 	private final List<Double> doubleConstants;
 	private final List<Long> longConstants;
@@ -66,6 +67,7 @@ public class RealClass {
 			int[] constantTypes,
 			RealClassConstant<?>[] constants,
 			List<String> utf8Constants,
+			List<Integer> intConstants,
 			List<Float> floatConstants,
 			List<Double> doubleConstants,
 			List<Long> longConstants,
@@ -84,6 +86,7 @@ public class RealClass {
 		this.constantTypes = constantTypes;
 		this.constants = constants;
 		this.utf8Constants = utf8Constants;
+		this.intConstants = intConstants;
 		this.floatConstants = floatConstants;
 		this.doubleConstants = doubleConstants;
 		this.longConstants = longConstants;
@@ -141,6 +144,10 @@ public class RealClass {
 			}
 		}
 		return false;
+	}
+
+	public boolean searchForInt(int required) {
+		return intConstants.contains(required);
 	}
 
 	public boolean searchForFloat(float required) {

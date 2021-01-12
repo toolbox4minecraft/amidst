@@ -17,7 +17,7 @@ import amidst.parsing.URIUtils;
 public enum RealClasses {
 	;
 
-	private static final int MAXIMUM_CLASS_BYTES = 32 * 1024;
+	private static final int MAXIMUM_CLASS_BYTES = 36 * 1024;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
 	public static List<RealClass> fromJarFile(Path jarFile) throws FileNotFoundException, JarFileParsingException {
