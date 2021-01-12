@@ -13,6 +13,8 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.minecraftinterface.legacy.BetaClassTranslator;
+import amidst.mojangapi.minecraftinterface.legacy.BetaMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.legacy.LegacyClassTranslator;
 import amidst.mojangapi.minecraftinterface.legacy.LegacyMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.legacy._1_13ClassTranslator;
@@ -54,7 +56,9 @@ public enum MinecraftInterfaces {
 
     @NotNull
     private static Factory fromVersion(RecognisedVersion version) {
-        if(RecognisedVersion.isOlderOrEqualTo(version, LegacyMinecraftInterface.LAST_COMPATIBLE_VERSION)) {
+        if(RecognisedVersion.isOlderOrEqualTo(version, BetaMinecraftInterface.LAST_COMPATIBLE_VERSION)) {
+            return new Factory(BetaClassTranslator.get(version), BetaMinecraftInterface::new);
+        } else if(RecognisedVersion.isOlderOrEqualTo(version, LegacyMinecraftInterface.LAST_COMPATIBLE_VERSION)) {
             return new Factory(LegacyClassTranslator.get(), LegacyMinecraftInterface::new);
         } else if(RecognisedVersion.isOlderOrEqualTo(version, _1_13MinecraftInterface.LAST_COMPATIBLE_VERSION)) {
             return new Factory(_1_13ClassTranslator.get(), _1_13MinecraftInterface::new);

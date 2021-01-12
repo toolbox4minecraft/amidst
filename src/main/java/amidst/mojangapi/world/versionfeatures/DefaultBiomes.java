@@ -108,7 +108,25 @@ public enum DefaultBiomes {
 	public static final int basaltDeltas         = 173;
 
 	public static final VersionFeature<BiomeList> DEFAULT_BIOMES = VersionFeature.<Biome> listBuilder()
-		.init( // Starts at beta 1.8
+		.init( // Starts at alpha 1.2.0
+			new Biome(jungle, "Rainforest", PLAINS),
+			new Biome(forestHills, "Seasonal Forest", PLAINS),
+			new Biome(forest, "Forest", PLAINS),
+			new Biome(savannaM, "Shrubland", PLAINS),
+			new Biome(savanna, "Savanna", PLAINS),
+			new Biome(plains, "Plains", PLAINS),
+			new Biome(desert, "Desert", PLAINS),
+			new Biome(taiga, "Taiga", PLAINS),
+			new Biome(icePlains, "Tundra", PLAINS),
+			new Biome(swampland, "Swampland", PLAINS),
+			// Just in case we implement that 4 year old idea for ocean gen:
+			new Biome(ocean, "Ocean", OCEAN),
+			new Biome(frozenOcean, "Frozen Ocean", OCEAN),
+			// For completeness:
+			new Biome(desertM, "Ice Desert", PLAINS),
+			new Biome(hell, "Hell", PLAINS),
+			new Biome(theEnd, "Sky", PLAINS)
+		).since(RecognisedVersion._b1_8_1,
 			new Biome(0, "Ocean", OCEAN),
 			new Biome(1, "Plains", PLAINS),
 			new Biome(2, "Desert", PLAINS_FLAT),
