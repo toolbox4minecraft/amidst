@@ -16,20 +16,13 @@ public enum BetaClassTranslator {
                 .next()
                     .ifDetect(c -> c.searchForLong(9871L) && c.searchForLong(39811L) && c.searchForLong(543321L))
                     .thenDeclareRequired(BetaSymbolicNames.CLASS_BIOMEGENERATOR)
-                        .requiredConstructor(BetaSymbolicNames.CONSTRUCTOR_BIOMEGENERATOR).symbolic(BetaSymbolicNames.CLASS_WORLD).end()
-                        .requiredMethod(BetaSymbolicNames.METHOD_BIOMEGENERATOR_GET_BIOME, "a").real("int").real("int").end()
+                        .requiredMethod(BetaSymbolicNames.METHOD_BIOMEGENERATOR_GET_BIOME, "a").symbolicArray(BetaSymbolicNames.CLASS_BIOME, 1).real("int").real("int").real("int").real("int").end()
+                        .requiredField(BetaSymbolicNames.FIELD_BIOMEGENERATOR_TEMPERATURE, "a")
                 .next()
                     .ifDetect(c -> c.searchForFloat(0.7529412f) && c.searchForFloat(0.84705883f))
                     .thenDeclareRequired(BetaSymbolicNames.CLASS_DIMENSION_BASE)
                         .requiredField(BetaSymbolicNames.FIELD_DIMENSION_WORLD, "a")
-                .next()
-                    .ifDetect(c -> {
-                        if (RecognisedVersion.isOlder(version, RecognisedVersion._b1_6_6))
-                            return c.searchForInt(8421536) || (c.searchForFloat(0.7529412f) && c.searchForFloat(0.84705883f));
-                        else
-                            return c.searchForInt(8421536);
-                    })
-                    .thenDeclareRequired(BetaSymbolicNames.CLASS_DIMENSION_CONCRETE)
+                        .requiredField(BetaSymbolicNames.FIELD_DIMENSION_BIOMEGENERATOR, "b")
                 .next()
                     .ifDetect(c -> {
                         int nFields = RecognisedVersion.isOlder(version, RecognisedVersion._b1_6_6) ? 5 : 6;
@@ -41,6 +34,36 @@ public enum BetaClassTranslator {
                     .thenDeclareRequired(BetaSymbolicNames.CLASS_WORLD)
                         .optionalConstructor(BetaSymbolicNames.CONSTRUCTOR_WORLD).real("String").symbolic(BetaSymbolicNames.CLASS_DIMENSION_BASE).real("long").end()
                         .optionalConstructor(BetaSymbolicNames.CONSTRUCTOR_WORLD).symbolic(BetaSymbolicNames.INTERFACE_SOMETHING).real("String").symbolic(BetaSymbolicNames.CLASS_DIMENSION_BASE).real("long").end()
+                .next()
+                    .ifDetect(c -> c.searchForDouble(10.0)
+                        && c.hasConstructorWithRealArgs("java/util/Random", "int")
+                        && c.hasMethodWithRealArgsReturning("double", "double", "double")
+                        && c.hasMethodWithRealArgsReturning(null, "double", "double", "double", "int", "int", "int", "double", "double", "double", null)
+                        && c.getNumberOfConstructors() == 1
+                        && c.getNumberOfMethods() == 3
+                        && c.getNumberOfFields() == 2
+                    )
+                    .thenDeclareRequired(BetaSymbolicNames.CLASS_PERLIN_OCTAVE_NOISE)
+                        .requiredMethod(BetaSymbolicNames.METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_3D, "a").realArray("double", 1).real("double").real("double").real("double").real("int").real("int").real("int").real("double").real("double").real("double").end()
+                        .requiredField(BetaSymbolicNames.FIELD_PERLIN_OCTAVE_NOISE_OCTAVES, "a")
+                .next()
+                    .ifDetect(c -> c.searchForDouble(109.0134))
+                    .thenDeclareRequired(BetaSymbolicNames.CLASS_OVERWORLD_LEVEL_SOURCE)
+                        .requiredConstructor(BetaSymbolicNames.CONSTRUCTOR_OVERWORLD_LEVEL_SOURCE).symbolic(BetaSymbolicNames.CLASS_WORLD).real("long").end()
+                        .requiredMethod(BetaSymbolicNames.METHOD_OVERWORLD_LEVEL_SOURCE_SHAPE_CHUNK, "a").real("int").real("int").realArray("byte", 1).symbolicArray(BetaSymbolicNames.CLASS_BIOME, 1).realArray("double", 1).end()
+                        .requiredField(BetaSymbolicNames.FIELD_UPPER_INTERPOLATION_NOISE, "k")
+                        .requiredField(BetaSymbolicNames.FIELD_LOWER_INTERPOLATION_NOISE, "l")
+                        .requiredField(BetaSymbolicNames.FIELD_INTERPOLATION_NOISE, "m")
+                .next()
+                    .ifDetect(c -> c.searchForDouble(6.0) && c.searchForDouble(15.0)
+                        && c.getNumberOfFields() == 4
+                        && c.getNumberOfConstructors() == 2
+                        && c.hasMethodWithRealArgsReturning("[double", "double", "double", "double", "int", "int", "int", "double", "double", "double", "double", null))
+                    .thenDeclareRequired(BetaSymbolicNames.CLASS_PERLIN_NOISE)
+                        .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_PERMUTATIONS, "d")
+                        .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_X_OFFSET, "a")
+                        .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_Y_OFFSET, "b")
+                        .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_Z_OFFSET, "c")
                 .construct();
     }
     // @formatter:on

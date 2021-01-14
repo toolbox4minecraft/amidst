@@ -121,7 +121,7 @@ public enum DefaultBiomes {
 			new Biome(swampland, "Swampland", PLAINS),
 			// Just in case we implement that 4 year old idea for ocean gen:
 			new Biome(ocean, "Ocean", OCEAN),
-			new Biome(frozenOcean, "Frozen Ocean", OCEAN),
+			new Biome(coldOcean, "Frozen Ocean", OCEAN),
 			// For completeness:
 			new Biome(desertM, "Ice Desert", PLAINS),
 			new Biome(hell, "Hell", PLAINS),
