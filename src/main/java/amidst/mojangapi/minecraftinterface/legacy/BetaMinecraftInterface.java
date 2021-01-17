@@ -36,13 +36,14 @@ public class BetaMinecraftInterface implements MinecraftInterface {
     private final SymbolicClass worldClass;
     private final SymbolicClass overworldLevelSourceClass;
     private final BiomeMapping biomeMapping;
-    private final Class<?> dimensionImplClass;
+    private final SymbolicClass dimensionOverworldClass;
     private final Class<?> hackedNoiseClass;
     private final SymbolicClass perlinNoiseClass;
 
     private BetaMinecraftInterface(
             SymbolicClass biomeClass,
             SymbolicClass dimensionBaseClass,
+            SymbolicClass dimensionOverworldClass,
             SymbolicClass worldClass,
             SymbolicClass overworldLevelSourceClass,
             SymbolicClass perlinOctaveNoiseClass,
@@ -53,7 +54,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         this.worldClass = worldClass;
         this.overworldLevelSourceClass = overworldLevelSourceClass;
         this.perlinNoiseClass = perlinNoiseClass;
-        this.dimensionImplClass = makeInstantiableDimension(dimensionBaseClass);
+        this.dimensionOverworldClass = dimensionOverworldClass;
         this.hackedNoiseClass = makeInterpolationNoiseClass(perlinOctaveNoiseClass);
         try {
             this.biomeMapping = new BiomeMapping(biomeClass);
@@ -67,6 +68,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         this(
                 stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_BIOME),
                 stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_DIMENSION_BASE),
+                stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_DIMENSION_OVERWORLD),
                 stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_WORLD),
                 stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_OVERWORLD_LEVEL_SOURCE),
                 stringSymbolicClassMap.get(BetaSymbolicNames.CLASS_PERLIN_OCTAVE_NOISE),
@@ -92,20 +94,8 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         return recognisedVersion;
     }
 
-    private Class<?> makeInstantiableDimension(SymbolicClass dimensionBaseClass) {
-        // Since b1.6, the Dimension class is abstract, with OverworldDimension
-        // being an empty class inheriting from it. Our ClassTranslator cannot
-        // match "empty class that inherits from Overworld", so we just generate
-        // an equivalent class at runtime.
-        return new ByteBuddy()
-                .subclass(dimensionBaseClass.getClazz())
-                .make()
-                .load(dimensionBaseClass.getClazz().getClassLoader())
-                .getLoaded();
-    }
-
     private SymbolicObject constructDimension() throws IllegalAccessException, InstantiationException {
-        return new SymbolicObject(dimensionBaseClass, dimensionImplClass.newInstance());
+        return new SymbolicObject(dimensionBaseClass, dimensionOverworldClass.getClazz().newInstance());
     }
 
     private SymbolicObject constructWorld(SymbolicObject overworldDimension, WorldOptions worldOptions) throws InvocationTargetException, IllegalAccessException, InstantiationException {

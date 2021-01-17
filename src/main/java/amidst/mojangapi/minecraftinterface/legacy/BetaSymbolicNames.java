@@ -17,6 +17,8 @@ public enum BetaSymbolicNames {
     public static final String FIELD_DIMENSION_WORLD = "world";
     public static final String INTERFACE_SOMETHING = "ISomething";
 
+    public static final String CLASS_DIMENSION_OVERWORLD = "DimensionOverworld";
+
     public static final String CLASS_PERLIN_OCTAVE_NOISE = "PerlinOctaveNoise";
     public static final String METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_3D = "sample";
     public static final String FIELD_PERLIN_OCTAVE_NOISE_OCTAVES = "octaves";

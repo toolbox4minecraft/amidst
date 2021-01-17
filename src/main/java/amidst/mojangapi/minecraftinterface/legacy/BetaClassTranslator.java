@@ -1,7 +1,10 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
+import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+
+import java.util.Objects;
 
 public enum BetaClassTranslator {
     INSTANCE;
@@ -19,14 +22,21 @@ public enum BetaClassTranslator {
                         .requiredMethod(BetaSymbolicNames.METHOD_BIOMEGENERATOR_GET_BIOME, "a").symbolicArray(BetaSymbolicNames.CLASS_BIOME, 1).real("int").real("int").real("int").real("int").end()
                         .requiredField(BetaSymbolicNames.FIELD_BIOMEGENERATOR_TEMPERATURE, "a")
                 .next()
-                    .ifDetect(c -> c.searchForFloat(0.7529412f) && c.searchForFloat(0.84705883f))
+                    .ifDetect(BetaClassTranslator::isDimensionBase)
                     .thenDeclareRequired(BetaSymbolicNames.CLASS_DIMENSION_BASE)
                         .requiredField(BetaSymbolicNames.FIELD_DIMENSION_WORLD, "a")
                         .requiredField(BetaSymbolicNames.FIELD_DIMENSION_BIOMEGENERATOR, "b")
                 .next()
+                    .ifDetect((c, mappedNames) -> RecognisedVersion.isOlder(version, RecognisedVersion._b1_6_6)
+                            ? isDimensionBase(c)
+                            : c.getNumberOfFields() == 0
+                                && c.getNumberOfMethods() == 0
+                                && mappedNames.get(BetaSymbolicNames.CLASS_DIMENSION_BASE).equals(c.getRealSuperClassName()))
+                    .thenDeclareRequired(BetaSymbolicNames.CLASS_DIMENSION_OVERWORLD)
+                .next()
                     .ifDetect(c -> {
-                        int nFields = RecognisedVersion.isOlder(version, RecognisedVersion._b1_6_6) ? 5 : 6;
-                        return c.getNumberOfFields() == 0 && c.getNumberOfConstructors() == 0 && c.getNumberOfMethods() == nFields && c.isInterface() && c.hasMethodWithRealArgsReturning("void");
+                        int nMethods = RecognisedVersion.isOlder(version, RecognisedVersion._b1_6_6) ? 5 : 6;
+                        return c.getNumberOfFields() == 0 && c.getNumberOfConstructors() == 0 && c.getNumberOfMethods() == nMethods && c.isInterface() && c.hasMethodWithRealArgsReturning("void");
                     })
                     .thenDeclareRequired(BetaSymbolicNames.INTERFACE_SOMETHING)
                 .next()
@@ -65,6 +75,10 @@ public enum BetaClassTranslator {
                         .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_Y_OFFSET, "b")
                         .requiredField(BetaSymbolicNames.FIELD_PERLIN_NOISE_Z_OFFSET, "c")
                 .construct();
+    }
+
+    private static boolean isDimensionBase(RealClass c) {
+        return c.searchForFloat(0.7529412f) && c.searchForFloat(0.84705883f);
     }
     // @formatter:on
 }

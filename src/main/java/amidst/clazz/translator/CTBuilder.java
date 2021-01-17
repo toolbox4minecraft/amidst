@@ -1,9 +1,11 @@
 package amidst.clazz.translator;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import amidst.clazz.real.RealClass;
@@ -118,7 +120,11 @@ public class CTBuilder {
 	}
 
 	public CTBuilder ifDetect(Predicate<RealClass> predicate) {
-		this.detector = new RealClassDetector(predicate);
+		return ifDetect((c, m) -> predicate.test(c));
+	}
+
+	public CTBuilder ifDetect(BiPredicate<RealClass, Map<String, String>> biPredicate) {
+		this.detector = new RealClassDetector(biPredicate);
 		return this;
 	}
 
@@ -142,17 +148,17 @@ public class CTBuilder {
 		return new ClassTranslator(constructResult());
 	}
 
-	private Map<RealClassDetector, SymbolicClassDeclaration> constructResult() {
-		Map<RealClassDetector, SymbolicClassDeclaration> result = constructPreviousResult();
-		result.put(detector, declarationBuilder.constructThis());
+	private List<Map.Entry<RealClassDetector, SymbolicClassDeclaration>> constructResult() {
+		List<Map.Entry<RealClassDetector, SymbolicClassDeclaration>> result = constructPreviousResult();
+		result.add(new AbstractMap.SimpleImmutableEntry<>(detector, declarationBuilder.constructThis()));
 		return result;
 	}
 
-	private Map<RealClassDetector, SymbolicClassDeclaration> constructPreviousResult() {
+	private List<Map.Entry<RealClassDetector, SymbolicClassDeclaration>> constructPreviousResult() {
 		if (previous != null) {
 			return previous.constructResult();
 		} else {
-			return new HashMap<>();
+			return new ArrayList<>();
 		}
 	}
 }
