@@ -1,5 +1,6 @@
 package amidst.clazz.translator;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,21 +18,26 @@ public class ClassTranslator {
 		return CTBuilder.newInstance();
 	}
 
-	private final Map<RealClassDetector, SymbolicClassDeclaration> translations;
+	private final List<Map.Entry<RealClassDetector, SymbolicClassDeclaration>> translations;
 
-	public ClassTranslator(Map<RealClassDetector, SymbolicClassDeclaration> translations) {
+	public ClassTranslator(List<Map.Entry<RealClassDetector, SymbolicClassDeclaration>> translations) {
 		this.translations = translations;
 	}
 
 	public Map<SymbolicClassDeclaration, List<RealClass>> translateToAllMatching(List<RealClass> realClasses) {
 		Map<SymbolicClassDeclaration, List<RealClass>> result = new HashMap<>();
-		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations.entrySet()) {
+		Map<String, String> foundNames = new HashMap<>();
+		Map<String, String> foundNamesView = Collections.unmodifiableMap(foundNames);
+		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations) {
 			SymbolicClassDeclaration declaration = entry.getValue();
-			List<RealClass> allMatching = entry.getKey().allMatching(realClasses);
+			List<RealClass> allMatching = entry.getKey().allMatching(realClasses, foundNamesView);
 			if (result.containsKey(declaration)) {
 				result.get(declaration).addAll(allMatching);
 			} else {
 				result.put(declaration, allMatching);
+				allMatching.stream()
+					.findFirst()
+					.ifPresent(c -> foundNames.put(declaration.getSymbolicClassName(), c.getRealClassName()));
 			}
 		}
 		return result;
@@ -39,11 +45,16 @@ public class ClassTranslator {
 
 	public Map<SymbolicClassDeclaration, String> translate(List<RealClass> realClasses) throws ClassNotFoundException {
 		Map<SymbolicClassDeclaration, String> result = new HashMap<>();
-		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations.entrySet()) {
+		Map<String, String> foundNames = new HashMap<>();
+		Map<String, String> foundNamesView = Collections.unmodifiableMap(foundNames);
+		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations) {
+			Optional<String> realClassName = entry.getKey().firstMatching(realClasses, foundNamesView).map(RealClass::getRealClassName);
+			SymbolicClassDeclaration declaration = entry.getValue();
+			realClassName.ifPresent(name -> foundNames.put(declaration.getSymbolicClassName(), name));
 			addResult(
 					result,
-					entry.getValue(),
-					entry.getKey().firstMatching(realClasses).map(RealClass::getRealClassName));
+					declaration,
+					realClassName);
 		}
 		return result;
 	}
