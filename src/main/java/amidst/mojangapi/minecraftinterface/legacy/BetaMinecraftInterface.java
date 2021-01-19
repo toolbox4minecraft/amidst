@@ -391,7 +391,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         }
 
         /** Combines the noise values in just the right way. */
-        private double mergeNoises(double yNoiseIdx, double biomeNoiseV, double depthNoiseV, double upperInterpolationNoiseV, double lowerInterpolationNoiseV, double interpolationNoiseV, double temperatureV, double rainfallV) {
+        private static double mergeNoises(double yNoiseIdx, double biomeNoiseV, double depthNoiseV, double upperInterpolationNoiseV, double lowerInterpolationNoiseV, double interpolationNoiseV, double temperatureV, double rainfallV) {
             // This took a lot of trial and error to get right...
             double scaledRainfall = 1.0 - rainfallV * temperatureV;
             double biomeNoiseValue = biomeNoiseV / 512.0 + 0.5;
@@ -400,14 +400,13 @@ public class BetaMinecraftInterface implements MinecraftInterface {
             double upperInter = upperInterpolationNoiseV / 512.0;
             double lowerInter = lowerInterpolationNoiseV / 512.0;
             double mainInter = interpolationNoiseV / 20.0 + 0.5;
-            double interpolated = PerlinNoise.lerp(mainInter, upperInter, lowerInter);
-            double clampedInterpolated = Math.max(lowerInter, Math.min(upperInter, interpolated));
+            double clampedInterpolated = PerlinNoise.lerp(Math.max(0, Math.min(1, mainInter)), upperInter, lowerInter);
 
             // Why are there so many conditionals for depth noise???
             double depth1 = depthNoiseV / 8000.0;
             double depth2 = depth1 * (depth1 < 0 ? -0.8999999999999999 : 3.0) - 2.0;
             double depth3 = depth2 < 0 ? Math.max(-2, depth2) / 5.6 : Math.min(1, depth2) / 8.0;
-            double depthAdjustedBiomeFactor = depth2 < 0 ? 0.5 : biomeFactor;
+            double depthAdjustedBiomeFactor = depth2 < 0 ? 0.5 : biomeFactor + 0.5;
             double depth4 = (NOISE_HEIGHT_OFFSET + yNoiseIdx - VANILLA_NOISE_HEIGHT * (0.5 + depth3 * 0.25)) * 12.0 / depthAdjustedBiomeFactor;
             double depth5 = depth4 < 0 ? depth4 * 4.0 : depth4;
 
@@ -435,7 +434,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
 
             double relX = blockX % 4;
             double relY = blockY % 8;
-            double relZ = blockX % 4;
+            double relZ = blockZ % 4;
 
             // interpolate X
             double noiseX00 = PerlinNoise.lerp(relX / 4, noise000, noise100);
@@ -461,7 +460,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
             double noise11 = noises[(idxX + 1) * noiseDepth + idxZ + 1];
 
             double relX = blockX % 4;
-            double relZ = blockX % 4;
+            double relZ = blockZ % 4;
 
             // interpolate X
             double noiseX0 = PerlinNoise.lerp(relX / 4, noise00, noise10);
