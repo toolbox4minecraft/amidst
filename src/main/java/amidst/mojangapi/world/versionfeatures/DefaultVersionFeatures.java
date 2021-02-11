@@ -292,7 +292,7 @@ public enum DefaultVersionFeatures {
 				).construct())
 
 			.with(MINESHAFT_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
-				.init( // Actually starts at beta 1.8
+				.init(
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._1_4_2,
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.01D, true))
@@ -301,19 +301,24 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._18w06a,
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.01D, false))
 				).construct())
-			.with(FeatureKey.MINESHAFT_PRODUCER, VersionFeature.fixed(features ->
-					new ChunkStructureProducer<>(
+			.with(FeatureKey.MINESHAFT_PRODUCER, VersionFeature.<WorldIconProducer<Void>>builder()
+				.init(new NoopProducer<>())
+				.since(RecognisedVersion._b1_8_1,
+					// this should be beta 1.8 pre-release
+					VersionFeature.fixed(features -> new ChunkStructureProducer<>(
 						Resolution.CHUNK,
 						8,
 						features.get(MINESHAFT_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD,
 						false
-					)
-				))
+					))
+				).construct())
 
 			.with(FeatureKey.STRONGHOLD_PRODUCER, VersionFeature.<CachedWorldIconProducer>builder()
-				.init( // Actually starts at beta 1.8, with a single stronghold per world
+				.init(new CachedWorldIconProducer.Empty())
+				.since(RecognisedVersion._b1_8_1,
+					// Actually starts at beta 1.8, with a single stronghold per world
 					VersionFeature.fixed(features -> new StrongholdProducer_Original(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES)
@@ -360,7 +365,6 @@ public enum DefaultVersionFeatures {
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.VILLAGE_PRODUCER, VersionFeature.fixed(features ->
-					// Actually starts at beta 1.8
 					new VillageProducer(
 						getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(VILLAGE_VALID_BIOMES),
@@ -370,7 +374,9 @@ public enum DefaultVersionFeatures {
 					)
 				))
 			.with(VILLAGE_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
-				.init(
+				.init()
+				.sinceExtend(RecognisedVersion._b1_8_1,
+					// this should be b1.8 pre-release
 					DefaultBiomes.plains,
 					DefaultBiomes.desert
 				).sinceExtend(RecognisedVersion._13w36a,

@@ -75,4 +75,11 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer<Void> {
 	 * called by one thread at a time.
 	 */
 	protected abstract List<WorldIcon> doCreateCache();
+
+	public static final class Empty extends CachedWorldIconProducer {
+		@Override
+		protected List<WorldIcon> doCreateCache() {
+			return null;
+		}
+	}
 }
