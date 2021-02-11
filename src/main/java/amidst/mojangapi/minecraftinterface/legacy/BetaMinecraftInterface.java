@@ -12,7 +12,6 @@ import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 import amidst.util.ChunkBasedGen;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -285,13 +284,14 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         }
     }
 
+    // This class is thread-safe
     private static class OceanOracle {
-        // Outputs of shapeChunk
+        // Outputs of determineOceans
         public static final int OCEAN = -1;
         public static final int FROZEN_OCEAN = -2;
         public static final int LAND = -3;
 
-        // Arbitrary constants to make us generate the same noise
+        // Arbitrary constants to make us generate the same noise as vanilla
         private static final int NOISE_POSITION_FACTOR = 4;
         private static final double BIOME_NOISE_SCALE = 1.121;
         private static final double DEPTH_NOISE_SCALE = 200.0;
@@ -315,14 +315,6 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         private final PerlinOctaveNoise upperInterpolationNoise;
         private final PerlinOctaveNoise lowerInterpolationNoise;
 
-        // Arrays that are stored to avoid re-allocating them constantly.
-        private double[] biomeNoises = null;
-        private double[] depthNoises = null;
-        private double[] interpolationNoises = null;
-        private double[] upperInterpolationNoises = null;
-        private double[] lowerInterpolationNoises = null;
-        private double[] noises = null;
-
         public OceanOracle(SymbolicObject biomeNoise, SymbolicObject depthNoise, PerlinOctaveNoise interpolationNoise, PerlinOctaveNoise upperInterpolationNoise, PerlinOctaveNoise lowerInterpolationNoise) {
             this.biomeNoise = biomeNoise;
             this.depthNoise = depthNoise;
@@ -334,7 +326,7 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         public int[] determineOceans(int chunkX, int chunkZ, int[] oceansIn, double[] temperatureNoises, double[] rainfallNoises) throws InvocationTargetException, IllegalAccessException {
             int[] oceans = (oceansIn != null && oceansIn.length >= 16 * 16) ? oceansIn : new int[16 * 16];
 
-            this.noises = this.calculateNoise(this.noises, chunkX, chunkZ, NOISE_WIDTH, NOISE_HEIGHT, NOISE_DEPTH, temperatureNoises, rainfallNoises);
+            double[] noises = this.calculateNoise(chunkX, chunkZ, NOISE_WIDTH, NOISE_HEIGHT, NOISE_DEPTH, temperatureNoises, rainfallNoises);
             for (int x = 0; x < 16; ++x) {
                 for (int z = 0; z < 16; ++z) {
                     double noiseAtPoint = NOISE_HEIGHT > 1
@@ -349,17 +341,16 @@ public class BetaMinecraftInterface implements MinecraftInterface {
             return oceans;
         }
 
-        private double[] calculateNoise(double[] noisesIn, int chunkX, int chunkZ, int noiseWidth, int noiseHeight, int noiseDepth, double[] temperatureNoises, double[] rainfallNoises) throws InvocationTargetException, IllegalAccessException {
-            int noisesLength = noiseWidth * noiseHeight * noiseDepth;
-            double[] noises = (noisesIn != null && noisesIn.length >= noisesLength) ? noisesIn : new double[noisesLength];
-
+        private double[] calculateNoise(int chunkX, int chunkZ, int noiseWidth, int noiseHeight, int noiseDepth, double[] temperatureNoises, double[] rainfallNoises) throws InvocationTargetException, IllegalAccessException {
+            double[] noises = new double[noiseWidth * noiseHeight * noiseDepth];
             int sampleX = chunkX * NOISE_POSITION_FACTOR;
             int sampleZ = chunkZ * NOISE_POSITION_FACTOR;
-            biomeNoises = (double[]) biomeNoise.callMethod(BetaSymbolicNames.METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_2D, biomeNoises, sampleX, sampleZ, noiseWidth, noiseDepth, BIOME_NOISE_SCALE, BIOME_NOISE_SCALE, 0);
-            depthNoises = (double[]) depthNoise.callMethod(BetaSymbolicNames.METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_2D, depthNoises, sampleX, sampleZ, noiseWidth, noiseDepth, DEPTH_NOISE_SCALE, DEPTH_NOISE_SCALE, 0);
-            interpolationNoises = interpolationNoise.sample3d(interpolationNoises, sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, MAIN_INTERPOLATION_SCALE_XZ, MAIN_INTERPOLATION_SCALE_Y, MAIN_INTERPOLATION_SCALE_XZ);
-            upperInterpolationNoises = upperInterpolationNoise.sample3d(upperInterpolationNoises, sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE);
-            lowerInterpolationNoises = lowerInterpolationNoise.sample3d(lowerInterpolationNoises, sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE);
+            // All sample methods are thread-safe, thus this doesn't require any locks.
+            double[] biomeNoises = (double[]) biomeNoise.callMethod(BetaSymbolicNames.METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_2D, null, sampleX, sampleZ, noiseWidth, noiseDepth, BIOME_NOISE_SCALE, BIOME_NOISE_SCALE, 0);
+            double[] depthNoises = (double[]) depthNoise.callMethod(BetaSymbolicNames.METHOD_PERLIN_OCTAVE_NOISE_SAMPLE_2D, null, sampleX, sampleZ, noiseWidth, noiseDepth, DEPTH_NOISE_SCALE, DEPTH_NOISE_SCALE, 0);
+            double[] interpolationNoises = interpolationNoise.sample3d(sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, MAIN_INTERPOLATION_SCALE_XZ, MAIN_INTERPOLATION_SCALE_Y, MAIN_INTERPOLATION_SCALE_XZ);
+            double[] upperInterpolationNoises = upperInterpolationNoise.sample3d(sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE);
+            double[] lowerInterpolationNoises = lowerInterpolationNoise.sample3d(sampleX, NOISE_HEIGHT_OFFSET, sampleZ, noiseWidth, noiseHeight, noiseDepth, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE, OTHER_INTERPOLATION_SCALE);
 
             for(int xNoiseIdx = 0; xNoiseIdx < noiseWidth; ++xNoiseIdx) {
                 for(int yNoiseIdx = 0; yNoiseIdx < noiseHeight; ++yNoiseIdx) {
@@ -483,9 +474,11 @@ public class BetaMinecraftInterface implements MinecraftInterface {
      * We sadly are not able to just re-use Minecraft's perlin noise as that implementation is bugged so that
      * selecting a different starting Y value alters the results. Minecraft's perlin octave noise only allows us to
      * skip the n most significant octaves, which is counterproductive, so we had to re-implement that as well.
+     * <p>
+     * This class is immutable and thus thread-safe.
      */
     private static class PerlinOctaveNoise {
-        private final PerlinNoise[] octaves;
+        private final PerlinNoise[] octaves; // will not be modified
         private final int firstOctave;
 
         public PerlinOctaveNoise(PerlinNoise[] octaves, int firstOctave) {
@@ -504,15 +497,10 @@ public class BetaMinecraftInterface implements MinecraftInterface {
             return new PerlinOctaveNoise(octaves, octaves.length - octaveCount);
         }
 
-        public double[] sample3d(double[] resultArr, double x, double y, double z,
+        public double[] sample3d(double x, double y, double z,
                                  int resX, int resY, int resZ, double scaleX, double scaleY,
                                  double scaleZ) {
-            if (resultArr == null) {
-                resultArr = new double[resX * resY * resZ];
-            } else {
-                Arrays.fill(resultArr, 0.0);
-            }
-
+            double[] resultArr = new double[resX * resY * resZ];
             for (int i = firstOctave; i < octaves.length; ++i) {
                 double inverseIntensity = 1.0 / (1 << i);
                 octaves[i].sample(resultArr,
@@ -525,8 +513,9 @@ public class BetaMinecraftInterface implements MinecraftInterface {
         }
     }
 
+    // This class is immutable, thus thread-safe.
     private static class PerlinNoise {
-        private final int[] permutations;
+        private final int[] permutations; // will not be modified
         private final double xOffset;
         private final double yOffset;
         private final double zOffset;
