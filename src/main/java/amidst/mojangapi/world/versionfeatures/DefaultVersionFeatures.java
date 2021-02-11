@@ -299,7 +299,7 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._1_7_2,
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.004D, true))
 				).since(RecognisedVersion._18w06a,
-					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.01D, false))
+					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.004D, false))
 				).construct())
 			.with(FeatureKey.MINESHAFT_PRODUCER, VersionFeature.<WorldIconProducer<Void>>builder()
 				.init(new NoopProducer<>())
