@@ -170,10 +170,5 @@ public class MainWindowDialogs {
 			return null;
 		}
 	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private String askForString(String title, String message) {
-		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
-	}
 	
 }
