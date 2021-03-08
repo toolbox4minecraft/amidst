@@ -15,10 +15,10 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 			long x = Long.parseLong(parsedCoordinates[0]);
 			long z = Long.parseLong(parsedCoordinates[1]);
 			if (isNether) {
-				x *= 8;
-				z *= 8;
+				return CoordinatesInWorld.fromNether(x, z);
+			} else {
+				return CoordinatesInWorld.from(x, z);
 			}
-			return CoordinatesInWorld.from(x, z);
 		} catch (NumberFormatException e) {
 			return null;
 		}
@@ -26,6 +26,14 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 
 	public static CoordinatesInWorld from(long xInWorld, long yInWorld) {
 		return new CoordinatesInWorld(xInWorld, yInWorld);
+	}
+
+	public static CoordinatesInWorld fromNether(long xInWorld, long yInWorld) {
+		return new CoordinatesInWorld(xInWorld * 8, yInWorld * 8);
+	}
+
+	public static CoordinatesInWorld toNether(CoordinatesInWorld coordinates) {
+		return new CoordinatesInWorld(coordinates.xInWorld / 8, coordinates.yInWorld / 8);
 	}
 
 	public static CoordinatesInWorld from(long xAsResolution, long yAsResolution, Resolution resolution) {
