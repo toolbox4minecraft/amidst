@@ -6,13 +6,19 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
-	public static CoordinatesInWorld tryParse(String coordinates) {
+	public static CoordinatesInWorld tryParse(String coordinates, Boolean isNether) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
 		if (parsedCoordinates.length != 2) {
 			return null;
 		}
 		try {
-			return CoordinatesInWorld.from(Long.parseLong(parsedCoordinates[0]), Long.parseLong(parsedCoordinates[1]));
+			long x = Long.parseLong(parsedCoordinates[0]);
+			long z = Long.parseLong(parsedCoordinates[1]);
+			if (isNether) {
+				x *= 8;
+				z *= 8;
+			}
+			return CoordinatesInWorld.from(x, z);
 		} catch (NumberFormatException e) {
 			return null;
 		}

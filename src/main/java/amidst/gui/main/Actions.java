@@ -39,6 +39,10 @@ import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
+import amidst.util.Pair;
+import jdk.jfr.BooleanFlag;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @NotThreadSafe
 public class Actions {
@@ -136,9 +140,9 @@ public class Actions {
 	public void goToCoordinate() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			String input = dialogs.askForCoordinates();
-			if (input != null) {
-				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
+			Pair<String, Boolean> output = dialogs.askForCoordinates();
+			if (output.getFirst() != null) {
+				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(output.getFirst(), output.getSecond());
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
@@ -424,5 +428,4 @@ public class Actions {
 		}
 		return Paths.get(filename);
 	}
-
 }

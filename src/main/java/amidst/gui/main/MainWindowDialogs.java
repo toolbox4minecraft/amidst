@@ -3,9 +3,7 @@ package amidst.gui.main;
 import java.nio.file.Path;
 import java.util.List;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
@@ -16,6 +14,7 @@ import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.WorldPlayerType;
+import amidst.util.Pair;
 
 @NotThreadSafe
 public class MainWindowDialogs {
@@ -147,8 +146,12 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public String askForCoordinates() {
-		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
+	public Pair<String, Boolean> askForCoordinates() {
+		JCheckBox checkbox = new JCheckBox("Nether");
+		String message = "Enter coordinates: (Ex. 123,456)";
+		Object[] params = {message, checkbox};
+		String answer = JOptionPane.showInputDialog(frame, params, "Go To", JOptionPane.QUESTION_MESSAGE);
+		return Pair.of(answer, checkbox.isSelected());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
