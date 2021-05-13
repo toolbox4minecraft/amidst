@@ -112,6 +112,10 @@ public class SymbolicClassBuilder {
 		Class<?>[] parameterClasses = getParameterClasses(declaration.getParameters().getDeclarations());
 		Method method = getMethod(product.getClazz(), realName, parameterClasses);
 		SymbolicClass returnType = getTypeOrSupertype(method.getReturnType());
+		// We don't want to succeed if the method found is a synthetic method.
+		if (method.isSynthetic()) {
+			throw new NoSuchMethodException();
+		}
 		return new SymbolicMethod(product, symbolicName, realName, method, returnType);
 	}
 
@@ -167,7 +171,7 @@ public class SymbolicClassBuilder {
 			return classLoader.loadClass(declaration.getType());
 		}
 	}
-	
+
 	public static Class<?> getArrayClass(Class<?> elementType, int dimensions) {
 	    return dimensions == 0 ? elementType : Array.newInstance(elementType, new int[dimensions]).getClass();
 	}

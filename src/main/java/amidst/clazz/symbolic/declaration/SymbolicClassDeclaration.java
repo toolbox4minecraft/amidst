@@ -68,7 +68,7 @@ public class SymbolicClassDeclaration {
 
 	public void handleMissing(ClassNotFoundException e, String realClassName)
 			throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class {}" + realClassName + " -> " + symbolicClassName;
+		String message = "unable to find the real class " + realClassName + " -> " + symbolicClassName;
 		if (isOptional) {
 			AmidstLogger.info(message);
 		} else {

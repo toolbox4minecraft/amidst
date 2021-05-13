@@ -6,6 +6,12 @@ import amidst.documentation.Immutable;
 public enum SymbolicNames {
 	;
 
+	public static final String CLASS_SHARED_CONSTANTS = "SharedConstants";
+	public static final String METHOD_SHARED_CONSTANTS_DETECT_VERSION = "detectVersion";
+
+	public static final String CLASS_BOOTSTRAP = "Bootstrap";
+	public static final String FIELD_BOOTSTRAP_IS_BOOTSTRAPPED = "isBootstrapped";
+
     public static final String CLASS_REGISTRY = "Registry";
     public static final String FIELD_REGISTRY_META_REGISTRY = "metaRegistry";
     public static final String FIELD_REGISTRY_META_REGISTRY2 = "metaRegistry2";
@@ -16,6 +22,7 @@ public enum SymbolicNames {
 
     public static final String CLASS_REGISTRY_ACCESS = "RegistryAccess";
     public static final String METHOD_REGISTRY_ACCESS_BUILTIN = "builtin";
+    public static final String METHOD_REGISTRY_ACCESS_BUILTIN2 = "builtin2";
     public static final String METHOD_REGISTRY_ACCESS_GET_REGISTRY = "getRegistry";
 
     public static final String CLASS_RESOURCE_KEY = "ResourceKey";

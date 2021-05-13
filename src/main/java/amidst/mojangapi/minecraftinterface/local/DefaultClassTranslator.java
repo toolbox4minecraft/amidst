@@ -18,8 +18,19 @@ public enum DefaultClassTranslator {
     private ClassTranslator createClassTranslator() {
         return ClassTranslator
             .builder()
+            	.ifDetect(c -> c.getNumberOfFields() == 3
+            			&& c.searchForUtf8EqualTo("Unable to load registries")
+            			&& c.getField(1).hasFlags(AccessFlags.STATIC)
+            	)
+            	.thenDeclareRequired(CLASS_BOOTSTRAP)
+            		.requiredField(FIELD_BOOTSTRAP_IS_BOOTSTRAPPED, "b")
+            .next()
+            	.ifDetect(c -> c.searchForUtf8EqualTo("Game version not set"))
+            	.thenDeclareOptional(CLASS_SHARED_CONSTANTS)
+            		.requiredMethod(METHOD_SHARED_CONSTANTS_DETECT_VERSION, "a").end()
+            .next()
                 .ifDetect(c -> c.getNumberOfConstructors() == 3
-                        && (c.getNumberOfFields() == 3 || c.getNumberOfFields() == 4)
+                        && (c.getNumberOfFields() >= 3 && c.getNumberOfFields() <= 7)
                         && c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
                         && c.searchForUtf8EqualTo("minecraft")
                         && c.searchForUtf8EqualTo("argument.id.invalid")
@@ -45,9 +56,10 @@ public enum DefaultClassTranslator {
                     .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
                     .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_RESOURCE_KEY).end()
             .next()
-                .ifDetect(c -> c.searchForUtf8EqualTo("Missing builtin registry: ")) // since 20w28a
+                .ifDetect(c -> c.searchForUtf8EqualTo("Missing registry: ")) // since 20w28a
                 .thenDeclareOptional(CLASS_REGISTRY_ACCESS)
-                    .requiredMethod(METHOD_REGISTRY_ACCESS_BUILTIN, "b").end()
+                    .optionalMethod(METHOD_REGISTRY_ACCESS_BUILTIN, "b").end()
+                    .optionalMethod(METHOD_REGISTRY_ACCESS_BUILTIN2, "a").end() // since 20w51a
                     .requiredMethod(METHOD_REGISTRY_ACCESS_GET_REGISTRY, "b").symbolic(CLASS_REGISTRY_ACCESS_KEY).end()
             .next()
                 .ifDetect(c -> c.searchForUtf8EqualTo("level-seed")
@@ -66,8 +78,9 @@ public enum DefaultClassTranslator {
                 	.requiredField(FIELD_DIMENSION_SETTINGS_GENERATOR, "g")
             .next()
                 .ifDetect(c -> c.getRealClassName().contains("$")
+                	&& c.getRealClassName().length() < 10
                     && c.isInterface()
-                    && c.getNumberOfMethods() == 1
+                    && (c.getNumberOfMethods() == 1 || c.getNumberOfMethods() == 2)
                     && c.hasMethodWithRealArgsReturning("int", "int", "int", null)
                     && !c.hasMethodWithRealArgsReturning("int", "int", "int", "boolean")
                 )

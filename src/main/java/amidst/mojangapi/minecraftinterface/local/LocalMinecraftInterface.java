@@ -46,6 +46,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass noiseBiomeProviderClass;
 	private final SymbolicClass biomeZoomerClass;
 	private final SymbolicClass utilClass;
+	private final SymbolicClass bootstrapClass;
+	private final SymbolicClass sharedConstantsClass;
 
 	private MethodHandle registryGetIdMethod;
     private MethodHandle biomeProviderGetBiomeMethod;
@@ -72,15 +74,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
         this.biomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME_ZOOMER);
         this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
+        this.bootstrapClass = symbolicClassMap.get(SymbolicNames.CLASS_BOOTSTRAP);
+        this.sharedConstantsClass = symbolicClassMap.get(SymbolicNames.CLASS_SHARED_CONSTANTS);
 	}
 
 	@Override
 	public synchronized MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		initializeIfNeeded();
-		
+
 	    try {
 	    	long seed = worldOptions.getWorldSeed().getLong();
-	    	
+
 	    	Object worldSettings = createWorldSettingsObject(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions()).getObject();
 	    	Object overworldBiomeProvider;
 	    	Object netherBiomeProvider;
@@ -189,6 +193,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    }
 
 	    try {
+	    	// Since 21w14a, the registry classes check that the game is bootstrapped,
+	    	// so toggle the relevant flag to make it so.
+	    	// If this cause issues, we may need to actually bootstrap the game instead of faking it.
+	    	bootstrapClass.getField(SymbolicNames.FIELD_BOOTSTRAP_IS_BOOTSTRAPPED)
+	    		.getRawField().setBoolean(null, true);
+
+	    	// Also since 21w14a, the Minecraft version needs to be detected manually.
+	    	if (sharedConstantsClass != null) {
+	    		sharedConstantsClass.callStaticMethod(SymbolicNames.METHOD_SHARED_CONSTANTS_DETECT_VERSION);
+	    	}
+
         	if (registryAccessClass == null) {
         		registryAccess = null;
         		biomeRegistry = getLegacyBiomeRegistry();
@@ -197,8 +212,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, "worldgen/biome"))
     	    			.getObject();
         		// We don't use symbolic calls, because they are inconsistently wrapped in SymbolicObject.
-        		registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)
-        			.getRawMethod().invoke(null);
+        		if (registryAccessClass.hasMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)) {
+	        		registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)
+	        				.getRawMethod().invoke(null);
+        		} else {
+        			registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN2)
+	        				.getRawMethod().invoke(null);
+        		}
         		biomeRegistry = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_GET_REGISTRY)
         			.getRawMethod().invoke(registryAccess, key);
         		biomeRegistry = Objects.requireNonNull(biomeRegistry);
@@ -218,6 +238,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         }
 
 	    isInitialized = true;
+	}
+
+	private void bootstrapGame() {
+
 	}
 
 	private Object getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
