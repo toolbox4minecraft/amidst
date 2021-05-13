@@ -23,7 +23,26 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
-	_1_16_2    ("1.16.2",     "brxcyd$acyhaozannaaxungn$bacs[Jacoabuwacxxwdvxaezvzcst"),                                  // matches the launcher version id; 1.16.2-pre2  1.16.2-pre3  1.16.2-rc1  1.16.2-rc2  1.16.2
+	_21w17a    ("21w17a",     "bwbdhh$adhlarqapgacavtgs$badz[Jadvadaxedhbxhxbaglxddbv"),                                  // matches the launcher version id: 21w17a  21w18a
+	_21w16a    ("21w16a",     "bwbdhf$adhjarqapgacavtgs$badz[Jadvadaxedgzxhxbaglxddbt"),                                  // matches the launcher version id: 21w16a
+	_21w15a    ("21w15a",     "bwbdhc$adhgarqapgacavtgs$badz[Jadvadaxedgwxhxbaglxddbq"),                                  // matches the launcher version id: 21w15a
+	_21w14a    ("21w14a",     "bvvdhb$adhfarnapfacavtgs$badz[Jadvadaxedgvxhxbaglxddbp"),                                  // matches the launcher version id: 21w14a
+	_21w13a    ("21w13a",     "bvvdgz$adhdarnapfacavtgs$badz[Jadvadaxedgtxhxbaglxddbn"),                                  // matches the launcher version id: 21w13a
+	_21w11a    ("21w11a",     "bvedfy$adgcaqzapiabwvpgo$badv[Jadracwxadfsxdwxaglwzdam"),                                  // matches the launcher version id: 21w11a
+	_21w10a    ("21w10a",     "buudfn$adfraqqapfabwvpgo$badv[Jadracwxadfhxdwxaglwzdab"),                                  // matches the launcher version id: 21w10a
+	_21w08b    ("21w08b",     "busdex$adfbaqqapfabyvrgo$badw[Jadsacyxcderxfwzagmxbczl"),                                  // matches the launcher version id: 20w08b
+	_21w07a    ("21w07a",     "bubdec$adegapzaooabmvfgo$badk[Jadgacmwqddwwtwnafwwpcyq"),                                  // matches the launcher version id: 20w07a
+	_21w06a    ("21w06a",     "buaddy$adecapyaonabmvfgo$badk[Jadgacmwqddswtwnafvwpcym"),                                  // matches the launcher version id: 20w06a
+	_21w05b    ("21w05b",     "btzddu$addyapxaomabmvfgo$badk[Jadgacmwqddowtwnafuwpcyj"),                                  // matches the launcher version id: 21w05a  21w05b
+	_21w03a    ("21w03a",     "btydda$addeapwaolabmvfgo$badk[Jadgacmwqdcuwtwnafuwpcxq"),                                  // matches the launcher version id: 21w03a
+	_20w51a    ("20w51a",     "btudcs$adcwaptaohabjvcgo$badh[Jaddacjwndcmwqwkafrwmcxi"),                                  // matches the launcher version id: 20w51a
+	_20w49a    ("20w49a",     "btfdcd$adchapsaogabjvcgo$badh[Jaddacjwndbxwqwkafrwmcwt"),                                  // matches the launcher version id: 20w49a
+	_20w48a    ("20w48a",     "bszdaz$adbdapmaoaabfuwgn$badd[Jaczacfwidatwlwfaflwhcvp"),                                  // matches the launcher version id: 20w48a
+	_20w46a    ("20w46a",     "bszdaw$adbaapmaoaabfuwgn$badd[Jaczacfwidaqwlwfaflwhcvm"),                                  // matches the launcher version id: 20w46a
+	_20w45a    ("20w45a",     "bstdap$adatapmaoaabguwgn$badd[Jaczacfwjdajwmwgaflwicvf"),                                  // matches the launcher version id: 20w45a
+	_1_16_4    ("1.16.4",     "bsacyg$acykapcanqaaxungn$bacu[Jacqabwwacyawdvxafcvzcsw"),                                  // matches the launcher version id: 1.16.4-pre2  1.16.4-rc1  1.16.4  1.16.5-rc1  1.16.5
+	_1_16_4_pre1("1.16.4-pre1", "brzcyf$acyjapbanpaaxungn$bacu[Jacqabwwacxzwdvxafbvzcsv"),                                // matches the launcher version id: 1.16.4-pre1
+	_1_16_2    ("1.16.2",     "brxcyd$acyhaozannaaxungn$bacs[Jacoabuwacxxwdvxaezvzcst"),                                  // matches the launcher version id: 1.16.2-pre2  1.16.2-pre3  1.16.2-rc1  1.16.2-rc2  1.16.2  1.16-3-rc1  1.16.3
 	_1_16_2_pre1("1.16.2-pre1", "brvcya$acyeaoxanlaavumgn$bacq[Jacmabsvycxuwbvvaexvxcsr"),                                // matches the launcher version id: 1.16.2-pre1
 	_20w30a    ("20w30a",     "brucxw$acyaaoxanlaavumgn$bacq[Jacmabsvycxqwbvvaexvxcso"),                                  // matches the launcher version id: 20w30a
 	_20w29a    ("20w29a",     "brvcxx$acybaoxanlaayupgn$bact[Jacpabvwbcxrwevyaeywacsp"),                                  // matches the launcher version id: 20w29a
