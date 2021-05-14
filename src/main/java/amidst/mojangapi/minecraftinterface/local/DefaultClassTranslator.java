@@ -38,7 +38,7 @@ public enum DefaultClassTranslator {
                 .thenDeclareRequired(CLASS_RESOURCE_KEY)
                     .requiredConstructor(CONSTRUCTOR_RESOURCE_KEY).real("java.lang.String").end()
             .next()
-            	.ifDetect(c -> c.searchForUtf8EqualTo("ResourceKey["))
+            	.ifDetect(c -> c.searchForStringContaining("ResourceKey["))
             	.thenDeclareOptional(CLASS_REGISTRY_ACCESS_KEY) // since 20w21a
             .next()
                 .ifDetect(c -> c.getNumberOfConstructors() <= 1
@@ -56,7 +56,7 @@ public enum DefaultClassTranslator {
                     .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
                     .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_RESOURCE_KEY).end()
             .next()
-                .ifDetect(c -> c.searchForUtf8EqualTo("Missing registry: ")) // since 20w28a
+                .ifDetect(c -> c.searchForStringContaining("Missing registry: ")) // since 20w28a
                 .thenDeclareOptional(CLASS_REGISTRY_ACCESS)
                     .optionalMethod(METHOD_REGISTRY_ACCESS_BUILTIN, "b").end()
                     .optionalMethod(METHOD_REGISTRY_ACCESS_BUILTIN2, "a").end() // since 20w51a

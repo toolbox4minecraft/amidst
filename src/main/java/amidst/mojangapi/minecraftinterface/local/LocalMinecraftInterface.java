@@ -240,10 +240,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    isInitialized = true;
 	}
 
-	private void bootstrapGame() {
-
-	}
-
 	private Object getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
     	InstantiationException, InvocationTargetException, MinecraftInterfaceException {
     	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
