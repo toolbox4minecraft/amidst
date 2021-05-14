@@ -20,43 +20,51 @@ import amidst.logging.AmidstLogger;
  */
 public class MultiMonitorFixer implements ComponentListener {
 	private final JFrame frame;
-	private final MethodHandle setGCHandle;
+	private MethodHandle setGCHandle = null;
 	private boolean errorPrinted = false;
-	
+
 	public MultiMonitorFixer(JFrame frame) {
 		this.frame = frame;
-		this.setGCHandle = getGCHandle();
 	}
-	
-	private static MethodHandle getGCHandle() {
-		try {
-			Method m1 = Window.class.getDeclaredMethod("setGraphicsConfiguration", GraphicsConfiguration.class);
-			m1.setAccessible(true);
-			MethodHandle mh1 = MethodHandles.lookup().unreflect(m1);
-			return mh1.asType(MethodType.methodType(void.class, JFrame.class, GraphicsConfiguration.class)); // change to allow invokeExact
-		} catch (NoSuchMethodException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+
+	// This doesn't work on Java 16+, because of module encapsulation.
+	// TODO: find another way to do this, or simply remove it?
+	private static MethodHandle getGCHandle() throws NoSuchMethodException, SecurityException, IllegalAccessException {
+		Method m1 = Window.class.getDeclaredMethod("setGraphicsConfiguration", GraphicsConfiguration.class);
+		m1.setAccessible(true);
+		MethodHandle mh1 = MethodHandles.lookup().unreflect(m1);
+		return mh1.asType(MethodType.methodType(void.class, JFrame.class, GraphicsConfiguration.class)); // change to allow invokeExact
 	}
-	
+
+	@Override
 	public void componentResized(ComponentEvent e) {
 		updateGC();
 	}
-	
+
+	@Override
 	public void componentMoved(ComponentEvent e) {
 		updateGC();
 	}
-	
+
+	@Override
 	public void componentShown(ComponentEvent e) {
 		updateGC();
 	}
-	
+
+	@Override
 	public void componentHidden(ComponentEvent e) {
 		updateGC();
 	}
-	
+
 	private void updateGC() {
+		if (errorPrinted) {
+			return;
+		}
+
 		try {
+			if (setGCHandle == null) {
+				setGCHandle = getGCHandle();
+			}
 			for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
 				GraphicsConfiguration defaultConfig = gd.getDefaultConfiguration();
 				if (!frame.getGraphicsConfiguration().equals(defaultConfig)) {
@@ -69,11 +77,9 @@ public class MultiMonitorFixer implements ComponentListener {
 				}
 			}
 		} catch (Throwable t) {
-			if (!errorPrinted) {
-				AmidstLogger.error(t, "Unable to set GraphicsConfiguration");
-				errorPrinted = true;
-			}
+			AmidstLogger.error("Unable to set GraphicsConfiguration; issues may arise with multi-monitors setups");
+			errorPrinted = true;
 		}
 	}
-	
+
 }
