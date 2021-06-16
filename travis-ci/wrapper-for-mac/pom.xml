@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>wrapper-for-mac</artifactId>
-	<version>4.6</version>
+	<version>4.7</version>
 	<build>
 		<finalName>${amidst.build.filename}</finalName>
 		<plugins>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>amidst</groupId>
 			<artifactId>amidst</artifactId>
-			<version>4.6</version>
+			<version>4.7</version>
 		</dependency>
 		<dependency>
 			<groupId>sh.tak.appbundler</groupId>

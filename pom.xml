@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>4.6</version>
+	<version>4.7</version>
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
