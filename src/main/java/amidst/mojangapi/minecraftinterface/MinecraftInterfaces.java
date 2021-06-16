@@ -45,7 +45,9 @@ public enum MinecraftInterfaces {
                 | JarFileParsingException
                 | SymbolicClassGraphCreationException
                 | IOException e) {
-            throw new MinecraftInterfaceCreationException("unable to create local minecraft interface", e);
+            throw new MinecraftInterfaceCreationException("Unable to create local minecraft interface", e);
+        } catch (UnsupportedClassVersionError e) {
+        	throw new MinecraftInterfaceCreationException("This version of Minecraft isn't compatible with your Java installation", e);
         }
     }
 
