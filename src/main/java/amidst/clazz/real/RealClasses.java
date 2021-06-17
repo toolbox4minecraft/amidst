@@ -31,7 +31,7 @@ public enum RealClasses {
 			throw new FileNotFoundException("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		}
 
-		try (FileSystem jarContents = URIUtils.openZipFile(jarFile.toUri())){
+		try (FileSystem jarContents = URIUtils.openZipFile(jarFile)){
 			return readJarFile(jarContents);
 		} catch (IOException | RealClassCreationException | URISyntaxException e) {
 			throw new JarFileParsingException("Error extracting jar data.", e);
