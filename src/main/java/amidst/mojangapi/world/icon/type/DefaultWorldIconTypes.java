@@ -31,6 +31,8 @@ public enum DefaultWorldIconTypes {
 	WOODLAND_MANSION    ("woodland_mansion",  "Woodland Mansion"),
 	END_CITY            ("end_city",          "Likely End City"),
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City"),
+	END_GATEWAY         ("end_gateway",          "End Gateway"),
+	POSSIBLE_END_GATEWAY("possible_end_gateway", "Possible End Gateway"),
 	OCEAN_RUINS         ("ocean_ruins",       "Ocean Ruins"),
 	SHIPWRECK           ("shipwreck",         "Shipwreck"),
 	BURIED_TREASURE     ("buried_treasure",   "Buried Treasure"),

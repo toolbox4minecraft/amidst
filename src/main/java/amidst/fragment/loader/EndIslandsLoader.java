@@ -1,7 +1,5 @@
 package amidst.fragment.loader;
 
-import java.util.List;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
@@ -10,8 +8,8 @@ import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.oracle.EndIsland;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 
 //TODO: use longs?
 @NotThreadSafe
@@ -42,7 +40,7 @@ public class EndIslandsLoader extends FragmentLoader {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private List<EndIsland> getEndIslands(CoordinatesInWorld corner) {
+	private EndIslandList getEndIslands(CoordinatesInWorld corner) {
 		return endIslandOracle.getAt(corner);
 	}
 }

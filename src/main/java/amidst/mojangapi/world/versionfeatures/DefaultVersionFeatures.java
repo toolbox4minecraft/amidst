@@ -26,6 +26,7 @@ import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker
 import amidst.mojangapi.world.icon.producer.BastionRemnantProducer;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.ChunkStructureProducer;
+import amidst.mojangapi.world.icon.producer.EndGatewayProducer;
 import amidst.mojangapi.world.icon.producer.NetherFortressProducer_Original;
 import amidst.mojangapi.world.icon.producer.NetherFortressProducer_Scattered;
 import amidst.mojangapi.world.icon.producer.NoopProducer;
@@ -43,10 +44,11 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIsland;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
 import amidst.util.FastRand;
 
 public enum DefaultVersionFeatures {
@@ -100,6 +102,7 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Function<FastRand, Boolean>> NETHER_FORTRESS_FUNCTION      = FeatureKey.make();
 	private static final FeatureKey<Function<FastRand, Boolean>> BASTION_REMNANT_FUNCTION      = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
+	private static final FeatureKey<Boolean>         END_CAN_GENERATE_SMALL_ISLANDS            = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE    = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT = FeatureKey.make();
 	private static final FeatureKey<Integer>         BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET  = FeatureKey.make();
@@ -167,9 +170,10 @@ public enum DefaultVersionFeatures {
 					LayerIds.TEMPLE
 				).sinceExtend(RecognisedVersion._1_8,
 					LayerIds.OCEAN_MONUMENT
-				).sinceExtend(RecognisedVersion._15w31c,
+				).sinceExtend(RecognisedVersion._15w31c,  // Actually 15w31a
 					LayerIds.END_ISLANDS,
-					LayerIds.END_CITY
+					LayerIds.END_CITY,
+					LayerIds.END_GATEWAY
 				).sinceExtend(RecognisedVersion._16w43a,
 					LayerIds.WOODLAND_MANSION
 				).sinceExtend(RecognisedVersion._18w09a,
@@ -177,9 +181,16 @@ public enum DefaultVersionFeatures {
 				).construct())
 
 			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
+
 			.with(FeatureKey.END_ISLAND_ORACLE, VersionFeature.fixed(features ->
-				EndIslandOracle.from(getWorldSeed(features))
+				EndIslandOracle.from(getWorldSeed(features), features.get(END_CAN_GENERATE_SMALL_ISLANDS))
 			))
+			.with(END_CAN_GENERATE_SMALL_ISLANDS, VersionFeature.<Boolean> builder()
+				.init(
+					false
+				).since(RecognisedVersion._1_13, // TODO: need confirmation on this version
+					true
+				).construct())
 
 			.with(FeatureKey.SLIME_CHUNK_ORACLE, VersionFeature.fixed(features ->
 				new SlimeChunkOracle(getWorldSeed(features))
@@ -270,11 +281,11 @@ public enum DefaultVersionFeatures {
 			)
 			.with(NETHER_BUILDING_SEPARATION, VersionFeature.constant((byte) 4))
 
-			.with(FeatureKey.END_CITY_PRODUCER, VersionFeature.<WorldIconProducer<List<EndIsland>>> builder()
+			.with(FeatureKey.END_CITY_PRODUCER, VersionFeature.<WorldIconProducer<List<LargeEndIsland>>> builder()
 				.init(new NoopProducer<>())
 				.since(RecognisedVersion._15w31c,
 					VersionFeature.fixed(features ->
-						new RegionalStructureProducer<List<EndIsland>>(
+						new RegionalStructureProducer<List<LargeEndIsland>>(
 							Resolution.CHUNK,
 							8,
 							null,
@@ -289,6 +300,16 @@ public enum DefaultVersionFeatures {
 							features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 						)
 					)
+				).construct())
+
+			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.<WorldIconProducer<EndIslandList>> builder()
+				.init(new NoopProducer<>())
+				.since(RecognisedVersion._15w31c,  // Actually 15w31a
+					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), features.get(FeatureKey.END_ISLAND_ORACLE)))
+				).since(RecognisedVersion._16w39a,
+					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), 0, 3, features.get(FeatureKey.END_ISLAND_ORACLE)))
+				).since(RecognisedVersion._20w06a, // TODO: confirm this version is correct; this changed after 1.15.2 and before 1.16
+					VersionFeature.fixed(features -> new EndGatewayProducer(getWorldSeed(features), 13, 4, features.get(FeatureKey.END_ISLAND_ORACLE)))
 				).construct())
 
 			.with(MINESHAFT_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()

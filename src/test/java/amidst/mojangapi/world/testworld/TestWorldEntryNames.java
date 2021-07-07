@@ -7,7 +7,7 @@ public class TestWorldEntryNames {
 	public static final String METADATA = "metadata";
 	public static final String QUARTER_RESOLUTION_BIOME_DATA = "quarter-resolution-biome-data";
 	public static final String FULL_RESOLUTION_BIOME_DATA = "full-resolution-biome-data";
-	public static final String END_ISLANDS = "end-islands";
+	public static final String LARGE_END_ISLANDS = "end-islands";
 	public static final String SLIME_CHUNKS = "slime-chunks";
 	public static final String SPAWN = "spawn";
 	public static final String STRONGHOLDS = "strongholds";
@@ -29,7 +29,7 @@ public class TestWorldEntryNames {
 			TestWorldEntryNames.METADATA,
 			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
 			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
-			TestWorldEntryNames.END_ISLANDS,
+			TestWorldEntryNames.LARGE_END_ISLANDS,
 			TestWorldEntryNames.SLIME_CHUNKS,
 			TestWorldEntryNames.SPAWN,
 			TestWorldEntryNames.STRONGHOLDS,

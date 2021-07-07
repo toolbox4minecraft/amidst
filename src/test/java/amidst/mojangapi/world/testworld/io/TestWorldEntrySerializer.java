@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
-import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
+import amidst.mojangapi.world.testworld.storage.json.LargeEndIslandsJson;
 import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
@@ -35,8 +35,8 @@ public enum TestWorldEntrySerializer {
 		return readJson(is, BiomeDataJson.class);
 	}
 
-	public static EndIslandsJson readEndIslands(InputStream is) {
-		return readJson(is, EndIslandsJson.class);
+	public static LargeEndIslandsJson readLargeEndIslands(InputStream is) {
+		return readJson(is, LargeEndIslandsJson.class);
 	}
 
 	public static SlimeChunksJson readSlimeChunks(InputStream is) {

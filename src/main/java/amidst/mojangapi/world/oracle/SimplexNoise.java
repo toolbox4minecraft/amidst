@@ -62,11 +62,9 @@ public class SimplexNoise {
 		perm = new short[512];
 		permMod12 = new short[512];
 
-		// Minecraft uses the PRNG 3 times before building the
-		// permutation table.
-		random.nextDouble();
-		random.nextDouble();
-		random.nextDouble();
+		// Minecraft calls nextDouble 3 times before building the permutation
+		// table, which is equivalent to 6 next calls.
+		random.advance(6);
 
 		// Build a permutation table using our seeded PRNG
 		for (short i = 0; i < 256; ++i) {

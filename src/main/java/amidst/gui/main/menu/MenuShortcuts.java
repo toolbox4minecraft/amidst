@@ -48,6 +48,7 @@ public enum MenuShortcuts implements MenuShortcut {
 	// It's okay to duplicate the Overworld layers shortcuts here, because
 	// the End layers will never be active at the same time.
 	SHOW_END_CITIES("menu 1"),
+	SHOW_END_GATEWAYS("menu 2"),
 
 	SHOW_GRID("menu G"),
 	SHOW_PLAYERS("menu P"),
