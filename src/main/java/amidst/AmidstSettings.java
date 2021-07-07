@@ -37,6 +37,8 @@ public class AmidstSettings {
 	public final Setting<Boolean> showDebug;
 	public final Setting<Boolean> useHybridScaling;
 	public final Setting<Integer> threads;
+	public final Setting<Integer> offscreenCacheTime;
+	public final Setting<Integer> availableCacheTime;
 	public final Setting<AmidstLookAndFeel> lookAndFeel;
 
 	public final Setting<String> lastProfile;
@@ -76,6 +78,8 @@ public class AmidstSettings {
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
 		useHybridScaling           = Setting.createBoolean(  preferences, "useHybridScaling",     true);
 		threads                    = Setting.createInteger(  preferences, "threads",              (Runtime.getRuntime().availableProcessors() / 2) + 1);
+		offscreenCacheTime         = Setting.createInteger(  preferences, "offscreenCacheTime",   30000);
+		availableCacheTime         = Setting.createInteger(  preferences, "availableCacheTime",   60000);
 		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");

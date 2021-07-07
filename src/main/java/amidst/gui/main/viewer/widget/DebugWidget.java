@@ -44,8 +44,8 @@ public class DebugWidget extends TextWidget {
 			int rows = graph.getFragmentsPerColumn();
 			return Arrays.asList(
 					"Fragment Manager:",
-					"Cache Size: " + fragmentManager.getCacheSize(),
-					"Available Queue Size: " + fragmentManager.getAvailableQueueSize(),
+					"Available Cache Size: " + fragmentManager.getAvailableCacheSize(),
+					"Off-Screen Cache Size: " + fragmentManager.getOffscreenCacheSize(),
 					"Loading Queue Size: " + fragmentManager.getLoadingQueueSize(),
 					"Recycle Queue Size: " + fragmentManager.getRecycleQueueSize(),
 					"",

@@ -1,8 +1,14 @@
 package amidst.fragment;
 
+import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.LockSupport;
+
+import javax.swing.SwingUtilities;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -15,34 +21,55 @@ import amidst.settings.Setting;
 
 @NotThreadSafe
 public class FragmentQueueProcessor {
-	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
-	private final FragmentCache cache;
+	private final ConcurrentLinkedDeque<Fragment> recycleQueue;
+	private final AvailableFragmentCache availableCache;
+	private final OffScreenFragmentCache offscreenCache;
+	
 	private final LayerManager layerManager;
 	private final ThreadPoolExecutor fragWorkers;
 	private final Setting<Dimension> dimensionSetting;
+	private final FragmentGraph graph;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
-			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> recycleQueue,
-			FragmentCache cache,
+			ConcurrentLinkedDeque<Fragment> recycleQueue,
+			AvailableFragmentCache availableCache,
+			OffScreenFragmentCache offscreenCache,
 			LayerManager layerManager,
-			ThreadPoolExecutor fragWorkers,
-			Setting<Dimension> dimensionSetting) {
-		this.availableQueue = availableQueue;
+			Setting<Dimension> dimensionSetting,
+			FragmentGraph graph,
+			ThreadPoolExecutor fragWorkers) {
 		this.loadingQueue = loadingQueue;
 		this.recycleQueue = recycleQueue;
-		this.cache = cache;
+		this.availableCache = availableCache;
+		this.offscreenCache = offscreenCache;
+		
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
+		this.graph = graph;
 		this.fragWorkers = fragWorkers;
 	}
-	
+
+	/**
+	 * Returns if there are fragments that still need to be processed.
+	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private boolean hasFragments() {
+		return !loadingQueue.isEmpty();
+	}
+
+	/**
+	 * Return the next fragment the loader should process, or null if no more fragments are available.
+	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private Fragment getNextFragment() {
+		return loadingQueue.poll();
+	}
+
 	private static final int PARK_MILLIS = 1000;
-	
+
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
@@ -63,10 +90,10 @@ public class FragmentQueueProcessor {
 		 * as possible.
 		 */
 		int maxSize = fragWorkers.getMaximumPoolSize();
-		while (loadingQueue.isEmpty() == false) {
+		while (hasFragments()) {
 			if (fragWorkers.getActiveCount() < maxSize) {
 				fragWorkers.execute(() -> {
-					Fragment f = loadingQueue.poll();
+					Fragment f = getNextFragment();
 					if (f != null && dimension.equals(dimensionSetting.get())) {
 						loadFragment(dimension, f);
 						updateLayerManager(dimension);
@@ -75,7 +102,8 @@ public class FragmentQueueProcessor {
 					}
 				});
 			} else {
-				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after time expires
+				// if for some reason unpark was never called, unpark after time expires
+				LockSupport.parkNanos(PARK_MILLIS * 1000000);
 			}
 		}
 		layerManager.clearInvalidatedLayers();
@@ -84,15 +112,53 @@ public class FragmentQueueProcessor {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void updateLayerManager(Dimension dimension) {
 		if (layerManager.updateAll(dimension)) {
-			cache.reloadAll();
+			tryReloadGraph();
+			offscreenCache.invalidate();
 		}
+	}
+
+	private volatile boolean firstLoad = true;
+
+	/**
+	 * Gets all of the fragments currently on the graph to offer, as they aren't
+	 * stored in any cache. However, we don't want to do this on the first load.
+	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private synchronized void tryReloadGraph() {
+		if (firstLoad) {
+			firstLoad = false;
+			return;
+		}
+		
+		loadingQueue.clear();
+		for (FragmentGraphItem graphItem : getGraphIterable()) {
+			loadingQueue.offer(graphItem.getFragment());
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private Iterable<FragmentGraphItem> getGraphIterable() {
+		CompletableFuture<Iterator<FragmentGraphItem>> graphIteratorFuture = new CompletableFuture<>();
+		// we have to get this on the EDT because it isn't thread safe
+		SwingUtilities.invokeLater(() -> graphIteratorFuture.complete(graph.iterator()));
+		
+		return () -> {
+			try {
+				return graphIteratorFuture.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		};
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void processRecycleQueue() {
 		Fragment fragment;
 		while ((fragment = recycleQueue.poll()) != null) {
-			recycleFragment(fragment);
+			// the fragment goes back in the queue if it didn't fully recycle
+			if (!recycleFragment(fragment)) {
+				recycleQueue.addLast(fragment);
+			}
 		}
 	}
 
@@ -100,8 +166,7 @@ public class FragmentQueueProcessor {
 	private void loadFragment(Dimension dimension, Fragment fragment) {
 		if (fragment.getState().equals(Fragment.State.LOADED)) {
 			layerManager.reloadInvalidated(dimension, fragment);
-		} else if (!fragment.getState().equals(Fragment.State.UNINITIALIZED)
-				&& !fragment.getAndSetState(Fragment.State.LOADING).equals(Fragment.State.LOADING)) {
+		} else if (!fragment.getAndSetState(Fragment.State.LOADING).equals(Fragment.State.LOADING)) {
 			//If it's not loading, set loading and continue. If it is already loading, don't continue.
 			layerManager.loadAll(dimension, fragment);
 			fragment.setState(State.LOADED);
@@ -109,20 +174,15 @@ public class FragmentQueueProcessor {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void recycleFragment(Fragment fragment) {
-		if (fragment.tryRecycle()) {
-			removeFromLoadingQueue(fragment);
-			availableQueue.offer(fragment);
+	private boolean recycleFragment(Fragment fragment) {
+		boolean recycled = fragment.tryRecycle();
+		if (recycled) {
+			// We also don't want this to load while it's in the availableCache so we remove it from the loadingQueue
+			while (loadingQueue.remove(fragment));
+			availableCache.put(fragment);
 		}
-	}
-
-	// TODO: Check performance with and without this. It is not needed, since
-	// loadFragment checks for isInitialized(). It helps to keep the
-	// loadingQueue small, but it costs time to remove fragments from the queue.
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void removeFromLoadingQueue(Object fragment) {
-		while (loadingQueue.remove(fragment)) {
-			// noop
-		}
+		
+		// if the recycle fails, it just ends up getting loaded and then recycled later
+		return recycled;
 	}
 }

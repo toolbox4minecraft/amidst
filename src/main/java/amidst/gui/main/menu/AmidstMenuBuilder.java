@@ -1,8 +1,10 @@
 package amidst.gui.main.menu;
 
+import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -13,8 +15,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.MenuSelectionManager;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 import amidst.AmidstSettings;
 import amidst.FeatureToggles;
@@ -135,6 +143,7 @@ public class AmidstMenuBuilder {
 		result.addSeparator();
 		result.add(create_Settings_LookAndFeel());
 		result.add(create_Settings_Threads());
+		result.add(create_Settings_FragmentCache());
 		return result;
 	}
 
@@ -161,7 +170,7 @@ public class AmidstMenuBuilder {
 		radios.addAll(Menus.radios(result, lookAndFeelSetting, AmidstLookAndFeel.values()));
 		return result;
 	}
-	
+
 	private JMenu create_Settings_Threads() {
 		UIManager.put("Slider.focus", UIManager.get("Slider.background"));
 		int cores = Runtime.getRuntime().availableProcessors();
@@ -178,7 +187,7 @@ public class AmidstMenuBuilder {
 						actions.tryChangeThreads();
 					}
 				}
-			}			
+			}
 		});
 		slider.setMinorTickSpacing(1);
 		slider.setPaintTicks(true);
@@ -190,6 +199,104 @@ public class AmidstMenuBuilder {
 		table.put(cores, new JLabel("" + cores));
 		slider.setLabelTable(table);
 		return submenu;
+	}
+
+	private JMenu create_Settings_FragmentCache() {
+		JMenu submenu = new JMenu("Cache Options");
+		submenu.setLayout(new FlowLayout());
+		
+		JLabel availableCacheTimeLabel = new JLabel("Available Cache Retention Time (s):");
+		submenu.add(availableCacheTimeLabel);
+		
+		JSpinner availableCacheTimeSpinner = new JSpinner(createCacheTimeNumberModel(settings.availableCacheTime.get() / 1000d));
+		availableCacheTimeSpinner.setEditor(createCacheTimeNumberEditor(availableCacheTimeSpinner));
+		submenu.add(availableCacheTimeSpinner);
+		availableCacheTimeSpinner.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (e.getSource() instanceof JSpinner) {
+					settings.availableCacheTime.set((int) (((Number) ((JSpinner) e.getSource()).getValue()).doubleValue() * 1000));
+				}
+			}			
+		});
+		
+		JLabel offscreenCacheTimeLabel = new JLabel("Off-Screen Cache Retention Time (s):");
+		submenu.add(offscreenCacheTimeLabel);
+		
+		JSpinner offscreenCacheTimeSpinner = new JSpinner(createCacheTimeNumberModel(settings.offscreenCacheTime.get() / 1000d));
+		offscreenCacheTimeSpinner.setEditor(createCacheTimeNumberEditor(offscreenCacheTimeSpinner));
+		submenu.add(offscreenCacheTimeSpinner);
+		offscreenCacheTimeSpinner.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (e.getSource() instanceof JSpinner) {
+					settings.offscreenCacheTime.set((int) (((Number) ((JSpinner) e.getSource()).getValue()).doubleValue() * 1000));
+				}
+			}			
+		});
+		return submenu;
+	}
+
+	private JSpinner.NumberEditor createCacheTimeNumberEditor(JSpinner spinner) {
+		return new JSpinner.NumberEditor(spinner) {
+			private static final long serialVersionUID = 3558355517740224788L;
+			
+			{
+				NumberFormatter formatter = new NumberFormatter() {
+					private static final long serialVersionUID = 5843793486873426981L;
+					
+					@Override
+					public Object stringToValue(String text) throws ParseException {
+						if (text.equals("Never Unload")) {
+							return 3601d;
+						} else {
+							return super.stringToValue(text);
+						}
+					}
+					
+					@Override
+					public String valueToString(Object value) throws ParseException {
+						if (value instanceof Double && ((Double) value) == 3601d) {
+							return "Never Unload";
+						} else {
+							return super.valueToString(value);
+						}
+					}
+				};
+				formatter.setMaximum(((SpinnerNumberModel) spinner.getModel()).getMaximum());
+				formatter.setMinimum(((SpinnerNumberModel) spinner.getModel()).getMinimum());
+				getTextField().setFormatterFactory(new DefaultFormatterFactory(formatter));
+			}
+		};
+	}
+
+	private SpinnerNumberModel createCacheTimeNumberModel(double value) {
+		return new SpinnerNumberModel(value, 0, 3601, 1d) {
+			private static final long serialVersionUID = 400524834946107859L;
+			
+		    @Override
+		    public Object getNextValue() {
+		        return incrValue(+1);
+		    }
+
+		    @Override
+		    public Object getPreviousValue() {
+		        return incrValue(-1);
+		    }
+			
+		    @SuppressWarnings("unchecked")
+			private Object incrValue(int dir) {
+		    	double newValue = getNumber().doubleValue() + (getStepSize().doubleValue() * (double)dir);
+		        if ((getMaximum() != null) && (getMaximum().compareTo(newValue) < 0)) {
+		            return null;
+		        }
+		        if ((getMinimum() != null) && (getMinimum().compareTo(newValue) > 0)) {
+		            return null;
+		        } else {
+		        	return newValue;
+		        }
+		    }
+		};
 	}
 
 	private JMenu create_Settings_BiomeProfile() {

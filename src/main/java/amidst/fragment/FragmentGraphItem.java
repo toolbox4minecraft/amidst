@@ -214,7 +214,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		while (current != null) {
 			current.disconnectBelow();
 			FragmentGraphItem right = current.disconnectRight();
-			current.recycle(manager);
+			current.retire(manager);
 			current = right;
 		}
 	}
@@ -225,7 +225,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		while (current != null) {
 			current.disconnectAbove();
 			FragmentGraphItem right = current.disconnectRight();
-			current.recycle(manager);
+			current.retire(manager);
 			current = right;
 		}
 	}
@@ -236,7 +236,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		while (current != null) {
 			current.disconnectRight();
 			FragmentGraphItem below = current.disconnectBelow();
-			current.recycle(manager);
+			current.retire(manager);
 			current = below;
 		}
 	}
@@ -247,7 +247,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		while (current != null) {
 			current.disconnectLeft();
 			FragmentGraphItem below = current.disconnectBelow();
-			current.recycle(manager);
+			current.retire(manager);
 			current = below;
 		}
 	}
@@ -382,7 +382,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void recycle(FragmentManager manager) {
-		manager.recycleFragment(fragment);
+	private void retire(FragmentManager manager) {
+		manager.retireFragment(fragment);
 	}
 }

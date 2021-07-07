@@ -1,9 +1,12 @@
 package amidst.fragment;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -16,21 +19,31 @@ import amidst.settings.Setting;
 
 @NotThreadSafe
 public class FragmentManager {
-	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<>();
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
-	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
-	private final FragmentCache cache;
+	private final ConcurrentLinkedDeque<Fragment> recycleQueue = new ConcurrentLinkedDeque<>();
+	
+	private final AvailableFragmentCache availableCache;
+	private final OffScreenFragmentCache offscreenCache;
 	
 	private final Setting<Integer> threadsSetting;
+	private final ScheduledExecutorService cleanerThread;
 	private ThreadPoolExecutor fragWorkers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers, Setting<Integer> threadsSetting) {
-		this.cache = new FragmentCache(availableQueue, loadingQueue, constructors, numberOfLayers);
+	public FragmentManager(
+			Iterable<FragmentConstructor> constructors,
+			int numberOfLayers,
+			Setting<Integer> threadsSetting,
+			Setting<Integer> availableCacheTime,
+			Setting<Integer> offscreenCacheTime) {
+		this.availableCache = new AvailableFragmentCache(constructors, numberOfLayers, availableCacheTime);
+		this.offscreenCache = new OffScreenFragmentCache(recycleQueue, offscreenCacheTime);
 		this.threadsSetting = threadsSetting;
+		this.cleanerThread = createCleanerThread();
 		this.fragWorkers = createThreadPool();
 	}
-	
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public ThreadPoolExecutor createThreadPool() {
 		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
 			private int num;
@@ -42,38 +55,90 @@ public class FragmentManager {
 		});
 	}
 
+	private ScheduledExecutorService createCleanerThread() {
+		ScheduledExecutorService scheduledExecutor =
+				Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "CacheCleanerThread"));
+		scheduledExecutor.scheduleAtFixedRate(() -> {
+			offscreenCache.cleanAndRecycle();
+			availableCache.clean();
+		}, 0, 500, TimeUnit.MILLISECONDS); // cleans both caches 2 times a second
+		return scheduledExecutor;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void restart() {
+		fragWorkers.shutdownNow();
+		this.fragWorkers = createThreadPool();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void shutdownCleaner() {
+		cleanerThread.shutdownNow();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void invalidateCaches() {
+		offscreenCache.invalidate();
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
-		Fragment fragment;
-		while ((fragment = availableQueue.poll()) == null) {
-			cache.increaseSize();
+		// We get and remove the fragments that come on screen from the loading cache,
+		// returning it if it exists.
+		Fragment fragment = offscreenCache.remove(coordinates);
+		if (fragment != null) {
+			return fragment;
 		}
+
+		fragment = availableCache.getOrCreate();
 		fragment.setCorner(coordinates);
 		fragment.setState(Fragment.State.INITIALIZED);
 		loadingQueue.offer(fragment);
 		return fragment;
 	}
 
+	/**
+	 * Called when a fragment is no longer shown on the screen. 
+	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void recycleFragment(Fragment fragment) {
-		recycleQueue.offer(fragment);
+	public void retireFragment(Fragment fragment) {
+		// This isn't recycled normally because we want to have a different outcome if it fails the first try
+		if (fragment.tryRecycleNotLoaded()) {
+			// We don't want this to load while it's in the availableCache so we remove it from the loadingQueue
+			while (loadingQueue.remove(fragment));
+			availableCache.put(fragment);
+		} else {
+			// We store the fragment if it's loaded or not properly recycling and it goes offscreen
+			// If it doesn't properly recycle, we know it'll just get loaded by the loadingQueue anyway
+			offscreenCache.put(fragment);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentQueueProcessor createQueueProcessor(LayerManager layerManager, Setting<Dimension> dimensionSetting) {
+	public FragmentQueueProcessor createQueueProcessor(
+			LayerManager layerManager,
+			Setting<Dimension> dimensionSetting,
+			FragmentGraph graph) {
+		
 		return new FragmentQueueProcessor(
-				availableQueue,
 				loadingQueue,
 				recycleQueue,
-				cache,
+				availableCache,
+				offscreenCache,
 				layerManager,
-				fragWorkers,
-				dimensionSetting);
+				dimensionSetting,
+				graph,
+				fragWorkers);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public int getAvailableQueueSize() {
-		return availableQueue.size();
+	public int getAvailableCacheSize() {
+		return availableCache.size();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public int getOffscreenCacheSize() {
+		return offscreenCache.size();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -88,20 +153,8 @@ public class FragmentManager {
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void clear() {
-		cache.clear();
-		availableQueue.clear();
+		offscreenCache.clear();
 		loadingQueue.clear();
 		recycleQueue.clear();
-	}
-	
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void restartThreadPool() {
-		fragWorkers.shutdownNow();
-		this.fragWorkers = createThreadPool();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public int getCacheSize() {
-		return cache.size();
 	}
 }
