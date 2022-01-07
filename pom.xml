@@ -56,7 +56,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
+				<version>3.3.0-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -125,4 +125,10 @@
 			<type>maven-plugin</type>
 		</dependency>
 	</dependencies>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-snapshots</id>
+			<url>https://repository.apache.org/content/repositories/snapshots/</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
