@@ -26,11 +26,11 @@ public class ClosestWorldIconFinder {
 		this.positionInWorld = positionInWorld;
 		this.closestIcon = null;
 		this.closestDistanceSq = maxDistanceInWorld * maxDistanceInWorld;
-		find();
+		findWorldIcon();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void find() {
+	private void findWorldIcon() {
 		for (FragmentGraphItem fragmentGraphItem : graph) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			for (LayerDeclaration declaration : declarations) {

@@ -24,17 +24,18 @@ public enum WorldPlayerType {
 		return SELECTABLE;
 	}
 
-	public static WorldPlayerType from(SaveGame saveGame) {
+	public static Object from(SaveGame saveGame) {
 		boolean hasSingleplayerPlayer = saveGame.hasSingleplayerPlayer();
 		boolean hasMultiplayerPlayers = saveGame.hasMultiplayerPlayers();
+
 		if (hasSingleplayerPlayer && hasMultiplayerPlayers) {
-			return BOTH;
+			return new BothWorldPlayerType().from(saveGame);
 		} else if (hasSingleplayerPlayer) {
-			return SINGLEPLAYER;
+			return new SingleplayerWorldPlayerType().from(saveGame);
 		} else if (hasMultiplayerPlayers) {
-			return MULTIPLAYER;
+			return new MultiplayerWorldPlayerType().from(saveGame);
 		} else {
-			return NONE;
+			return new NoneWorldPlayerType().from(saveGame);
 		}
 	}
 
