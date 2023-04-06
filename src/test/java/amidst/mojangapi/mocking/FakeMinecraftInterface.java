@@ -30,13 +30,27 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+	/*public MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
 		if (worldMetadataJson.getSeed() == worldOptions.getWorldSeed().getLong() && worldMetadataJson.getWorldType().equals(worldOptions.getWorldType())
 				&& worldOptions.getGeneratorOptions().isEmpty()) {
 			return new WorldAccessor();
 		} else {
 			throw new MinecraftInterfaceException("the world has to match");
 		}
+	}*/
+
+	public MinecraftInterface.WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException {
+		if (worldMatches(worldOptions)) {
+			return new WorldAccessor();
+		} else {
+			throw new MinecraftInterfaceException("the world has to match");
+		}
+	}
+
+	private boolean worldMatches(WorldOptions worldOptions) {
+		return worldMetadataJson.getSeed() == worldOptions.getWorldSeed().getLong() &&
+				worldMetadataJson.getWorldType().equals(worldOptions.getWorldType()) &&
+				worldOptions.getGeneratorOptions().isEmpty();
 	}
 
 	@Override
