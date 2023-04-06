@@ -10,14 +10,13 @@ import java.util.function.Function;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.minecraftinterface.ReflectionUtils;
-import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.minecraftinterface.*;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 /**
@@ -154,6 +153,16 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
+	public VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface, SeedHistoryLogger seedHistoryLogger)
+			throws MinecraftInterfaceException {
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		if(minecraftInterface instanceof LoggingMinecraftInterface) {
+			((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
+		}
+		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
+		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
+	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {
 		private final Object quarterResolutionBiomeGenerator;
@@ -179,6 +188,17 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		@Override
 		public Set<Dimension> supportedDimensions() {
 			return Collections.singleton(Dimension.OVERWORLD);
+		}
+
+		public VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface, SeedHistoryLogger seedHistoryLogger)
+				throws MinecraftInterfaceException {
+			RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+			if(minecraftInterface instanceof LoggingMinecraftInterface) {
+				((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
+			}
+			MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
+			seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+			return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 		}
 	}
 }
