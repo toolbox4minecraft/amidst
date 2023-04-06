@@ -64,7 +64,7 @@ public class WorldBuilder {
 					playerInformationProvider,
 					saveGame,
 					true,
-					WorldPlayerType.from(saveGame)),
+						(WorldPlayerType) WorldPlayerType.from(saveGame)),
 				versionFeatures,
 				new ImmutableWorldSpawnOracle(saveGame.getWorldSpawn()));
 	}
