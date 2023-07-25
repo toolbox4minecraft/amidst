@@ -33,7 +33,7 @@
 			        <dependency>
 			            <groupId>org.codehaus.plexus</groupId>
 			            <artifactId>plexus-archiver</artifactId>
-			            <version>RELEASE</version>
+			            <version>4.8.0</version>
 			        </dependency>
 			        <dependency>
 			            <groupId>org.apache.velocity</groupId>
