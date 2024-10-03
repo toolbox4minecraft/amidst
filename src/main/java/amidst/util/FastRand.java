@@ -13,7 +13,7 @@ public class FastRand {
 
     private static final long MULTIPLIER = 0x5DEECE66DL;
     private static final long ADDEND = 0xBL;
-    private static final long MASK = (1L << 48) - 1;
+    private static final long MODULUS = 1L << 48;
 
     private static final double DOUBLE_UNIT = 0x1.0p-53;
 
@@ -24,15 +24,46 @@ public class FastRand {
 	}
 
 	private long initialScramble(long seed) {
-		return (seed ^ MULTIPLIER) & MASK;
+		return (seed ^ MULTIPLIER) & MODULUS - 1;
 	}
 
 	public void setSeed(long seed) {
 		this.seed = initialScramble(seed);
 	}
 
+	public long mod(long n) {
+		return n & (MODULUS - 1);
+	}
+
 	public void advance() {
-		seed = (seed * MULTIPLIER + ADDEND) & MASK;
+		seed = this.mod(seed * MULTIPLIER + ADDEND);
+	}
+
+	/**
+	 * Stolen from <a
+	 * href=https://github.com/KaptainWutax/SeedUtils/blob/master/src/main/java/kaptainwutax/seedutils/lcg/LCG.java#L80>here<a>
+	 */
+	public void advance(int steps) {
+        long multiplier = 1;
+        long addend = 0;
+
+        long intermediateMultiplier = MULTIPLIER;
+        long intermediateAddend = ADDEND;
+
+        for(long k = steps; k != 0; k >>>= 1) {
+            if((k & 1) != 0) {
+                multiplier *= intermediateMultiplier;
+                addend = intermediateMultiplier * addend + intermediateAddend;
+            }
+
+            intermediateAddend = (intermediateMultiplier + 1) * intermediateAddend;
+            intermediateMultiplier *= intermediateMultiplier;
+        }
+
+        multiplier = this.mod(multiplier);
+        addend = this.mod(addend);
+
+        seed = this.mod(seed * multiplier + addend);
 	}
 
 	private int next(int bits) {

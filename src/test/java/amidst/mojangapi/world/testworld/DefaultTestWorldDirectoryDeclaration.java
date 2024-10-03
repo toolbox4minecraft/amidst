@@ -10,7 +10,7 @@ import amidst.mojangapi.world.testworld.file.TestWorldDirectoryDeclaration;
 import amidst.mojangapi.world.testworld.io.TestWorldEntrySerializer;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
-import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
+import amidst.mojangapi.world.testworld.storage.json.LargeEndIslandsJson;
 import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
@@ -51,11 +51,11 @@ public enum DefaultTestWorldDirectoryDeclaration {
 				.deserializer(TestWorldEntrySerializer::readBiomeData)
 				.extractor(biomeDataExtractor())
 				.skipEqualityCheck()
-			.entry(TestWorldEntryNames.END_ISLANDS,      EndIslandsJson.class)
+			.entry(TestWorldEntryNames.LARGE_END_ISLANDS,      LargeEndIslandsJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
-				.deserializer(TestWorldEntrySerializer::readEndIslands)
-				.extractor(endIslandExtractor())
-				.equalityChecker(EndIslandsJson::equals)
+				.deserializer(TestWorldEntrySerializer::readLargeEndIslands)
+				.extractor(largeEndIslandExtractor())
+				.equalityChecker(LargeEndIslandsJson::equals)
 			.entry(TestWorldEntryNames.SLIME_CHUNKS,      SlimeChunksJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readSlimeChunks)
@@ -147,8 +147,8 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		};
 	}
 
-	private Function<World, EndIslandsJson> endIslandExtractor() {
-		return world -> EndIslandsJson.extract(world.getEndIslandOracle(), END_FRAGMENTS_AROUND_ORIGIN);
+	private Function<World, LargeEndIslandsJson> largeEndIslandExtractor() {
+		return world -> LargeEndIslandsJson.extract(world.getEndIslandOracle(), END_FRAGMENTS_AROUND_ORIGIN);
 	}
 
 	private Function<World, CoordinatesCollectionJson> worldIconExtractor(
@@ -166,7 +166,7 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				world.getEndCityProducer(),
 				worldIconType.getLabel(),
-				corner -> world.getEndIslandOracle().getAt(corner),
+				corner -> world.getEndIslandOracle().getLargeIslandsAt(corner),
 				END_FRAGMENTS_AROUND_ORIGIN,
 				MINIMAL_NUMBER_OF_COORDINATES);
 	}

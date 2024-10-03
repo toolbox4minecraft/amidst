@@ -28,6 +28,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showOceanFeatures;
 	public final Setting<Boolean> showNetherFortresses;
 	public final Setting<Boolean> showEndCities;
+	public final Setting<Boolean> showEndGateways;
 
 	public final Setting<Boolean> smoothScrolling;
 	public final Setting<Boolean> fragmentFading;
@@ -67,6 +68,7 @@ public class AmidstSettings {
 		showOceanFeatures          = Setting.createBoolean(  preferences, "oceanFeaturesIcons",   true);
 		showNetherFortresses       = Setting.createBoolean(  preferences, "netherFortressIcons",  false);
 		showEndCities              = Setting.createBoolean(  preferences, "endCityIcons",         false);
+		showEndGateways            = Setting.createBoolean(  preferences, "endGatewayIcons",      false);
 
 		smoothScrolling            = Setting.createBoolean(  preferences, "mapFlicking",          true);
 		fragmentFading             = Setting.createBoolean(  preferences, "mapFading",            true);

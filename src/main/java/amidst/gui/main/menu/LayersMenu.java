@@ -78,7 +78,7 @@ public class LayersMenu {
 		createOverworldLayers(dimension);
 		menu.addSeparator();
 		Menus.radio(   menu, dimensionSetting, group,     Dimension.END,                                            MenuShortcuts.DISPLAY_DIMENSION_END);
-		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        MenuShortcuts.SHOW_END_CITIES, dimension, LayerIds.END_CITY);
+		createEndLayers(dimension);
 		// @formatter:on
 	}
 
@@ -95,6 +95,14 @@ public class LayersMenu {
 		overworldLayer(settings.showWoodlandMansions,     "Woodland Mansion Icons", getIcon("woodland_mansion.png"),MenuShortcuts.SHOW_WOODLAND_MANSIONS, dimension, LayerIds.WOODLAND_MANSION);
 		overworldLayer(settings.showOceanFeatures,        "Ocean Features Icons",   getIcon("shipwreck.png"),       MenuShortcuts.SHOW_OCEAN_FEATURES,    dimension, LayerIds.OCEAN_FEATURES);
 		overworldLayer(settings.showNetherFortresses,     "Nether Features Icons",  getIcon("nether_fortress.png"), MenuShortcuts.SHOW_NETHER_FEATURES,   dimension, LayerIds.NETHER_FEATURES);
+		// @formatter:on
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void createEndLayers(Dimension dimension) {
+		// @formatter:off
+		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        MenuShortcuts.SHOW_END_CITIES,   dimension, LayerIds.END_CITY);
+		endLayer(      settings.showEndGateways,          "End Gateway Icons",      getIcon("end_gateway.png"),     MenuShortcuts.SHOW_END_GATEWAYS, dimension, LayerIds.END_GATEWAY);
 		// @formatter:on
 	}
 

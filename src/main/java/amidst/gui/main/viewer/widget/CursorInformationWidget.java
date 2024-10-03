@@ -16,6 +16,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 import amidst.settings.Setting;
 
@@ -61,11 +62,25 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
+			return getEndBiomeNameAt(coordinates);
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
 		}
+	}
+	
+	public String getEndBiomeNameAt(CoordinatesInWorld coordinates) {
+		Fragment fragment = graph.getFragmentAt(coordinates);
+		if (fragment != null && fragment.isLoaded()) {
+			Biome biome = biomeList.getByIdOrNull(EndIslandOracle.getBiomeAtBlock(coordinates.getX(), coordinates.getY(), graph.getFragmentAt(coordinates).getLargeEndIslands()));
+			
+			if (biome != null) {
+				return biome.getName();
+			} else {
+				return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
+			}
+		}
+		return UNKNOWN_BIOME_NAME;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -7,7 +7,9 @@ import amidst.ResourceLoader;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.oracle.EndIsland;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
+import amidst.mojangapi.world.oracle.end.SmallEndIsland;
 
 @ThreadSafe
 public class TheEndColorProvider implements ColorProvider {
@@ -31,8 +33,8 @@ public class TheEndColorProvider implements ColorProvider {
 		long xAsQuarter = cornerX + x;
 		long yAsQuarter = cornerY + y;
 		return getColorAt(
-				(int) (xAsQuarter << 2),
-				(int) (yAsQuarter << 2),
+				xAsQuarter << 2,
+				yAsQuarter << 2,
 				xAsQuarter >> 2,
 				yAsQuarter >> 2,
 				(int) (x % TEXTURES_WIDTH),
@@ -41,26 +43,27 @@ public class TheEndColorProvider implements ColorProvider {
 	}
 
 	private int getColorAt(
-			int x,
-			int y,
+			long x,
+			long y,
 			long chunkX,
 			long chunkY,
 			int textureX,
 			int textureY,
-			List<EndIsland> endIslands) {
-		// Determine whether this
+			EndIslandList endIslands) {
+		
 		float maxInfluence = getMaxInfluence(x, y, endIslands);
 		if (maxInfluence >= INFLUENCE_FADE_START) {
 			// Draw endstone island
 			return getEndStoneTextureAt(textureX, textureY);
 		} else {
-			return getFadingColorAt(chunkX, chunkY, textureX, textureY, maxInfluence);
+			// Draw fade and small islands
+			return getOuterColorAt(x, y, chunkX, chunkY, textureX, textureY, maxInfluence, endIslands);
 		}
 	}
 
-	private float getMaxInfluence(int x, int y, List<EndIsland> endIslands) {
+	private float getMaxInfluence(long x, long y, EndIslandList endIslands) {
 		float result = -100.0f;
-		for (EndIsland island : endIslands) {
+		for (LargeEndIsland island : endIslands.getLargeIslands()) {
 			float influence = island.influenceAtBlock(x, y);
 			if (result < influence) {
 				result = influence;
@@ -69,34 +72,67 @@ public class TheEndColorProvider implements ColorProvider {
 		return result;
 	}
 
-	private int getFadingColorAt(long chunkX, long chunkY, int textureX, int textureY, float maxInfluence) {
+	private int getOuterColorAt(
+			long x,
+			long y,
+			long chunkX,
+			long chunkY,
+			int textureX,
+			int textureY,
+			float maxInfluence,
+			EndIslandList endIslands) {
 		int result = VOID_TRANSPARENT_BLACK;
-		if (showRockyShores(chunkX, chunkY)) {
+		
+		// The small islands list is null if the version doesn't support them
+		if (endIslands.getSmallIslands() != null) {
+			// Small islands can leak into other biomes if they spawn close enough, so we want to set this to when large islands start fading so they merge smoothly
+			if(maxInfluence <= INFLUENCE_FADE_START) {
+				result = getSmallIslandSSAAPixel(x, y, textureX, textureY, endIslands.getSmallIslands());
+			}
+		} else if (showOldRockyShores(chunkX, chunkY)) {
 			result = getRockyShoresTextureAt(textureX, textureY);
 		}
+		
 		if (maxInfluence > INFLUENCE_FADE_FINISH) {
 			// Fade out the endstone - this is the edge of an island
-			int pixelAlpha = result >>> 24;
-			int fadingIslandAlpha = getFadingIslandAlpha(maxInfluence);
-			if (fadingIslandAlpha > pixelAlpha) {
-				// favor the island pixel instead of the rocky shores pixel
-				// (Should look perfect without needing to blend, because
-				// rocky shore is still endstone texture)
-				return getFadedEndStoneTextureAt(textureX, textureY, fadingIslandAlpha);
-			}
+			int pixelAlpha = (result >>> 24) + getFadingIslandAlpha(maxInfluence);
+			// Add alphas together to blend
+			return getFadedEndStoneTextureAt(textureX, textureY, pixelAlpha);
 		}
 		return result;
 	}
-
-	/**
-	 * Determine if the chunk may contain miniature islands.
-	 */
-	private boolean showRockyShores(long chunkX, long chunkY) {
-		return (chunkX * chunkX + chunkY * chunkY) > 4096;
+	
+	private static final double ALPHA_INCREMENT = 63.75d;
+	private static final int[] NEIGHBORING_PIXEL_TABLE = {
+			0, 0,
+			1, 0,
+			0, 1,
+			1, 1
+	};
+	
+	// Anti-aliased pixel through taking 4 samples and blending them
+	private int getSmallIslandSSAAPixel(long x, long y, int textureX, int textureY, List<SmallEndIsland> smallIslands) {
+		double alpha = 0;
+		for(SmallEndIsland smallIsland : smallIslands) {
+			for(int i = 0; i <= 3; i++) {
+				if(smallIsland.isOnIsland(x + NEIGHBORING_PIXEL_TABLE[(i * 2)], y + NEIGHBORING_PIXEL_TABLE[(i * 2) + 1])) {
+					alpha += ALPHA_INCREMENT;
+				}
+			}
+		}
+		
+		return alpha == 0 ? VOID_TRANSPARENT_BLACK : getFadedEndStoneTextureAt(textureX, textureY, (int) alpha);
 	}
 
 	private int getFadingIslandAlpha(float maxInfluence) {
 		return 255 - (int) (255 * (INFLUENCE_FADE_START - maxInfluence) / INFLUENCE_FADE_RANGE);
+	}
+	
+	/**
+	 * Determine whether to show the rocky shores texture.
+	 */
+	private boolean showOldRockyShores(long chunkX, long chunkY) {
+		return (chunkX * chunkX + chunkY * chunkY) > 4096L;
 	}
 
 	private int getEndStoneTextureAt(int textureX, int textureY) {
@@ -108,12 +144,14 @@ public class TheEndColorProvider implements ColorProvider {
 	 * from the world seed, like chorus plants they are decorations whose PRNG
 	 * state depends on the order chunks are created/explored in. This makes me
 	 * sad :( Let's use a symbolic texture, since we can't plot them properly.
+	 * 
+	 * EDIT: This isn't true past 1.13, they can be generated from the seed.
 	 */
 	private int getRockyShoresTextureAt(int textureX, int textureY) {
 		return TEXTURES.getRGB(textureX, textureY + TEXTURES_HEIGHT);
 	}
 
 	private int getFadedEndStoneTextureAt(int textureX, int textureY, int alpha) {
-		return (getEndStoneTextureAt(textureX, textureY) & 0x00FFFFFF) | (alpha << 24);
+		return (getEndStoneTextureAt(textureX, textureY) & 0x00FFFFFF) | (Math.min(alpha, 0xFF) << 24);
 	}
 }

@@ -2,9 +2,9 @@ package amidst.mojangapi.world.icon.type;
 
 import java.util.List;
 
-import amidst.mojangapi.world.oracle.EndIsland;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
 
-public class EndCityWorldIconTypeProvider implements WorldIconTypeProvider<List<EndIsland>> {
+public class EndCityWorldIconTypeProvider implements WorldIconTypeProvider<List<LargeEndIsland>> {
 	/**
 	 * REQUIRED_INFLUENCE is a value between 0 and 80 that I'm finding by trial
 	 * and error. If the island influence is 0 or higher then an End City can
@@ -16,10 +16,9 @@ public class EndCityWorldIconTypeProvider implements WorldIconTypeProvider<List<
 	private static final int REQUIRED_INFLUENCE = 60;
 
 	@Override
-	public DefaultWorldIconTypes get(int chunkX, int chunkY, List<EndIsland> endIslands) {
-		// Convert coordinates to long to guard against overflow
+	public DefaultWorldIconTypes get(int chunkX, int chunkY, List<LargeEndIsland> largeEndIslands) {
 		if (((long) chunkX * (long) chunkX + (long) chunkY * (long) chunkY) > 4096) {
-			return hasSuitableIslandFoundation(chunkX, chunkY, endIslands);
+			return hasSuitableIslandFoundation(chunkX, chunkY, largeEndIslands);
 		} else {
 			return null;
 		}
@@ -36,9 +35,9 @@ public class EndCityWorldIconTypeProvider implements WorldIconTypeProvider<List<
 	 * 
 	 * In the meantime, fall back on the requiredInfluence heuristic
 	 */
-	private DefaultWorldIconTypes hasSuitableIslandFoundation(int chunkX, int chunkY, List<EndIsland> endIslands) {
+	private DefaultWorldIconTypes hasSuitableIslandFoundation(int chunkX, int chunkY, List<LargeEndIsland> largeEndIslands) {
 		DefaultWorldIconTypes result = null;
-		for (EndIsland island : endIslands) {
+		for (LargeEndIsland island : largeEndIslands) {
 			float influence = island.influenceAtChunk(chunkX, chunkY);
 			if (influence >= REQUIRED_INFLUENCE) {
 				return DefaultWorldIconTypes.END_CITY;
