@@ -5,7 +5,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class LoggingMinecraftInterface implements MinecraftInterface {
@@ -54,5 +57,17 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return inner.getRecognisedVersion();
+	}
+
+	@Override
+	public VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface, SeedHistoryLogger seedHistoryLogger)
+			throws MinecraftInterfaceException {
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		if(minecraftInterface instanceof LoggingMinecraftInterface) {
+			((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
+		}
+		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
+		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 	}
 }
