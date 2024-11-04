@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.util.HashMap;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 
@@ -55,8 +55,7 @@ public enum URIUtils {
 		return bytes.toByteArray();
 	}
 
-	public static FileSystem openZipFile(URI uri) throws URISyntaxException, IOException {
-		URI zipUri = new URI("jar:" + uri.getScheme(), uri.getPath(), null);
-		return FileSystems.newFileSystem(zipUri, new HashMap<>());
+	public static FileSystem openZipFile(Path path) throws URISyntaxException, IOException {
+		return FileSystems.newFileSystem(path, null);
 	}
 }
