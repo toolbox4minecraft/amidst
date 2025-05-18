@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>4.7</version>
+	<version>5.0-SNAPSHOT</version>
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
@@ -13,6 +13,10 @@
 	</repositories>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>24</maven.compiler.source>
+		<maven.compiler.target>24</maven.compiler.target>
 	</properties>
 	<build>
 		<finalName>${amidst.build.filename}</finalName>
@@ -36,6 +40,7 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<!-- Will be removed soon -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.9</version>
@@ -47,16 +52,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>${amidst.build.jdk.version}</source>
-					<target>${amidst.build.jdk.version}</target>
-				</configuration>
+				<version>3.11.0</version>
 			</plugin>
 			<plugin>
+				<!-- Will be removed soon -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
+				<version>3.6.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -94,7 +96,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.5</version>
+			<version>2.13.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.miglayout</groupId>
@@ -104,14 +106,15 @@
 		<dependency>
 			<groupId>args4j</groupId>
 			<artifactId>args4j</artifactId>
-			<version>2.32</version>
+			<version>2.37</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Querz</groupId>
 			<artifactId>NBT</artifactId>
-			<version>5.5</version>
+			<version>6.1</version>
 		</dependency>
 		<dependency>
+			<!-- Need to update to Junit 5 -->
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13.1</version>
@@ -120,7 +123,7 @@
 		<dependency>
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>properties-maven-plugin</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.1</version>
 			<scope>provided</scope>
 			<type>maven-plugin</type>
 		</dependency>
