@@ -1,53 +1,127 @@
 package amidst.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import javax.swing.JFrame;
-
 import amidst.AmidstMetaData;
+import amidst.AmidstSettings;
+import amidst.Application;
 import amidst.FeatureToggles;
+import amidst.dependency.injection.Factory3;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.export.BiomeExporter;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
+import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.RunningLauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.world.World;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
+import amidst.threading.ThreadMaster;
 import amidst.util.SwingUtils;
 
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * The main application window, showing the world map.
+ */
 @NotThreadSafe
 public class MainWindow {
+
+	/**
+	 * The default window size.
+	 */
 	private static final Dimension WINDOW_DIMENSIONS = new Dimension(1000, 800);
-	
+
+	/**
+	 * The JFrame that is the main window.
+	 */
 	private final JFrame frame;
+
 	private final WorldSwitcher worldSwitcher;
-	private final Supplier<ViewerFacade> viewerFacadeSupplier;
+	private final AtomicReference<ViewerFacade> viewerFacadeReference = new AtomicReference<>();
 	private final SeedSearcherWindow seedSearcherWindow;
 	private final BiomeExporterDialog biomeExporterDialog;
 
+	/**
+	 * Creates and shows the main application window.
+	 *
+	 * @param application
+	 * @param metadata
+	 * @param settings
+	 * @param minecraftInstallation
+	 * @param runningLauncherProfile
+	 * @param biomeProfileDirectory
+	 * @param viewerFacadeFactory
+	 * @param threadMaster
+	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindow(JFrame frame, WorldSwitcher worldSwitcher, Supplier<ViewerFacade> viewerFacadeSupplier,
-			SeedSearcherWindow seedSearcherWindow, BiomeExporterDialog biomeExporterDialog) {
-		this.frame = frame;
-		this.worldSwitcher = worldSwitcher;
-		this.viewerFacadeSupplier = viewerFacadeSupplier;
-		this.seedSearcherWindow = seedSearcherWindow;
-		this.biomeExporterDialog = biomeExporterDialog;
-	}
+	public MainWindow(Application application,
+					  AmidstMetaData metadata,
+					  AmidstSettings settings,
+					  MinecraftInstallation minecraftInstallation,
+					  RunningLauncherProfile runningLauncherProfile,
+					  BiomeProfileDirectory biomeProfileDirectory,
+					  Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
+					  ThreadMaster threadMaster) {
+		frame = new JFrame();
+		frame.addComponentListener(new MultiMonitorFixer(frame));
+		Container contentPane = frame.getContentPane();
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar,
-				 Optional<WorldOptions> initialWorldOptions) {
+		MainWindowDialogs dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
+		AtomicReference<AmidstMenu> menuBarReference = new AtomicReference<>();
+		AtomicReference<Actions> actionsReference = new AtomicReference<>();
+
+		if (FeatureToggles.SEED_SEARCH) {
+			SeedSearcher seedSearcher = new SeedSearcher(
+					dialogs,
+					runningLauncherProfile.createSilentPlayerlessCopy(),
+					threadMaster.getWorkerExecutor());
+			seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
+		} else {
+			seedSearcherWindow = null;
+		}
+
+		biomeExporterDialog = new BiomeExporterDialog(new BiomeExporter(threadMaster.getWorkerExecutor()), frame, settings.biomeProfileSelection, menuBarReference::get, settings.lastBiomeExportPath);
+
+		worldSwitcher = new WorldSwitcher(
+				minecraftInstallation,
+				runningLauncherProfile,
+				viewerFacadeFactory,
+				actionsReference::get,
+				biomeExporterDialog,
+				threadMaster,
+				frame,
+				contentPane,
+				viewerFacadeReference,
+				dialogs,
+				menuBarReference::get);
+		Actions actions = new Actions(
+				application,
+				dialogs,
+				worldSwitcher,
+				seedSearcherWindow,
+				biomeExporterDialog,
+				viewerFacadeReference::get,
+				settings.biomeProfileSelection,
+				settings.lastBiomeExportPath);
+		actionsReference.set(actions);
+
+		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
+		menuBarReference.set(menuBar);
+
 		frame.setSize(WINDOW_DIMENSIONS);
 		frame.setIconImages(metadata.getIcons());
-		frame.setTitle(versionString);
+		frame.setTitle(createVersionString(metadata, runningLauncherProfile));
 		frame.setJMenuBar(menuBar.getMenuBar());
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -57,11 +131,14 @@ public class MainWindow {
 				actions.exit();
 			}
 		});
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+
 		worldSwitcher.clearWorld();
-		initialWorldOptions.ifPresent(options -> {
-            AmidstLogger.info("Setting initial world options to [" + options.getWorldSeed().getLabel() + ", World Type: " + options.getWorldType() + "]");
-            worldSwitcher.displayWorld(options);
+
+		runningLauncherProfile.getInitialWorldOptions().ifPresent(options -> {
+			AmidstLogger.info("Setting initial world options to [" + options.getWorldSeed().getLabel() + ", World Type: " + options.getWorldType() + "]");
+			worldSwitcher.displayWorld(options);
 		});
 	}
 
@@ -70,7 +147,7 @@ public class MainWindow {
 	}
 
 	public ViewerFacade getViewerFacade() {
-		return viewerFacadeSupplier.get();
+		return viewerFacadeReference.get();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -81,5 +158,17 @@ public class MainWindow {
 			seedSearcherWindow.dispose();
 		}		
 		SwingUtils.destroyComponentTree(frame);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private static String createVersionString(AmidstMetaData metadata, RunningLauncherProfile runningLauncherProfile) {
+		return metadata.getVersion().createLongVersionString() +
+				" - Selected Profile: " +
+				runningLauncherProfile.getLauncherProfile().getProfileName() +
+				" - Minecraft Version " +
+				runningLauncherProfile.getLauncherProfile().getVersionName() +
+				" (recognised: " +
+				runningLauncherProfile.getRecognisedVersion().getName() +
+				")";
 	}
 }

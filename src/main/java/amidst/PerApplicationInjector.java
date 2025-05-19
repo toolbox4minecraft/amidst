@@ -7,7 +7,10 @@ import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.license.LicenseWindow;
-import amidst.gui.main.*;
+import amidst.gui.main.Actions;
+import amidst.gui.main.MainWindow;
+import amidst.gui.main.MainWindowDialogs;
+import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
@@ -84,7 +87,7 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private MainWindow createMainWindow(RunningLauncherProfile runningLauncherProfile) {
-		return new PerMainWindowInjector(
+		return new MainWindow(
 				application,
 				metadata,
 				settings,
@@ -92,7 +95,7 @@ public class PerApplicationInjector {
 				runningLauncherProfile,
 				biomeProfileDirectory,
 				this::createViewerFacade,
-				threadMaster).getMainWindow();
+				threadMaster);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
