@@ -1,30 +1,21 @@
 package amidst.gui.profileselect;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.swing.JPanel;
-
-import net.miginfocom.swing.MigLayout;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
+import net.miginfocom.swing.MigLayout;
 
+import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * The JPanel that lists the individual profiles installed.
+ */
 @NotThreadSafe
 public class ProfileSelectPanel {
 	@NotThreadSafe
@@ -33,7 +24,8 @@ public class ProfileSelectPanel {
 		private static final int INVALID_EMPTY_MESSAGE_WIDTH = -1;
 
 		private int emptyMessageWidth = INVALID_EMPTY_MESSAGE_WIDTH;
-		private String oldEmptyMessage;
+
+		private final String oldEmptyMessage;
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		public Component() {
@@ -45,11 +37,6 @@ public class ProfileSelectPanel {
 		public void paintChildren(Graphics g) {
 			super.paintChildren(g);
 			Graphics2D g2d = (Graphics2D) g;
-			drawSeparatorLines(g2d);
-		}
-
-		@CalledOnlyBy(AmidstThread.EDT)
-		private void drawSeparatorLines(Graphics2D g2d) {
 			g2d.setColor(Color.gray);
 			for (int i = 1; i <= profileComponents.size(); i++) {
 				g2d.drawLine(0, i * 40, getWidth(), i * 40);
@@ -60,38 +47,24 @@ public class ProfileSelectPanel {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			Graphics2D g2d = (Graphics2D) g;
-			drawBackground(g2d);
-			if (profileComponents.isEmpty()) {
-				drawEmptyMessage(g2d);
-			}
-		}
 
-		@CalledOnlyBy(AmidstThread.EDT)
-		private void drawBackground(Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g2d.setColor(Color.white);
-			g2d.fillRect(0, 0, getWidth(), getHeight());
-		}
-
-		@CalledOnlyBy(AmidstThread.EDT)
-		private void drawEmptyMessage(Graphics2D g2d) {
-			g2d.setColor(Color.gray);
-			g2d.setFont(EMPTY_MESSAGE_FONT);
-			updateEmptyMessageWidth(g2d);
-			int x = (getWidth() >> 1) - (emptyMessageWidth >> 1);
-			g2d.drawString(emptyMessage, x, 30);
-		}
-
-		@CalledOnlyBy(AmidstThread.EDT)
-		private void updateEmptyMessageWidth(Graphics2D g2d) {
-			if (!oldEmptyMessage.equals(emptyMessage) || emptyMessageWidth == INVALID_EMPTY_MESSAGE_WIDTH) {
-				emptyMessageWidth = g2d.getFontMetrics().stringWidth(emptyMessage);
+			if (g instanceof Graphics2D g2d) {
+				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2d.setColor(Color.white);
+				g2d.fillRect(0, 0, getWidth(), getHeight());
+				if (profileComponents.isEmpty()) {
+					g2d.setColor(Color.gray);
+					g2d.setFont(new Font("arial", Font.BOLD, 30));
+					if (!oldEmptyMessage.equals(emptyMessage) || emptyMessageWidth == INVALID_EMPTY_MESSAGE_WIDTH) {
+						emptyMessageWidth = g2d.getFontMetrics().stringWidth(emptyMessage);
+					}
+					int x = (getWidth() >> 1) - (emptyMessageWidth >> 1);
+					g2d.drawString(emptyMessage, x, 30);
+				}
 			}
 		}
 	}
 
-	private static final Font EMPTY_MESSAGE_FONT = new Font("arial", Font.BOLD, 30);
 	private static final int INVALID_INDEX = -1;
 
 	private final Setting<String> lastProfileSetting;
@@ -99,21 +72,15 @@ public class ProfileSelectPanel {
 	private final List<ProfileComponent> profileComponents = new ArrayList<>();
 
 	private ProfileComponent selected = null;
-	private String emptyMessage;
+	private String emptyMessage = "Scanning...";
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ProfileSelectPanel(Setting<String> lastProfileSetting, String emptyMessage) {
+	public ProfileSelectPanel(Setting<String> lastProfileSetting) {
 		this.lastProfileSetting = lastProfileSetting;
-		this.emptyMessage = emptyMessage;
-		this.component = createComponent();
-	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private Component createComponent() {
-		Component component = new Component();
+		component = new Component();
 		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
 		component.addMouseListener(createMouseListener());
-		return component;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -123,7 +90,11 @@ public class ProfileSelectPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (!isLoading()) {
-					doMousePressed(e.getPoint());
+					Point mousePosition = e.getPoint();
+					select(getSelectedIndexFromYCoordinate(mousePosition));
+					if (isLoadButtonClicked(mousePosition)) {
+						loadSelectedProfile();
+					}
 				}
 			}
 		};
@@ -136,29 +107,14 @@ public class ProfileSelectPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (!isLoading()) {
-					doKeyPressed(e.getKeyCode());
+					switch (e.getKeyCode()) {
+						case KeyEvent.VK_DOWN -> select(profileComponents.indexOf(selected) + 1);
+						case KeyEvent.VK_UP -> select(profileComponents.indexOf(selected) - 1);
+						case KeyEvent.VK_ENTER -> loadSelectedProfile();
+					}
 				}
 			}
 		};
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void doKeyPressed(int key) {
-		if (key == KeyEvent.VK_DOWN) {
-			select(profileComponents.indexOf(selected) + 1);
-		} else if (key == KeyEvent.VK_UP) {
-			select(profileComponents.indexOf(selected) - 1);
-		} else if (key == KeyEvent.VK_ENTER) {
-			loadSelectedProfile();
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void doMousePressed(Point mousePosition) {
-		select(getSelectedIndexFromYCoordinate(mousePosition));
-		if (isLoadButtonClicked(mousePosition)) {
-			loadSelectedProfile();
-		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -193,35 +149,24 @@ public class ProfileSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void select(int index) {
-		deselectSelected();
-		doSelect(getBoundedIndex(index));
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void deselectSelected() {
 		if (selected != null) {
 			selected.setSelected(false);
 			selected = null;
 		}
-	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private int getBoundedIndex(int index) {
+		int i;
 		if (profileComponents.isEmpty()) {
-			return INVALID_INDEX;
+			i = INVALID_INDEX;
 		} else if (index < 0) {
-			return 0;
+			i = 0;
 		} else if (index >= profileComponents.size()) {
-			return profileComponents.size() - 1;
+			i = profileComponents.size() - 1;
 		} else {
-			return index;
+			i = index;
 		}
-	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void doSelect(int index) {
-		if (index != INVALID_INDEX) {
-			selected = profileComponents.get(index);
+		if (i != INVALID_INDEX) {
+			selected = profileComponents.get(i);
 			selected.setSelected(true);
 		}
 	}

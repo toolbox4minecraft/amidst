@@ -58,7 +58,7 @@ public class ProfileSelectWindow {
 		title.setFont(new Font("arial", Font.BOLD, 16));
 		frame.add(title, "h 20!,w :400:, growx, pushx, wrap");
 
-		ProfileSelectPanel profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
+		ProfileSelectPanel profileSelectPanel = new ProfileSelectPanel(settings.lastProfile);
 		JScrollPane scrollPane = new JScrollPane(profileSelectPanel.getComponent());
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
