@@ -74,7 +74,6 @@ public class MainWindow {
 					  Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
 					  ThreadMaster threadMaster) {
 		frame = new JFrame();
-		frame.addComponentListener(new MultiMonitorFixer(frame));
 		Container contentPane = frame.getContentPane();
 
 		MainWindowDialogs dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
