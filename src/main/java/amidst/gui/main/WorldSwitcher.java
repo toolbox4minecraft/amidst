@@ -1,22 +1,17 @@
 package amidst.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
-
-import javax.swing.JFrame;
-
-import amidst.dependency.injection.Factory2;
-import amidst.dependency.injection.Factory3;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.FragmentManager;
+import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
+import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.main.viewer.Zoom;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
@@ -28,11 +23,24 @@ import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.parsing.FormatException;
 import amidst.threading.ThreadMaster;
 
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
+
 @NotThreadSafe
 public class WorldSwitcher {
 	private final MinecraftInstallation minecraftInstallation;
 	private final RunningLauncherProfile runningLauncherProfile;
-	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;
+	private final BiomeExporterDialog biomeExporterDialog;
+	private final AmidstSettings settings;
+	private final Zoom zoom;
+	private final LayerBuilder layerBuilder;
+	private final FragmentManager fragmentManager;
+	private final BiomeSelection biomeSelection;
 	private final Supplier<Actions> actionsSupplier;
 	private final ThreadMaster threadMaster;
 	private final JFrame frame;
@@ -45,7 +53,11 @@ public class WorldSwitcher {
 	public WorldSwitcher(
 			MinecraftInstallation minecraftInstallation,
 			RunningLauncherProfile runningLauncherProfile,
-			Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
+			AmidstSettings settings,
+			Zoom zoom,
+			LayerBuilder layerBuilder,
+			FragmentManager fragmentManager,
+			BiomeSelection biomeSelection,
 			Supplier<Actions> actionsSupplier,
 			BiomeExporterDialog biomeExporterDialog,
 			ThreadMaster threadMaster,
@@ -56,7 +68,12 @@ public class WorldSwitcher {
 			Supplier<AmidstMenu> menuBarSupplier) {
 		this.minecraftInstallation = minecraftInstallation;
 		this.runningLauncherProfile = runningLauncherProfile;
-		this.viewerFacadeFactory = (w,a) -> viewerFacadeFactory.create(w, biomeExporterDialog, a);
+		this.settings = settings;
+		this.biomeExporterDialog = biomeExporterDialog;
+		this.zoom = zoom;
+		this.layerBuilder = layerBuilder;
+		this.fragmentManager = fragmentManager;
+		this.biomeSelection = biomeSelection;
 		this.actionsSupplier = actionsSupplier;
 		this.threadMaster = threadMaster;
 		this.frame = frame;
@@ -103,7 +120,17 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorld(World world) {
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			setViewerFacade(viewerFacadeFactory.create(world, actionsSupplier.get()));
+			ViewerFacade v = new PerViewerFacadeInjector(
+					settings,
+					threadMaster.getWorkerExecutor(),
+					zoom,
+					layerBuilder,
+					fragmentManager,
+					biomeExporterDialog,
+					biomeSelection,
+					world,
+					actionsSupplier.get()).getViewerFacade();
+			setViewerFacade(v);
 		} else {
 			frame.revalidate();
 			frame.repaint();

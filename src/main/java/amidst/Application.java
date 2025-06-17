@@ -5,15 +5,11 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerBuilder;
-import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.license.LicenseWindow;
-import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.viewer.BiomeSelection;
-import amidst.gui.main.viewer.PerViewerFacadeInjector;
-import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.LauncherProfileRunner;
@@ -24,7 +20,6 @@ import amidst.mojangapi.file.PlayerInformationCache;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
-import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.parsing.FormatException;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
@@ -101,7 +96,10 @@ public class Application {
 				minecraftInstallation,
 				runningLauncherProfile,
 				biomeProfileDirectory,
-				this::createViewerFacade,
+				zoom,
+				layerBuilder,
+				fragmentManager,
+				biomeSelection,
 				threadMaster);
 		setMainWindow(m);
 		setProfileSelectWindow(null);
@@ -179,19 +177,5 @@ public class Application {
 				throw new RuntimeException("Unexpected exception while restarting Amidst", e);
 			}
 		});
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacade createViewerFacade(World world, BiomeExporterDialog biomeExporterDialog, Actions actions) {
-		return new PerViewerFacadeInjector(
-				settings,
-				threadMaster.getWorkerExecutor(),
-				zoom,
-				layerBuilder,
-				fragmentManager,
-				biomeExporterDialog,
-				biomeSelection,
-				world,
-				actions).getViewerFacade();
 	}
 }

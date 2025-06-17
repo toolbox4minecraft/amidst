@@ -4,21 +4,23 @@ import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
 import amidst.FeatureToggles;
-import amidst.dependency.injection.Factory3;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.FragmentManager;
+import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.export.BiomeExporter;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
+import amidst.gui.main.viewer.BiomeSelection;
 import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.main.viewer.Zoom;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.world.World;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 import amidst.util.SwingUtils;
@@ -61,7 +63,10 @@ public class MainWindow {
 	 * @param minecraftInstallation
 	 * @param runningLauncherProfile
 	 * @param biomeProfileDirectory
-	 * @param viewerFacadeFactory
+	 * @param zoom
+	 * @param layerBuilder
+	 * @param fragmentManager
+	 * @param biomeSelection
 	 * @param threadMaster
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -71,7 +76,10 @@ public class MainWindow {
 					  MinecraftInstallation minecraftInstallation,
 					  RunningLauncherProfile runningLauncherProfile,
 					  BiomeProfileDirectory biomeProfileDirectory,
-					  Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
+					  Zoom zoom,
+					  LayerBuilder layerBuilder,
+					  FragmentManager fragmentManager,
+					  BiomeSelection biomeSelection,
 					  ThreadMaster threadMaster) {
 		frame = new JFrame();
 		Container contentPane = frame.getContentPane();
@@ -95,7 +103,11 @@ public class MainWindow {
 		worldSwitcher = new WorldSwitcher(
 				minecraftInstallation,
 				runningLauncherProfile,
-				viewerFacadeFactory,
+				settings,
+				zoom,
+				layerBuilder,
+				fragmentManager,
+				biomeSelection,
 				actionsReference::get,
 				biomeExporterDialog,
 				threadMaster,
