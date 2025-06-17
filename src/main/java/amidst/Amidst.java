@@ -85,7 +85,7 @@ public class Amidst {
 			AmidstSettings settings = new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 			try {
 				settings.lookAndFeel.get().tryApply();
-				new PerApplicationInjector(parameters, metadata, settings).getApplication().run();
+				new Application(parameters, metadata, settings).run();
 			} catch (DotMinecraftDirectoryNotFoundException e) {
 				AmidstLogger.warn(e);
 				AmidstMessageBox.displayError(

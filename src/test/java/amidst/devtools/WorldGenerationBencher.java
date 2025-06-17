@@ -1,35 +1,9 @@
 package amidst.devtools;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
-import java.util.prefs.Preferences;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import amidst.Amidst;
-import amidst.AmidstMetaData;
-import amidst.AmidstSettings;
-import amidst.Application;
-import amidst.CommandLineParameters;
-import amidst.PerApplicationInjector;
+import amidst.*;
 import amidst.gui.main.MainWindow;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
+import amidst.mojangapi.file.*;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.mocking.BenchmarkingMinecraftInterface;
@@ -40,6 +14,21 @@ import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.parsing.FormatException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Semaphore;
+import java.util.prefs.Preferences;
 
 public class WorldGenerationBencher {
 
@@ -139,7 +128,7 @@ public class WorldGenerationBencher {
 		AmidstSettings settings = new AmidstSettings(Preferences.userNodeForPackage(getClass()));
 		CommandLineParameters params = new CommandLineParameters();
 		AmidstMetaData metadata = Amidst.createMetadata();
-		return new PerApplicationInjector(params, metadata, settings).getApplication();
+		return new Application(params, metadata, settings);
 	}
 
 	private void adjustRecords(long startTime) {

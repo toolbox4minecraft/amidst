@@ -1,53 +1,74 @@
 package amidst;
 
-import java.util.Optional;
-
-import javax.swing.SwingUtilities;
-
-import amidst.dependency.injection.Factory0;
-import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.FragmentManager;
+import amidst.fragment.layer.LayerBuilder;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.license.LicenseWindow;
+import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.UpdatePrompt;
+import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.PerViewerFacadeInjector;
+import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.PlayerInformationCache;
+import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
+import amidst.mojangapi.world.SeedHistoryLogger;
+import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldBuilder;
+import amidst.parsing.FormatException;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
+import amidst.threading.ThreadMaster;
+
+import javax.swing.SwingUtilities;
+import java.io.IOException;
+import java.util.Optional;
 
 @NotThreadSafe
 public class Application {
 	private final LauncherProfileRunner launcherProfileRunner;
-	private final Factory1<MainWindowDialogs, UpdatePrompt> noisyUpdatePromptFactory;
-	private final Factory0<UpdatePrompt> silentUpdatePromptFactory;
-	private final Factory1<RunningLauncherProfile, MainWindow> mainWindowFactory;
-	private final Factory0<ProfileSelectWindow> profileSelectWindowFactory;
-	private final Factory0<LicenseWindow> licenseWindowFactory;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
 	private volatile Optional<LauncherProfile> selectedLauncherProfile;
 
+	private final ThreadMaster threadMaster = new ThreadMaster();
+	private final LayerBuilder layerBuilder = new LayerBuilder();
+	private final BiomeSelection biomeSelection = new BiomeSelection();
+
+	private final AmidstMetaData metadata;
+	private final AmidstSettings settings;
+	private final MinecraftInstallation minecraftInstallation;
+	private final BiomeProfileDirectory biomeProfileDirectory;
+	private final VersionListProvider versionListProvider;
+	private final Zoom zoom;
+	private final FragmentManager fragmentManager;
+
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(
-			Optional<LauncherProfile> preferredLauncherProfile,
-			LauncherProfileRunner launcherProfileRunner,
-			Factory1<MainWindowDialogs, UpdatePrompt> noisyUpdatePromptFactory,
-			Factory0<UpdatePrompt> silentUpdatePromptFactory,
-			Factory1<RunningLauncherProfile, MainWindow> mainWindowFactory,
-			Factory0<ProfileSelectWindow> profileSelectWindowFactory,
-			Factory0<LicenseWindow> licenseWindowFactory) {
-		this.selectedLauncherProfile = preferredLauncherProfile;
-		this.launcherProfileRunner = launcherProfileRunner;
-		this.noisyUpdatePromptFactory = noisyUpdatePromptFactory;
-		this.silentUpdatePromptFactory = silentUpdatePromptFactory;
-		this.mainWindowFactory = mainWindowFactory;
-		this.profileSelectWindowFactory = profileSelectWindowFactory;
-		this.licenseWindowFactory = licenseWindowFactory;
+	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings) throws FormatException, IOException {
+		this.metadata = metadata;
+		this.settings = settings;
+
+		minecraftInstallation = MinecraftInstallation.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+
+		selectedLauncherProfile = parameters.getInitialLauncherProfile(minecraftInstallation);
+
+		WorldBuilder worldBuilder = new WorldBuilder(new PlayerInformationCache(), SeedHistoryLogger.from(parameters.seedHistoryFile));
+		launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.getInitialWorldOptions());
+		biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
+		versionListProvider = VersionListProvider.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
+		zoom = new Zoom(settings.maxZoom);
+		fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers(), settings.threads);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -62,25 +83,42 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates(MainWindowDialogs dialogs) {
-		noisyUpdatePromptFactory.create(dialogs).check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), dialogs, false).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdatesSilently() {
-		silentUpdatePromptFactory.create().check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), null, true).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
 		selectedLauncherProfile = Optional.of(runningLauncherProfile.getLauncherProfile());
-		setMainWindow(mainWindowFactory.create(runningLauncherProfile));
+		MainWindow m = new MainWindow(
+				this,
+				metadata,
+				settings,
+				minecraftInstallation,
+				runningLauncherProfile,
+				biomeProfileDirectory,
+				this::createViewerFacade,
+				threadMaster);
+		setMainWindow(m);
 		setProfileSelectWindow(null);
 		return mainWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ProfileSelectWindow displayProfileSelectWindow() {
-		setProfileSelectWindow(profileSelectWindowFactory.create());
+		ProfileSelectWindow window = new ProfileSelectWindow(
+				this,
+				metadata,
+				threadMaster.getWorkerExecutor(),
+				versionListProvider,
+				minecraftInstallation,
+				launcherProfileRunner,
+				settings);
+		setProfileSelectWindow(window);
 		setMainWindow(null);
 		return profileSelectWindow;
 	}
@@ -115,7 +153,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayLicenseWindow() {
-		licenseWindowFactory.create();
+		new LicenseWindow(metadata);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -141,5 +179,19 @@ public class Application {
 				throw new RuntimeException("Unexpected exception while restarting Amidst", e);
 			}
 		});
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private ViewerFacade createViewerFacade(World world, BiomeExporterDialog biomeExporterDialog, Actions actions) {
+		return new PerViewerFacadeInjector(
+				settings,
+				threadMaster.getWorkerExecutor(),
+				zoom,
+				layerBuilder,
+				fragmentManager,
+				biomeExporterDialog,
+				biomeSelection,
+				world,
+				actions).getViewerFacade();
 	}
 }
