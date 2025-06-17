@@ -9,7 +9,6 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.BiomeSelection;
-import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.logging.AmidstLogger;
@@ -120,16 +119,16 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorld(World world) {
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			ViewerFacade v = new PerViewerFacadeInjector(
+			ViewerFacade v = new ViewerFacade(
 					settings,
-					threadMaster.getWorkerExecutor(),
-					zoom,
-					layerBuilder,
-					fragmentManager,
-					biomeExporterDialog,
-					biomeSelection,
 					world,
-					actionsSupplier.get()).getViewerFacade();
+					fragmentManager,
+					zoom,
+					threadMaster.getWorkerExecutor(),
+					biomeExporterDialog,
+					layerBuilder,
+					biomeSelection,
+					actionsSupplier.get());
 			setViewerFacade(v);
 		} else {
 			frame.revalidate();

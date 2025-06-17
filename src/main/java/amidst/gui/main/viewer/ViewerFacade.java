@@ -1,20 +1,18 @@
 package amidst.gui.main.viewer;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
+import amidst.fragment.FragmentQueueProcessor;
+import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.export.BiomeExporterDialog;
+import amidst.gui.main.Actions;
+import amidst.gui.main.viewer.widget.*;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
@@ -23,6 +21,14 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.threading.WorkerExecutor;
+
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class works as wrapper around a world instance. It holds everything that
@@ -42,43 +48,65 @@ public class ViewerFacade {
 	private final LayerManager layerManager;
 	private final WorkerExecutor workerExecutor;
 	private final BiomeExporterDialog biomeExporterDialog;
-	private final Consumer<Entry<ProgressEntryType, Integer>> progressListener;
-	private final Runnable onRepainterTick;
-	private final Runnable onFragmentLoaderTick;
-	private final Runnable onPlayerFinishedLoading;
+	private final FragmentQueueProcessor fragmentQueueProcessor;
+	private final AtomicReference<Entry<ProgressEntryType, Integer>> progressEntryHolder;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ViewerFacade(
+			AmidstSettings settings,
 			World world,
 			FragmentManager fragmentManager,
-			FragmentGraph graph,
-			FragmentGraphToScreenTranslator translator,
 			Zoom zoom,
-			Viewer viewer,
-			LayerReloader layerReloader,
-			WorldIconSelection worldIconSelection,
-			LayerManager layerManager,
 			WorkerExecutor workerExecutor,
 			BiomeExporterDialog biomeExporterDialog,
-			Consumer<Entry<ProgressEntryType, Integer>> progressListener,
-			Runnable onRepainterTick,
-			Runnable onFragmentLoaderTick,
-			Runnable onPlayerFinishedLoading) {
+			LayerBuilder layerBuilder,
+			BiomeSelection biomeSelection,
+			Actions actions) {
 		this.world = world;
 		this.fragmentManager = fragmentManager;
-		this.graph = graph;
-		this.translator = translator;
 		this.zoom = zoom;
-		this.viewer = viewer;
-		this.layerReloader = layerReloader;
-		this.worldIconSelection = worldIconSelection;
-		this.layerManager = layerManager;
 		this.workerExecutor = workerExecutor;
 		this.biomeExporterDialog = biomeExporterDialog;
-		this.progressListener = progressListener;
-		this.onRepainterTick = onRepainterTick;
-		this.onFragmentLoaderTick = onFragmentLoaderTick;
-		this.onPlayerFinishedLoading = onPlayerFinishedLoading;
+
+		Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter();
+		Movement movement = new Movement(settings.smoothScrolling);
+
+		this.worldIconSelection = new WorldIconSelection();
+		this.layerManager = layerBuilder.create(settings, world, biomeSelection, worldIconSelection, zoom, accelerationCounter);
+		this.graph = new FragmentGraph(layerManager.getDeclarations(), fragmentManager);
+		this.translator = new FragmentGraphToScreenTranslator(graph, zoom);
+		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
+		this.layerReloader = layerManager.createLayerReloader(world);
+		this.progressEntryHolder = new AtomicReference<Entry<ProgressEntryType, Integer>>();
+
+		DebugWidget debugWidget = new DebugWidget(Widget.CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter, zoom);
+		BiomeWidget biomeWidget = new BiomeWidget(Widget.CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList());
+		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(Widget.CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
+		WorldOptions worldOptions = world.getWorldOptions();
+		List<Widget> widgets = Arrays.asList(
+				new FpsWidget(Widget.CornerAnchorPoint.BOTTOM_LEFT, new FramerateTimer(2), settings.showFPS),
+				new ScaleWidget(Widget.CornerAnchorPoint.BOTTOM_CENTER, zoom, settings.showScale),
+				new SeedAndWorldTypeWidget(Widget.CornerAnchorPoint.TOP_LEFT, worldOptions.getWorldSeed(), worldOptions.getWorldType()),
+				new SelectedIconWidget(Widget.CornerAnchorPoint.TOP_LEFT, worldIconSelection),
+				debugWidget,
+				new CursorInformationWidget(Widget.CornerAnchorPoint.TOP_RIGHT, graph, translator, settings.dimension, world.getBiomeList()),
+				biomeToggleWidget,
+				new BiomeExporterProgressWidget(Widget.CornerAnchorPoint.BOTTOM_RIGHT, progressEntryHolder::get, -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
+				biomeWidget
+		);
+
+		Drawer drawer = new Drawer(
+				graph,
+				translator,
+				zoom,
+				movement,
+				widgets,
+				layerManager.getDrawers(),
+				settings.dimension,
+				accelerationCounter);
+
+		ViewerMouseListener viewerMouseListener = new ViewerMouseListener(new WidgetManager(widgets), graph, translator, zoom, movement, actions);
+		this.viewer = new Viewer(viewerMouseListener, drawer);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -107,12 +135,12 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Runnable getOnRepainterTick() {
-		return onRepainterTick;
+		return viewer::repaintComponent;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Runnable getOnFragmentLoaderTick() {
-		return onFragmentLoaderTick;
+		return fragmentQueueProcessor::processQueues;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -179,7 +207,7 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void loadPlayers() {
 		worldIconSelection.clear();
-		world.getMovablePlayerList().load(workerExecutor, onPlayerFinishedLoading);
+		world.getMovablePlayerList().load(workerExecutor, layerReloader::reloadPlayerLayer);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -204,11 +232,10 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openExportDialog() {
-		biomeExporterDialog.createAndShow(world, translator, progressListener);
+		biomeExporterDialog.createAndShow(world, translator, progressEntryHolder::set);
 	}
 
 	public boolean isFullyLoaded() {
 		return fragmentManager.getLoadingQueueSize() == 0;
 	}
-
 }
