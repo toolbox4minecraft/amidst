@@ -5,13 +5,14 @@ import java.util.Set;
 import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.*;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class FakeMinecraftInterface implements MinecraftInterface {
@@ -41,6 +42,18 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return worldMetadataJson.getRecognisedVersion();
+	}
+
+	@Override
+	public VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface, SeedHistoryLogger seedHistoryLogger)
+			throws MinecraftInterfaceException {
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		if(minecraftInterface instanceof LoggingMinecraftInterface) {
+			((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
+		}
+		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
+		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 	}
 
 	private class WorldAccessor implements MinecraftInterface.WorldAccessor {

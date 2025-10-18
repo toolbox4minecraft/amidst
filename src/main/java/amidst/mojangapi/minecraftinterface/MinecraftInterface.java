@@ -5,7 +5,9 @@ import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
@@ -20,6 +22,9 @@ public interface MinecraftInterface {
 	public WorldAccessor createWorldAccessor(WorldOptions worldOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
+
+	VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface, SeedHistoryLogger seedHistoryLogger)
+			throws MinecraftInterfaceException;
 
 	/**
 	 * Represents a Minecraft world, allowing for querying of biome data.
