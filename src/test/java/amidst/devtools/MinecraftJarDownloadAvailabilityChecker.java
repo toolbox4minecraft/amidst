@@ -1,23 +1,23 @@
 package amidst.devtools;
 
-import java.io.IOException;
-
 import amidst.devtools.utils.VersionStateRenderer;
 import amidst.mojangapi.file.RemoteVersion;
 import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
 import amidst.parsing.FormatException;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MinecraftJarDownloadAvailabilityChecker {
 	private VersionStateRenderer renderer = new VersionStateRenderer();
-	private VersionList versionList;
+	private List<Version> versionList;
 
-	public MinecraftJarDownloadAvailabilityChecker(VersionList versionList) {
+	public MinecraftJarDownloadAvailabilityChecker(List<Version> versionList) {
 		this.versionList = versionList;
 	}
 
 	public void run() {
-		for (Version version : versionList.getVersions()) {
+		for (Version version : versionList) {
 			checkVersion(version);
 		}
 	}

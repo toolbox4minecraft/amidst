@@ -4,7 +4,10 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.*;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.Version;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.parsing.FormatException;
@@ -26,10 +29,10 @@ import java.util.Map.Entry;
  */
 public class MinecraftVersionCompatibilityChecker {
 	private final String prefix;
-	private final VersionList versionList;
+	private final List<Version> versionList;
 	private final MinecraftInstallation minecraftInstallation;
 
-	public MinecraftVersionCompatibilityChecker(String prefix, String libraries, VersionList versionList)
+	public MinecraftVersionCompatibilityChecker(String prefix, String libraries, List<Version> versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
@@ -40,7 +43,7 @@ public class MinecraftVersionCompatibilityChecker {
 	public void run() {
 		Map<VersionStatus, List<Version>> statuses = new EnumMap<>(VersionStatus.class);
 
-		for (Version version : versionList.getVersions()) {
+		for (Version version : versionList) {
 			statuses.computeIfAbsent(checkOne(version), k -> new ArrayList<>()).add(version);
 		}
 

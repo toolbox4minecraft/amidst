@@ -3,7 +3,10 @@ package amidst.devtools;
 import amidst.*;
 import amidst.gui.main.MainWindow;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.*;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.Version;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.mocking.BenchmarkingMinecraftInterface;
@@ -37,7 +40,7 @@ public class WorldGenerationBencher {
 			WorldSeed.fromSaveGame(123456), WorldType.DEFAULT);
 
 	private final String prefix;
-	private final VersionList versionList;
+	private final List<Version> versionList;
 	private final MinecraftInstallation minecraftInstallation;
 	private final Path outDir;
 	private final List<BiomeRequestRecordJson> records = new ArrayList<>();
@@ -46,7 +49,7 @@ public class WorldGenerationBencher {
 
 	private final Semaphore fullyLoadedBarrier = new Semaphore(0);
 
-	public WorldGenerationBencher(String outDir, String prefix, String libraries, VersionList versionList)
+	public WorldGenerationBencher(String outDir, String prefix, String libraries, List<Version> versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
@@ -58,7 +61,7 @@ public class WorldGenerationBencher {
 	public void run() throws FormatException, IOException {
 		Application app = startAmidst();
 
-		for(Version version: versionList.getVersions()) {
+		for(Version version: versionList) {
 			benchmarkOne(app, version);
 		}
 

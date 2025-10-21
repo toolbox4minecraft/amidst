@@ -11,6 +11,7 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.threading.WorkerExecutor;
 import amidst.util.SwingUtils;
@@ -45,6 +46,7 @@ public class ProfileSelectWindow {
 			Application application,
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
+			List<Version> versions,
 			VersionListProvider versionListProvider,
 			MinecraftInstallation minecraftInstallation,
 			LauncherProfileRunner launcherProfileRunner,
@@ -101,6 +103,7 @@ public class ProfileSelectWindow {
 								new LocalProfileComponent(
 										application,
 										workerExecutor,
+										versions,
 										versionListProvider,
 										launcherProfileRunner,
 										p

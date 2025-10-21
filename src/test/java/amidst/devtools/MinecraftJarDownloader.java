@@ -1,25 +1,25 @@
 package amidst.devtools;
 
-import java.io.IOException;
-
 import amidst.devtools.utils.VersionStateRenderer;
 import amidst.mojangapi.file.RemoteVersion;
 import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
 import amidst.parsing.FormatException;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MinecraftJarDownloader {
 	private VersionStateRenderer renderer = new VersionStateRenderer();
 	private String prefix;
-	private VersionList versionList;
+	private List<Version> versionList;
 
-	public MinecraftJarDownloader(String prefix, VersionList versionList) {
+	public MinecraftJarDownloader(String prefix, List<Version> versionList) {
 		this.prefix = prefix;
 		this.versionList = versionList;
 	}
 
 	public void run() {
-		for (Version version : versionList.getVersions()) {
+		for (Version version : versionList) {
 			downloadVersion(version);
 		}
 	}

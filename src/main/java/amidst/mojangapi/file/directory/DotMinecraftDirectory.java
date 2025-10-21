@@ -4,7 +4,6 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.ProfileType;
@@ -125,7 +124,7 @@ public class DotMinecraftDirectory {
 	@NotNull
 	public static VersionDirectory createValidVersionDirectory(
 			LauncherProfileJson launcherProfileJson,
-			VersionList versionList,
+			List<Version> versionList,
 			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String lastVersionId = launcherProfileJson.getLastVersionId();
 
@@ -145,7 +144,7 @@ public class DotMinecraftDirectory {
 			}
 		} else {
 			VersionDirectory result = null;
-			for (Version version : versionList.getVersions()) {
+			for (Version version : versionList) {
 				if (releaseTypesToSearch.contains(version.getType())) {
 					VersionDirectory versionDirectory = createVersionDirectory(dotMinecraftDirectory, version.getId());
 					if (versionDirectory.isValid()) {

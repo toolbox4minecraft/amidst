@@ -1,13 +1,5 @@
 package amidst.gui.profileselect;
 
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Optional;
-
-import javax.imageio.ImageIO;
-
 import amidst.Application;
 import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
@@ -19,15 +11,25 @@ import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 
+import javax.imageio.ImageIO;
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+
 @NotThreadSafe
 public class LocalProfileComponent extends ProfileComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
+	private final List<Version> versions;
 	private final VersionListProvider versionListProvider;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final UnresolvedLauncherProfile unresolvedProfile;
@@ -43,11 +45,13 @@ public class LocalProfileComponent extends ProfileComponent {
 	public LocalProfileComponent(
 			Application application,
 			WorkerExecutor workerExecutor,
+			List<Version> versions,
 			VersionListProvider versionListProvider,
 			LauncherProfileRunner launcherProfileRunner,
 			UnresolvedLauncherProfile unresolvedProfile) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
+		this.versions = versions;
 		this.versionListProvider = versionListProvider;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.unresolvedProfile = unresolvedProfile;
@@ -94,7 +98,8 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private Optional<LauncherProfile> tryResolve() {
 		try {
-			return Optional.of(unresolvedProfile.resolveToVanilla(versionListProvider.getRemoteOrElseLocal()));
+			List<Version> remote = versionListProvider.getRemote();
+			return Optional.of(unresolvedProfile.resolveToVanilla(remote == null ? versions : remote));
 		} catch (FormatException | IOException e) {
 			AmidstLogger.warn(e);
 			return Optional.empty();

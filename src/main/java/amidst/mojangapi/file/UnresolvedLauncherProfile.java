@@ -10,6 +10,7 @@ import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
 import java.io.IOException;
+import java.util.List;
 
 @Immutable
 public class UnresolvedLauncherProfile {
@@ -35,7 +36,7 @@ public class UnresolvedLauncherProfile {
 		return launcherProfileJson.getLastVersionId();
 	}
 
-	public LauncherProfile resolve(VersionList versionList) throws FormatException, IOException {
+	public LauncherProfile resolve(List<Version> versionList) throws FormatException, IOException {
 		ProfileDirectory profileDirectory = DotMinecraftDirectory
 				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);
 		VersionDirectory versionDirectory = DotMinecraftDirectory
@@ -50,7 +51,7 @@ public class UnresolvedLauncherProfile {
 				launcherProfileJson.getName());
 	}
 
-	public LauncherProfile resolveToVanilla(VersionList versionList) throws FormatException, IOException {
+	public LauncherProfile resolveToVanilla(List<Version> versionList) throws FormatException, IOException {
 		ProfileDirectory profileDirectory = DotMinecraftDirectory
 				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);
 		VersionDirectory versionDirectory = DotMinecraftDirectory

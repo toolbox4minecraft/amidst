@@ -131,7 +131,7 @@ public class MinecraftInstallation {
 	 */
 	public Optional<LauncherProfile> tryGetLauncherProfileFromName(String profileName) {
 		try {
-			VersionList versionList = VersionList.newLocalVersionList();
+			List<Version> versionList = Version.newLocalVersionList();
 			for (UnresolvedLauncherProfile unresolvedProfile : readLauncherProfiles()) {
 				LauncherProfile profile = unresolvedProfile.resolveToVanilla(versionList);
 				if (profile.getProfileName().equalsIgnoreCase(profileName)) {

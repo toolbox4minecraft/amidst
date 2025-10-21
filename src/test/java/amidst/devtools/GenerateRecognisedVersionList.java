@@ -5,7 +5,6 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.parsing.FormatException;
 
@@ -17,13 +16,13 @@ import java.util.List;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
-	private final VersionList versionList;
+	private final List<Version> versionList;
 	private final MinecraftInstallation minecraftInstallation;
 	private final List<String> versionsWithError = new LinkedList<>();
 	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
-	public GenerateRecognisedVersionList(String prefix, String libraries, VersionList versionList)
+	public GenerateRecognisedVersionList(String prefix, String libraries, List<Version> versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
@@ -37,7 +36,7 @@ public class GenerateRecognisedVersionList {
 	}
 
 	private void populate() {
-		for (Version version : versionList.getVersions()) {
+		for (Version version : versionList) {
 			process(version);
 		}
 		builder.calculateMaxLength();

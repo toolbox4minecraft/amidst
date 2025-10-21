@@ -14,10 +14,7 @@ import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.PlayerInformationCache;
-import amidst.mojangapi.file.VersionListProvider;
+import amidst.mojangapi.file.*;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
@@ -27,6 +24,7 @@ import amidst.threading.ThreadMaster;
 
 import javax.swing.SwingUtilities;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @NotThreadSafe
@@ -49,6 +47,8 @@ public class Application {
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 
+	private final List<Version> versions;
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings) throws FormatException, IOException {
 		this.metadata = metadata;
@@ -61,7 +61,8 @@ public class Application {
 		WorldBuilder worldBuilder = new WorldBuilder(new PlayerInformationCache(), SeedHistoryLogger.from(parameters.seedHistoryFile));
 		launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.getInitialWorldOptions());
 		biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
-		versionListProvider = VersionListProvider.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
+		versionListProvider = new VersionListProvider(threadMaster.getWorkerExecutor());
+		versions = Version.newLocalVersionList();
 		zoom = new Zoom(settings.maxZoom);
 		fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers(), settings.threads);
 	}
@@ -112,6 +113,7 @@ public class Application {
 				this,
 				metadata,
 				threadMaster.getWorkerExecutor(),
+				versions,
 				versionListProvider,
 				minecraftInstallation,
 				launcherProfileRunner,

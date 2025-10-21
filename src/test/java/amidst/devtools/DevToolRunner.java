@@ -4,7 +4,7 @@ import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.VersionList;
+import amidst.mojangapi.file.Version;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.FeatureKey;
@@ -31,7 +31,7 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateRecognisedVersionList() throws FormatException, IOException {
-		new GenerateRecognisedVersionList(versionsDirectory(), librariesDirectory(), versionList()).run();
+		new GenerateRecognisedVersionList(versionsDirectory(), librariesDirectory(), Version.newRemoteVersionList()).run();
 	}
 
 	@Ignore
@@ -43,25 +43,25 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateWorldTestData() throws FormatException, IOException {
-		new GenerateWorldTestData(versionsDirectory(), librariesDirectory(), versionList()).run();
+		new GenerateWorldTestData(versionsDirectory(), librariesDirectory(), Version.newRemoteVersionList()).run();
 	}
 
 	@Ignore
 	@Test
 	public void checkMinecraftJarFileDownloadAvailability() throws FormatException, IOException {
-		new MinecraftJarDownloadAvailabilityChecker(versionList()).run();
+		new MinecraftJarDownloadAvailabilityChecker(Version.newRemoteVersionList()).run();
 	}
 
 	@Ignore
 	@Test
 	public void downloadMinecraftJarFiles() throws FormatException, IOException {
-		new MinecraftJarDownloader(versionsDirectory(), versionList()).run();
+		new MinecraftJarDownloader(versionsDirectory(), Version.newRemoteVersionList()).run();
 	}
 
 	@Ignore
 	@Test
 	public void checkMinecraftVersionCompatibility() throws FormatException, IOException {
-		new MinecraftVersionCompatibilityChecker(versionsDirectory(), librariesDirectory(), versionList()).run();
+		new MinecraftVersionCompatibilityChecker(versionsDirectory(), librariesDirectory(), Version.newRemoteVersionList()).run();
 	}
 
 	@Ignore
@@ -73,17 +73,13 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void benchmarkWorldGeneration() throws FormatException, IOException {
-		new WorldGenerationBencher(benchmarksDirectory(), versionsDirectory(), librariesDirectory(), versionList()).run();
+		new WorldGenerationBencher(benchmarksDirectory(), versionsDirectory(), librariesDirectory(), Version.newRemoteVersionList()).run();
 	}
 	
 	@Ignore
 	@Test
 	public void serializeBiomeProfile() {
 		new BiomeProfileSerializer(BiomeProfile.createExampleProfile()).run();
-	}
-
-	private VersionList versionList() throws FormatException, IOException {
-		return VersionList.newRemoteVersionList();
 	}
 
 	private String librariesDirectory() {
