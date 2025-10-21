@@ -1,11 +1,5 @@
 package amidst.devtools;
 
-import java.io.IOException;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
@@ -14,6 +8,12 @@ import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.parsing.FormatException;
+
+import java.io.IOException;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
@@ -28,7 +28,7 @@ public class GenerateRecognisedVersionList {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), Paths.get(prefix), null);
 	}
 
 	public void run() {

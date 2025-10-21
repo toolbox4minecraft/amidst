@@ -1,10 +1,12 @@
 package amidst.mojangapi.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import amidst.mojangapi.file.json.ReleaseType;
+import amidst.mojangapi.file.json.versionlist.RemoteVersionJson;
+import amidst.parsing.FormatException;
+import amidst.parsing.URIUtils;
+import amidst.parsing.json.JsonReader;
+
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,31 +14,22 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-import amidst.mojangapi.file.json.ReleaseType;
-import amidst.mojangapi.file.json.versionlist.RemoteVersionJson;
-import amidst.mojangapi.file.service.FilenameService;
-import amidst.parsing.FormatException;
-import amidst.parsing.URIUtils;
-import amidst.parsing.json.JsonReader;
-
 public class RemoteVersion {
 
-	private final FilenameService filenameService;
 	private final RemoteVersionJson remoteVersionJson;
 	private final byte[] rawJson;
 
-	private RemoteVersion(FilenameService filenameService, RemoteVersionJson remoteVersionJson, byte[] rawJson) {
-		this.filenameService = filenameService;
+	private RemoteVersion(RemoteVersionJson remoteVersionJson, byte[] rawJson) {
 		this.remoteVersionJson = remoteVersionJson;
 		this.rawJson = rawJson;
 	}
 
-	public static RemoteVersion from(FilenameService filenameService, URL metaUrl)
+	public static RemoteVersion from(URL metaUrl)
 			throws FormatException, IOException {
 		byte[] rawJson = URIUtils.readBytes(metaUrl);
 		Reader jsonReader = new InputStreamReader(new ByteArrayInputStream(rawJson));
 		RemoteVersionJson remoteVersionJson = JsonReader.read(jsonReader, RemoteVersionJson.class);
-		return new RemoteVersion(filenameService, remoteVersionJson, rawJson);
+		return new RemoteVersion(remoteVersionJson, rawJson);
 	}
 
 	public String getId() {
@@ -56,15 +49,18 @@ public class RemoteVersion {
 	}
 
 	public void downloadClient(String prefix) throws IOException {
+		String versionId1 = getId();
 		copyToFile(URIUtils.newInputStream(remoteVersionJson.getClientUrl()),
-			Paths.get(filenameService.getClientJar(prefix, getId())));
+			Paths.get(prefix + versionId1 + "/" + versionId1 + ".jar"));
+		String versionId = getId();
 		copyToFile(new ByteArrayInputStream(rawJson),
-			Paths.get(filenameService.getClientJson(prefix, getId())));
+			Paths.get(prefix + versionId + "/" + versionId + ".json"));
 	}
 
 	public void downloadServer(String prefix) throws IOException {
+		String versionId = getId();
 		copyToFile(URIUtils.newInputStream(remoteVersionJson.getServerUrl()),
-			Paths.get(filenameService.getServerJar(prefix, getId())));
+			Paths.get(prefix + versionId + "/minecraft_server." + versionId + ".jar"));
 	}
 
 	private void copyToFile(InputStream from, Path to) throws IOException {

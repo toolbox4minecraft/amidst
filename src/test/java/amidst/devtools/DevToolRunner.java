@@ -1,11 +1,5 @@
 package amidst.devtools;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
@@ -16,6 +10,11 @@ import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
 import amidst.settings.biomeprofile.BiomeProfile;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * Eclipse does not allow to run the main directly as a Java Application,
@@ -26,7 +25,7 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateInstalledVersionsList() throws FormatException, IOException {
-		new GenerateInstalledVersionsList(MinecraftInstallation.newLocalMinecraftInstallation()).run();
+		new GenerateInstalledVersionsList(MinecraftInstallation.newLocalMinecraftInstallation(null)).run();
 	}
 
 	@Ignore

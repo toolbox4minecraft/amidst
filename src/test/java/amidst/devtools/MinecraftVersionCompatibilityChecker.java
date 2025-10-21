@@ -1,5 +1,14 @@
 package amidst.devtools;
 
+import amidst.clazz.Classes;
+import amidst.clazz.real.JarFileParsingException;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
+import amidst.clazz.translator.ClassTranslator;
+import amidst.mojangapi.file.*;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.parsing.FormatException;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,19 +17,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import amidst.clazz.Classes;
-import amidst.clazz.real.JarFileParsingException;
-import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
-import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.Version;
-import amidst.mojangapi.file.VersionList;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.parsing.FormatException;
 
 /**
  * This only checks if there is exactly one class in the jar file for each
@@ -38,7 +34,7 @@ public class MinecraftVersionCompatibilityChecker {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), Paths.get(prefix), null);
 	}
 
 	public void run() {

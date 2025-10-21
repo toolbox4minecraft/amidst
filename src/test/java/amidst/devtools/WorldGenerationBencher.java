@@ -52,7 +52,7 @@ public class WorldGenerationBencher {
 		this.versionList = versionList;
 		this.outDir = Paths.get(outDir);
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), Paths.get(prefix), null);
 	}
 
 	public void run() throws FormatException, IOException {

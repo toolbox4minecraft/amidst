@@ -1,17 +1,15 @@
 package amidst.mojangapi.file;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.service.FilenameService;
 import amidst.parsing.FormatException;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 @Immutable
 public class Version {
-	private final FilenameService filenameService = new FilenameService();
 	private final VersionListEntryJson versionListEntryJson;
 
 	public Version(VersionListEntryJson versionListEntryJson) {
@@ -27,7 +25,7 @@ public class Version {
 	}
 
 	public RemoteVersion fetchRemoteVersion() throws FormatException, IOException {
-		return RemoteVersion.from(filenameService, versionListEntryJson.getMetaUrl());
+		return RemoteVersion.from(versionListEntryJson.getMetaUrl());
 	}
 
 	/*public boolean hasServer() {
@@ -47,10 +45,12 @@ public class Version {
 	}*/
 
 	public Path getClientJarFile(Path prefix) {
-		return filenameService.getClientJarFile(prefix, versionListEntryJson.getId());
+		String versionId = versionListEntryJson.getId();
+		return prefix.resolve(versionId + "/" + versionId + ".jar");
 	}
 
 	public Path getClientJsonFile(Path prefix) {
-		return filenameService.getClientJsonFile(prefix, versionListEntryJson.getId());
+		String versionId = versionListEntryJson.getId();
+		return prefix.resolve(versionId + "/" + versionId + ".json");
 	}
 }
