@@ -49,7 +49,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (mousePosition != null) {
 			CoordinatesInWorld coordinates = translator.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
-			return Arrays.asList(biomeName + " " + coordinates.toString());
+			return Arrays.asList(biomeName, "Overworld: " + coordinates.toString(), "Nether: " + CoordinatesInWorld.toNether(coordinates).toString());
 		} else {
 			return null;
 		}
