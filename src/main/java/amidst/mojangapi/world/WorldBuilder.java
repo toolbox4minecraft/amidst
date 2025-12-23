@@ -46,7 +46,7 @@ public class WorldBuilder {
 	public World from(
 			MinecraftInterface minecraftInterface,
 			WorldOptions worldOptions) throws MinecraftInterfaceException {
-		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(worldOptions, minecraftInterface);
+		VersionFeatures versionFeatures = minecraftInterface.initInterfaceAndGetFeatures(worldOptions, minecraftInterface, seedHistoryLogger);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
 				MovablePlayerList.dummy(),
@@ -57,27 +57,16 @@ public class WorldBuilder {
 	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException {
-		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(WorldOptions.fromSaveGame(saveGame), minecraftInterface);
+		VersionFeatures versionFeatures = minecraftInterface.initInterfaceAndGetFeatures(WorldOptions.fromSaveGame(saveGame), minecraftInterface, seedHistoryLogger);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
 				new MovablePlayerList(
 					playerInformationProvider,
 					saveGame,
 					true,
-					WorldPlayerType.from(saveGame)),
+						(WorldPlayerType) WorldPlayerType.from(saveGame)),
 				versionFeatures,
 				new ImmutableWorldSpawnOracle(saveGame.getWorldSpawn()));
-	}
-
-	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
-		throws MinecraftInterfaceException {
-		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		if(minecraftInterface instanceof LoggingMinecraftInterface) {
-			((LoggingMinecraftInterface) minecraftInterface).logNextAccessor();
-		}
-		MinecraftInterface.WorldAccessor worldAccessor = new ThreadedWorldAccessor(v -> minecraftInterface.createWorldAccessor(worldOptions));
-		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, worldAccessor).create(recognisedVersion);
 	}
 
 	private World create(
