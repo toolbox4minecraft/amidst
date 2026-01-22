@@ -1,0 +1,77 @@
+1 the user can query whether a specific biome exists in a given radius around a given coordiate
+1.1 the user can specify a minimal biome size
+1.2 the user can query for a set of biomes, it matches if any of the biomes in the set is found
+1.3 the user can specify the shape of the biome
+1.4 the distance of the match is used to calculate the match quality
+
+2 the user can query whether a specific structure exists in a given radius around a given coordiate
+2.1 the user can specify a minimal number of structures
+2.2 the user can query for a set of structures, it matches if any of the structures in the set is found
+2.3 the user can specify the layout if multiple structures are matched
+2.4 the distance of the match is used to calculate the match quality
+
+3 the user can exclude seeds that match a given criterion
+
+4 the user can terminate the search at any time
+4.1 the user can tell how well the searched seeds matched the query
+4.2 the user can tell how long it takes to find a perfect match (pre-calculated average times foreach combination of minecraft version, biome and structure)
+
+5 the user can see a history of previous searches
+5.1 the user can execute previous search again
+
+6 the user can search for commonly known "good" seeds
+6.1 the user can search for a quad witch hut
+
+7 the user can add different weights to different parts of the query, these weights are used to determine the quality of the match, but before this the seed has to match
+
+8 the user can run multiple independent queries at the same time
+
+9 the user can specify exactly where to search
+9.1 the user can specify the world type
+9.2 the user can specify the world seed
+9.3 the user can specify the minecraft version (might need to use the launcher profile name)
+9.4 the user can specify the center
+9.5 the user can specify the shape of the search area (circle vs square)
+9.6 the user can specify a list of seeds different values for 9.1 - 9.5
+9.7 the user can specify to use random seeds with 9.1, 9.3, 9.4 and 9.5 as fixed values
+9.8 the user can specify a seed generator (e.g. all seeds starting from a given seed)
+
+10 the user is able to tell why a given seed was accepted or rejected
+10.1 the user can tell which of the criteria was checked, matched and unmatched
+10.2 additional information are always present, if the seed matched
+
+11 the user can write sub-queries that work relative to the position of another query match
+
+12 the user is not limited by arbitrary size restrictions (512 blocks raster)
+
+13 each criterium can have a different center point and shape
+13.1 the center point can be a fixed coordinate
+13.2 the center point can be given relative to another coordinate, which can be one of
+13.2.1 "center" for the center point of the seed
+13.2.2 "spawn" for the world spawn point of the seed
+13.2.3 "origin" for the coordinate [0, 0]
+13.2.4 another explicitly given coordinate
+13.2.5 the coordinate of an already matched criterium
+
+14 the search should be as quick as possible
+14.1 the search can be executed on multiple threads
+14.2 only the necessary biome data should be generated
+14.3 the necessary biome data should be generated only once
+14.4 a unmatching seed should be rejected as soon as possible
+14.5 a matching seed should be accepted as soon as possible
+14.6 for a matching seed, we still need to collect all additional information
+14.7 we can optimise the query so we execute the parts that are likely to terminate the matching algorithm early e.g. we can execute cheap sub queries early on and use the logical structure of the query
+
+15 the user can figure out how to write a query
+15.1 there is documentation about the query syntax
+15.2 if an invalid query is entered, the user receives a meaningful error message
+
+16 the user can specify when the search should be terminated
+16.1 the user can specify to search for one matching seed
+16.2 the user can specify to search through all seeds of a finite list
+16.3 the user can specify to search through the seeds of an infinite list until he stops manually
+16.4 the user can specify to search through the seeds of an infinite list until a given number of seeds has been checked
+16.5 the user can specify to search through the seeds of an infinite list until a given number of seeds has been found
+16.6 the user can specify to search through the seeds of an infinite list until a given timeout is reached
+
+17 the user can collect additional information about a seed that already matched the query
